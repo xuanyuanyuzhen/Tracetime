@@ -10,13 +10,13 @@
 
 ## 当前状态
 
-- 当前任务 0.3：应用每日时长限制（轻度/中度/严重）、本地多视图分析及可选手动 AI 分析已实现，35个场景和发布流程通过；正在完成独立修正复核、归档和上传。
+- 当前任务 0.3 已完成：应用每日时长限制（轻度/中度/严重）、本地多视图分析及可选手动 AI 分析；35个场景和发布流程通过，独立审查修正resolved，功能已上传，设计与使用文档已归档。
 
 - 已确认：Windows 托盘应用、双时长、每日排行和时间线、本地 SQLite。
 - 已检查：Windows 11；系统 SDK 为 .NET 8.0.421，另有 .NET 10 桌面运行时。
 - 全局偏好：已写入并回读核对 `C:/Users/xuanyuan/.codex/AGENTS.md`（532 字节），用户级指令已生效。
 - 技术基线：项目本地 SDK 10.0.402 已安装，Microsoft.Data.Sqlite 锁定 10.0.13。
-- 当前阶段：0.3 发布候选通过；GitHub main 仍为0.2，0.3尚未上传。
+- 当前阶段：0.3 发布包通过；功能提交 `be3661a` 已推送GitHub main并核对远端。
 - 新版运行入口：`artifacts/release/TraceTime-0.3.0-win-x64/TraceTime.exe`；需保留整个同级文件夹。
 - 新版分享包：`artifacts/release/TraceTime-0.3.0-win-x64.zip`（依赖 .NET 10 Desktop Runtime x64，本机已有），带 `.sha256` 校验。
 - 旧版目录 `artifacts/release/TraceTime-win-x64` 保留，未强制结束用户旧版进程；使用新版前从旧版托盘选择退出。
@@ -256,3 +256,17 @@
 - `docs/screenshots` 已换成0.3隔离演示视图，新增额度/趋势/提醒图；文档不使用真实用户记录截图。
 - 未新增NuGet或图表依赖，发布包约18MB；API配置、数据库及QA目录不进入包或Git。
 - 正在更新设计归档并提交上传；当前用户旧版0.2进程保留，使用新版前需从旧版托盘退出。
+
+### 2026-10-26 · 0.3 功能上传与最终包核对
+
+- `be3661a` 已推送 origin/main，远端SHA回读一致；实现、测试、使用说明、项目提示词及演示截图已同步。
+- 最终ZIP 18,450,914字节，67条目；SHA-256 `0727c3be5b5e656084c7fb9c6487747994f11b3a4c1bdf69e6a7ef02460e7ddb` 与同名校验文件匹配。
+- 包不含SQLite、ai-settings.json、appearance.json、调试符号或QA数据；README图片、说明和提示词均存在。源码凭据模式扫描通过，独立提示词与代码模板一致。
+- 下一步：接收设计文档代理的4份局部更新，提交文档和完成状态后交付；不再重跑已通过且未受文档修改影响的测试。
+
+### 2026-10-26 · 0.3 交付完成
+
+- 设计文档代理已更新 DESIGN.md、PRODUCT.md、docs/overview-design.md、.impeccable/design.json；原主题frontmatter保持，新增五页导航、额度提醒、本地分析与显式AI外发边界。文档diff/JSON核对通过，没有代码变更或追加测试。
+- 交付：0.3运行目录及ZIP/校验文件、docs/LIMITS-AND-ANALYSIS.md、docs/AI-PROMPT.txt、更新的README与验证记录；源码已在GitHub main。
+- 本轮需求完成；后续仅观察实际系统通知/声音/前台焦点和填入用户服务配置后的实连表现，以及既有长期/多屏等试用事项。不把这些未测项记为通过。
+- 下次接手：先读本页「当前状态」、PLAN及docs/VALIDATION；无待继续实现的本轮功能。升级先退出旧版托盘，再启动新版，用户数据保留。

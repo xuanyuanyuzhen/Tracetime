@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "generatedAt": "2026-10-25",
-  "title": "Design System: TraceTime 0.2",
+  "title": "Design System: TraceTime 0.3",
   "extensions": {
     "shadows": [],
     "motion": [
@@ -22,12 +22,15 @@
   "components": [],
   "narrative": {
     "northStar": "清楚看见时间的去向",
-    "overview": "Windows WPF application with selectable light/dark and glass/soft/minimal materials. Values in DESIGN.md are DIP, not CSS pixels; native XAML components remain documented there rather than translated into invented web snippets.",
+    "overview": "沿用 Windows 桌面操作习惯，以清晰的数据行、可区分的双时长和轻量导航呈现应用使用。0.3 增加应用每日额度、近 7/30 天本地分析和用户手动发起的可选 AI 回顾。用户可以独立选择明暗模式、材质和强调色；默认首次跟随系统并使用液态玻璃，之后恢复已保存的选择。界面使用简体中文。",
     "keyCharacteristics": [
       "Separate foreground and without-idle durations",
       "Persist independent mode/material/accent choices",
       "Theme tokens computed from user color and mode",
-      "Internal translucent material without desktop sampling"
+      "Internal translucent material without desktop sampling",
+      "Five native WPF destinations with scrolling access",
+      "Application limits remind without closing or blocking applications",
+      "Local 7/30-day analysis with optional manually approved aggregate sharing"
     ],
     "rules": [
       {
@@ -44,12 +47,17 @@
     "dos": [
       "Use DynamicResource for runtime theme colors",
       "Retain native Windows focus and scrolling",
-      "Preserve the original user accent in stored preferences"
+      "Preserve the original user accent in stored preferences",
+      "Keep both duration metrics explicit in charts, limits and summaries",
+      "Require preview, consent and a send action for optional AI requests; support cancellation",
+      "Document native WPF components and DIP dimensions without invented HTML/CSS snippets"
     ],
     "donts": [
       "Do not treat idle as proof of not working",
       "Do not record titles, URLs, document names, keystrokes or screenshots",
-      "Do not describe the material as desktop backdrop sampling"
+      "Do not describe the material as desktop backdrop sampling",
+      "Do not close or block target applications or apply AI suggestions as limit rules",
+      "Do not include keys, paths or raw time segments in AI preview data or exports"
     ]
   }
 }
