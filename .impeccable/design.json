@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-25",
+  "title": "Design System: TraceTime 0.2",
+  "extensions": {
+    "shadows": [],
+    "motion": [
+      {
+        "name": "page-switch",
+        "value": "WPF DoubleAnimation 0.7 to 1, 140ms, FillBehavior.Stop",
+        "purpose": "Non-demo page switch; only when Windows ClientAreaAnimation is enabled."
+      }
+    ],
+    "breakpoints": [],
+    "typographyMeta": {
+      "display": {
+        "displayName": "总时长",
+        "purpose": "DIP; Viewbox may shrink to fit."
+      }
+    }
+  },
+  "components": [],
+  "narrative": {
+    "northStar": "清楚看见时间的去向",
+    "overview": "Windows WPF application with selectable light/dark and glass/soft/minimal materials. Values in DESIGN.md are DIP, not CSS pixels; native XAML components remain documented there rather than translated into invented web snippets.",
+    "keyCharacteristics": [
+      "Separate foreground and without-idle durations",
+      "Persist independent mode/material/accent choices",
+      "Theme tokens computed from user color and mode",
+      "Internal translucent material without desktop sampling"
+    ],
+    "rules": [
+      {
+        "name": "Selected label contrast",
+        "body": "Choice selected labels use Ink on AccentSoft; Accent remains the border. Verify the actual control combination, not just Accent on Surface.",
+        "section": "colors"
+      },
+      {
+        "name": "Material scope",
+        "body": "Glass gradients and opacity are computed in ThemeManager.Apply; soft/minimal surfaces are opaque. No custom shadow tokens exist.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Use DynamicResource for runtime theme colors",
+      "Retain native Windows focus and scrolling",
+      "Preserve the original user accent in stored preferences"
+    ],
+    "donts": [
+      "Do not treat idle as proof of not working",
+      "Do not record titles, URLs, document names, keystrokes or screenshots",
+      "Do not describe the material as desktop backdrop sampling"
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+**/bin/
+**/obj/
+.tools/
+.packages/
+artifacts/
+*.user
+*.suo
+.vs/
+*.db
+*.db-shm
+*.db-wal
+
+# Local assistant setup helper; not part of the application.
+scripts/save-global-preference.ps1
+.env
+.env.*
+*.pfx
+*.p12

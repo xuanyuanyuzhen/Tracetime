@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0</TargetFramework><OutputType>Exe</OutputType></PropertyGroup>
+  <ItemGroup><ProjectReference Include="..\..\src\TraceTime.Core\TraceTime.Core.csproj"/><ProjectReference Include="..\..\src\TraceTime.Storage\TraceTime.Storage.csproj"/></ItemGroup>
+  <ItemGroup><Compile Include="..\..\src\TraceTime.App\AppearanceSettings.cs" Link="AppearanceSettings.cs"/></ItemGroup>
+</Project>
