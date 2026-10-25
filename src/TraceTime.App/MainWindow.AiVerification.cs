@@ -15,7 +15,7 @@ public partial class MainWindow
         if (!_demo) throw new InvalidOperationException("模拟接口验证仅允许演示模式。");
         void Check(bool condition,string reason) { if(!condition) throw new Exception(reason); }
         void Prepare() { PrepareAiPreview(this,new()); Check(_prepared is not null,"预览未就绪"); AiConsent.IsChecked=true; }
-        ShowAnalysis(this,new()); AiEndpoint.Text="http://localhost:11434/v1/chat/completions"; AiModel.Text="mock-only";
+        ShowAnalysis(this,new()); _aiSettings=new("http://localhost:11434/v1/chat/completions","mock-only");
         using(var ok=new HttpClient(new UiMockHandler((_,_)=>Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) {Content=new StringContent("{\"choices\":[{\"message\":{\"content\":\"模拟分析结果\"}}]}")}))))
         { Prepare(); await SendPreparedAnalysisAsync(ok); Check(AiResult.Text.Contains("模拟分析结果") && !AiSend.IsEnabled && !AiCancel.IsEnabled,"成功响应未更新界面或未重置状态"); }
         using(var denied=new HttpClient(new UiMockHandler((_,_)=>Task.FromResult(new HttpResponseMessage(HttpStatusCode.Unauthorized) {Content=new StringContent("do-not-show-server-secrets")}))))
@@ -23,7 +23,7 @@ public partial class MainWindow
         using(var delayed=new HttpClient(new UiMockHandler(async (_,ct)=>{await Task.Delay(Timeout.Infinite,ct);return new HttpResponseMessage(HttpStatusCode.OK);})))
         {
             Prepare(); var pending=SendPreparedAnalysisAsync(delayed); Check(AiCancel.IsEnabled,"请求中不能取消");
-            AiModel.Text="new-range-model"; await pending;
+            _aiSettings=_aiSettings with {Model="new-range-model"}; InvalidateAiPreview(); await pending;
             Check(AiFeedback.Text.Contains("取消") && _prepared is null && !AiSend.IsEnabled,"变更配置未取消旧请求");
             Prepare(); await SendPreparedAnalysisAsync(delayed,TimeSpan.FromMilliseconds(20)); Check(AiFeedback.Text.Contains("取消") && !AiCancel.IsEnabled,"超时未恢复界面");
         }

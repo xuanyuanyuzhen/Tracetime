@@ -38,6 +38,7 @@ public sealed partial class UsageDatabase : ITrackingSink, IDisposable
         foreach (var s in changes.Usage) InsertUsage(s, tx);
         foreach (var s in changes.Idle) InsertIdle(s, tx);
         tx.Commit();
+        if(changes.Usage.Count>0) HistoryRevision++;
     }
 
     private void InsertUsage(UsageSegment s, SqliteTransaction tx) => Execute("""
@@ -128,6 +129,7 @@ public sealed partial class UsageDatabase : ITrackingSink, IDisposable
             if (s.End > b) InsertGap(s with { Id = Id(), Start = b }, tx);
         }
         tx.Commit();
+        HistoryRevision++;
     }
 
     private void InsertGap(GapInterval g, SqliteTransaction tx) => Execute("INSERT INTO gaps VALUES($id,$a,$b,$r)", tx,

@@ -27,6 +27,9 @@ public partial class MainWindow : Window
     private readonly TrackerController? _tracker;
     private readonly bool _demo;
     private readonly DispatcherTimer _refreshTimer;
+    private readonly AppIconCache _icons;
+    private readonly RecordedCalendar _recordedCalendar;
+    private string? _lastIconApp;
     private DayReport? _report;
     private string? _selectedApp;
     private bool _ready, _refreshing;
@@ -40,11 +43,13 @@ public partial class MainWindow : Window
     internal MainWindow(UsageDatabase db, TrackerController? tracker, bool demo)
     {
         _db = db; _tracker = tracker; _demo = demo;
+        _icons = new AppIconCache(Path.GetDirectoryName(db.FilePath)!,Dispatcher);
         _appearancePath = Path.Combine(Path.GetDirectoryName(db.FilePath)!, "appearance.json");
         _appearance = AppearanceSettings.Load(_appearancePath);
         ThemeManager.Apply(_appearance);
         InitializeComponent();
         _limits = _db.LoadLimits(); InitializeAnalysis();
+        _recordedCalendar = new RecordedCalendar(db,DayPicker,AnalysisEnd,RangeStart,RangeEnd);
         SourceInitialized += (_, _) => ThemeManager.ApplyTitleBar(this);
         SystemEvents.UserPreferenceChanged += SystemThemeChanged;
         DayPicker.DisplayDateEnd = DateTime.Today; DayPicker.SelectedDate = DateTime.Today;
@@ -58,6 +63,7 @@ public partial class MainWindow : Window
         _refreshTimer = new DispatcherTimer(TimeSpan.FromSeconds(5), DispatcherPriority.Background, (_, _) => {
             if (IsVisible && OverviewPanel.Visibility == Visibility.Visible) RefreshReport();
             CheckLimits();
+            _recordedCalendar.RefreshOpen();
             if (IsVisible && LimitsPanel.Visibility == Visibility.Visible) RenderLimitProgress();
         }, Dispatcher);
         _ready = true; SyncAppearanceControls(); SetPage("overview"); RefreshReport(); UpdateStatus();
@@ -93,7 +99,7 @@ public partial class MainWindow : Window
         var total = WithoutIdle ? _report.WithoutIdle : _report.Foreground;
         var sorted = _report.Apps.OrderByDescending(x => WithoutIdle ? x.WithoutIdle : x.Foreground).ToArray();
         var maximum = sorted.Length == 0 ? 0 : (WithoutIdle ? sorted[0].WithoutIdle : sorted[0].Foreground).TotalSeconds;
-        var rows = sorted.Select((x, i) => new AppRow(x, WithoutIdle, total, maximum, i + 1)).ToArray();
+        var rows = sorted.Select((x, i) => new AppRow(x, WithoutIdle, total, maximum, i + 1,_icons)).ToArray();
         AppCountLabel.Text = $"{sorted.Length} 个应用";
         _refreshing = true;
         AppList.ItemsSource = rows;
@@ -126,7 +132,9 @@ public partial class MainWindow : Window
         Timeline.Report = _report; Timeline.SelectedAppKey = _selectedApp;
         SelectionLabel.Text = _selectedApp is null ? "全部应用" : _report.Apps.FirstOrDefault(x => x.App.Key == _selectedApp)?.App.Name ?? "全部应用";
         var entries = _report.Timeline.Where(x => _selectedApp is null || x.AppKey == _selectedApp).OrderByDescending(x => x.Start).ToArray();
+        var apps=_report.Apps.ToDictionary(x=>x.App.Key,x=>x.App);
         DetailsList.ItemsSource = entries.Select(x => new {
+            Visual = x.Kind=="gap" || string.IsNullOrEmpty(x.AppKey) ? null : _icons.Get(apps.GetValueOrDefault(x.AppKey) ?? new(x.AppKey,x.Label)),
             Range = $"{x.Start.LocalDateTime:HH:mm:ss} – {x.End.LocalDateTime:HH:mm:ss}",
             Label = x.Label + (x.Kind == "idle" ? " · 空闲" : ""),
             Duration = FormatTime(x.End - x.Start),
@@ -138,6 +146,7 @@ public partial class MainWindow : Window
     private void UpdateStatus()
     {
         if (!_ready) return;
+        if(_tracker is not null && _lastIconApp!=_tracker.CurrentApp.Key) { _lastIconApp=_tracker.CurrentApp.Key; _icons.Get(_tracker.CurrentApp); }
         if (_tracker is not null && !_tracker.CanPresentReminder) _limitAlert?.Hide();
         StatusText.Text = _demo ? "演示数据 · 不采集" : _tracker?.Status ?? "未记录";
         PauseButton.Content = _tracker?.Paused == true ? "恢复记录" : "暂停记录";
@@ -294,6 +303,7 @@ public partial class MainWindow : Window
     {
         if(!_demo) throw new InvalidOperationException("只有隔离演示模式可以生成界面检查图片。");
         VerifyAppearanceFlow();
+        VerifyRecordedCalendar(DayPicker,DateOnly.FromDateTime(DateTime.Today),DateOnly.FromDateTime(DateTime.Today).AddDays(-1));
         ChangeAppearance(new("light","glass"), false);
         Width=1160; Height=860; TimelineExpander.IsExpanded=false; Save(path);
         ChangeAppearance(new("dark","glass"), false); Save(Path.ChangeExtension(path,"dark.png"));
@@ -329,6 +339,14 @@ public partial class MainWindow : Window
         else throw new Exception("日历弹出模板未连接");
         DayPicker.IsDropDownOpen=false;
         ChangeAppearance(new("light","glass"),false); TimelineExpander.IsExpanded=true;
+        RenderTimeline(); OverviewPanel.ScrollToBottom(); Save(Path.ChangeExtension(path,"timeline-icons.png"));
+        foreach(var row in DetailsList.Items)
+        {
+            var hasIcon=row.GetType().GetProperty("Visual")?.GetValue(row) is AppVisual;
+            var name=(string?)row.GetType().GetProperty("Label")?.GetValue(row);
+            if(name is not null && _report!.Apps.Any(x=>name.StartsWith(x.App.Name,StringComparison.Ordinal)) && !hasIcon) throw new Exception("应用时间片图标缺失");
+        }
+        OverviewPanel.ScrollToTop();
         ShowSettings(this,new RoutedEventArgs()); Save(Path.ChangeExtension(path,"settings.png"));
         var primary=VisualChildren(SettingsPanel).OfType<Button>().Single(x=>Equals(x.Content,"保存偏好"));
         var primaryText=VisualChildren(primary).OfType<TextBlock>().Single(x=>x.Text=="保存偏好");
@@ -376,7 +394,6 @@ public partial class MainWindow : Window
 
 internal sealed class AppRow
 {
-    private static readonly Dictionary<string,ImageSource?> Icons=new(StringComparer.OrdinalIgnoreCase);
     public string Key {get;}
     public string Name {get;}
     public string Initial => string.IsNullOrWhiteSpace(Name)?"?":Name[..1];
@@ -388,9 +405,8 @@ internal sealed class AppRow
     public GridLength RemainingFraction {get;}
     public Brush Brush {get;}
     public Brush Tint {get;}
-    public ImageSource? Icon {get;}
-    public Visibility LetterVisibility => Icon is null?Visibility.Visible:Visibility.Collapsed;
-    public AppRow(AppUsage row,bool withoutIdle,TimeSpan total,double maximum,int rank)
+    public AppVisual Visual {get;}
+    public AppRow(AppUsage row,bool withoutIdle,TimeSpan total,double maximum,int rank,AppIconCache icons)
     {
         Key=row.App.Key; Name=row.App.Name; var duration=withoutIdle?row.WithoutIdle:row.Foreground;
         Duration=MainWindow.FormatTime(duration); Percent=total.Ticks==0?"0%":(100d*duration.Ticks/total.Ticks).ToString("0.0",CultureInfo.CurrentCulture)+"%";
@@ -398,14 +414,7 @@ internal sealed class AppRow
         Rank=rank;
         var fraction=maximum<=0?0:Math.Clamp(duration.TotalSeconds/maximum,0,1);
         BarFraction=new GridLength(fraction,GridUnitType.Star); RemainingFraction=new GridLength(1-fraction,GridUnitType.Star);
-        Brush=Palette.ForApp(Key); Tint=ThemeManager.Get("AccentSoft"); Icon=LoadIcon(row.App.ExecutablePath);
-    }
-    private static ImageSource? LoadIcon(string? path)
-    {
-        if(path is null) return null; if(Icons.TryGetValue(path,out var cached)) return cached;
-        ImageSource? image=null;
-        try { using var icon=Drawing.Icon.ExtractAssociatedIcon(path); if(icon is not null) { image=Imaging.CreateBitmapSourceFromHIcon(icon.Handle,Int32Rect.Empty,BitmapSizeOptions.FromWidthAndHeight(24,24)); image.Freeze(); } } catch { }
-        Icons[path]=image; return image;
+        Brush=Palette.ForApp(Key); Tint=ThemeManager.Get("AccentSoft"); Visual=icons.Get(row.App);
     }
 }
 

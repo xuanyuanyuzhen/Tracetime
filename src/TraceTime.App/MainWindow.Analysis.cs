@@ -31,9 +31,8 @@ public partial class MainWindow
         {
             _aiSettingsPath = Path.Combine(Path.GetDirectoryName(_db.FilePath)!, "ai-settings.json"); _aiSettings = AiSettings.Load(_aiSettingsPath);
             AnalysisEnd.DisplayDateEnd = DateTime.Today; AnalysisEnd.SelectedDate = DateTime.Today;
-            AiEndpoint.Text = _aiSettings.Endpoint; AiModel.Text = _aiSettings.Model; AiPrompt.Text = _aiSettings.Prompt;
             AiAnonymous.IsChecked = _aiSettings.Anonymous;
-            AiKeyStatus.Text = string.IsNullOrEmpty(_aiSettings.ProtectedKey) ? "未保存密钥；不会自动发起请求。" : "已保存当前 Windows 用户加密的密钥，输入新密钥可替换。";
+            UpdateAiServiceSummary();
         }
         finally { _loadingAi = false; }
     }
@@ -69,58 +68,45 @@ public partial class MainWindow
     {
         if (_analysis is null) return;
         var active = AnalysisIdle.IsChecked == true; var total = active ? _analysis.WithoutIdle : _analysis.Foreground;
-        AnalysisApps.ItemsSource = _analysis.Apps.OrderByDescending(x => active ? x.WithoutIdle : x.Foreground).Select(x => new { Name = x.App.Name, Duration = FormatTime(active ? x.WithoutIdle : x.Foreground), Percent = total.Ticks == 0 ? "0%" : ((active ? x.WithoutIdle : x.Foreground).Ticks / (double)total.Ticks).ToString("P1") }).ToArray();
+        AnalysisApps.ItemsSource = _analysis.Apps.OrderByDescending(x => active ? x.WithoutIdle : x.Foreground).Select(x => new { Visual = _icons.Get(x.App), Name = x.App.Name, Duration = FormatTime(active ? x.WithoutIdle : x.Foreground), Percent = total.Ticks == 0 ? "0%" : ((active ? x.WithoutIdle : x.Foreground).Ticks / (double)total.Ticks).ToString("P1") }).ToArray();
         AnalysisNoApps.Visibility = total == TimeSpan.Zero ? Visibility.Visible : Visibility.Collapsed;
     }
-    private void AiDraftChanged(object sender, TextChangedEventArgs e) { if (_ready && !_loadingAi) InvalidateAiPreview(); }
-    private void AiKeyChanged(object sender, RoutedEventArgs e) { if (_ready && !_loadingAi) InvalidateAiPreview(); }
-    private void AiAnonymityChanged(object sender, RoutedEventArgs e) { if (_ready && !_loadingAi) InvalidateAiPreview(); }
+    private void OpenAiConfig(object sender, RoutedEventArgs e)
+    {
+        InvalidateAiPreview();
+        var dialog=new AiConfigWindow(_aiSettings,_aiSettingsPath) { Owner=this };
+        dialog.ShowDialog();
+        if(dialog.Saved is { } settings) { _aiSettings=settings; UpdateAiServiceSummary(); AiFeedback.Text="服务配置已保存，尚未发送使用记录。"; }
+    }
+    private void UpdateAiServiceSummary()
+    {
+        AiServiceSummary.Text=string.IsNullOrWhiteSpace(_aiSettings.Model)?"尚未配置 AI 服务":(string.IsNullOrWhiteSpace(_aiSettings.Name)?"已配置 AI 服务":_aiSettings.Name)+" · "+_aiSettings.Model;
+        AiServiceHint.Text=string.IsNullOrWhiteSpace(_aiSettings.Model)?"先配置服务，或直接使用本地分析。":_aiSettings.Endpoint;
+    }
+    private void AiAnonymityChanged(object sender, RoutedEventArgs e)
+    {
+        if(!_ready || _loadingAi) return;
+        InvalidateAiPreview();
+        try { var settings=_aiSettings with {Anonymous=AiAnonymous.IsChecked==true}; settings.Save(_aiSettingsPath); _aiSettings=settings; }
+        catch { AiFeedback.Text="匿名选择本次有效，但未能保存，请检查文件夹权限。"; }
+    }
     private void InvalidateAiPreview()
     {
         _aiCancellation?.Cancel(); _prepared = null; AiConsent.IsChecked = false; AiSend.IsEnabled = false; AiPreview.Text = ""; AiPreviewPanel.Visibility = Visibility.Collapsed;
     }
-    private AiSettings AiDraft()
-    {
-        var endpoint = AiAnalysisClient.ValidateEndpoint(AiEndpoint.Text).AbsoluteUri;
-        AiAnalysisClient.RequestBody(AiModel.Text, AiPrompt.Text, "{}");
-        return _aiSettings with { Endpoint = endpoint, Model = AiModel.Text.Trim(), Prompt = AiPrompt.Text, Anonymous = AiAnonymous.IsChecked == true };
-    }
-    private void SaveAiConfig(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            var value = AiDraft();
-            if (AiKey.Password.Length > 0)
-            {
-                var bytes = Encoding.UTF8.GetBytes(AiKey.Password);
-                try { value = value with { ProtectedKey = Convert.ToBase64String(UserSecret.Protect(bytes)) }; }
-                finally { CryptographicOperations.ZeroMemory(bytes); }
-            }
-            value.Save(_aiSettingsPath); _aiSettings = value; AiKey.Clear();
-            AiKeyStatus.Text = string.IsNullOrEmpty(value.ProtectedKey) ? "未保存密钥。" : "密钥已使用当前 Windows 用户加密保存。";
-            AiFeedback.Text = "配置已保存，尚未发送任何数据。";
-        }
-        catch (ArgumentException ex) { AiFeedback.Text = ex.Message; }
-        catch { AiFeedback.Text = "配置保存失败，请检查文件夹权限或重新输入密钥。"; }
-    }
-    private void ForgetAiKey(object sender, RoutedEventArgs e)
-    {
-        try { var cleared = _aiSettings with { ProtectedKey = "" }; cleared.Save(_aiSettingsPath); _aiSettings = cleared; AiKey.Clear(); InvalidateAiPreview(); AiKeyStatus.Text = "已清除本机保存的密钥。"; }
-        catch { AiFeedback.Text = "清除失败，请检查数据文件夹权限。"; }
-    }
-    private void ResetAiPrompt(object sender, RoutedEventArgs e) => AiPrompt.Text = UsageAnalysis.DefaultPrompt;
     private void PrepareAiPreview(object sender, RoutedEventArgs e)
     {
         try
         {
             if (_analysis is null || _analysis.RecordedDays == 0) { AiFeedback.Text = "没有可分析的使用记录，请先记录一些应用时长。"; return; }
-            var options = AiDraft(); var key = AiKey.Password.Length > 0 ? AiKey.Password : _aiSettings.Key();
+            var options = _aiSettings; AiAnalysisClient.ValidateEndpoint(options.Endpoint); var key = options.Key();
             if (key.Length == 0 && !new Uri(options.Endpoint).IsLoopback) { AiFeedback.Text = "请填写 API Key；本机无鉴权服务可留空。"; return; }
-            var body = AiAnalysisClient.RequestBody(options.Model, options.Prompt, _analysis.Payload(options.Anonymous));
+            var payload=_analysis.Payload(AiAnonymous.IsChecked==true);
+            var body = AiAnalysisClient.RequestBody(options.Model, UsageAnalysis.DefaultPrompt, payload);
             _prepared = new(options.Endpoint, options.Model, body, $"{_analysis.Days.First().Date:yyyy-MM-dd} 至 {_analysis.Days.Last().Date:yyyy-MM-dd}", key);
-            AiConsent.IsChecked = false; AiSend.IsEnabled = false; AiPreview.Text = body;
+            AiConsent.IsChecked = false; AiSend.IsEnabled = false; AiPreview.Text = payload;
             AiDestination.Text = $"发送到：{options.Endpoint}\n模型：{options.Model} · {_prepared.Scope}";
-            AiPreviewPanel.Visibility = Visibility.Visible; AiFeedback.Text = "请检查预览并勾选同意，再发送。密钥不会出现在预览中。";
+            AiPreviewPanel.Visibility = Visibility.Visible; AiFeedback.Text = "请检查预览并勾选同意，再发送。预览仅显示会外发的汇总数据。";
         }
         catch (ArgumentException ex) { AiFeedback.Text = ex.Message; }
         catch { AiFeedback.Text = "无法读取配置或密钥，请重新输入密钥后重试。"; }
@@ -152,10 +138,10 @@ public partial class MainWindow
         finally { _aiCancellation = null; _prepared = null; AiCancel.IsEnabled = false; AiConsent.IsChecked = false; AiSend.IsEnabled = false; }
     }
     private void CancelAiAnalysis(object sender, RoutedEventArgs e) => _aiCancellation?.Cancel();
-    private void CopyAiPrompt(object sender, RoutedEventArgs e)
+    private void CopyAiData(object sender, RoutedEventArgs e)
     {
         if (_analysis is null) return;
-        try { Clipboard.SetText(AiPrompt.Text + "\n\n" + _analysis.Payload(AiAnonymous.IsChecked == true)); AiFeedback.Text = "提示词与汇总已复制，未包含密钥。"; }
+        try { Clipboard.SetText(_analysis.Payload(AiAnonymous.IsChecked == true)); AiFeedback.Text = "汇总数据已复制。"; }
         catch { AiFeedback.Text = "剪贴板暂时不可用，请稍后再试。"; }
     }
     private void ExportAnalysis(object sender, RoutedEventArgs e)

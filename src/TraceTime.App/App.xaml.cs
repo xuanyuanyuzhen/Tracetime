@@ -50,7 +50,7 @@ public partial class App : Application
                 var timer=new DispatcherTimer {Interval=TimeSpan.FromMilliseconds(650)};
                 timer.Tick+=async (_,_)=> {
                     timer.Stop();
-                    try { window.Capture(capture); await window.VerifyAiUiAsync(capture); }
+                    try { await window.PreparePolishCaptureAsync(capture); window.Capture(capture); await window.VerifyAiUiAsync(capture); }
                     catch(Exception ex) { Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(capture))!); File.WriteAllText(Path.ChangeExtension(capture,"error.txt"),ex.ToString()); }
                     finally { window.CloseTransientViews(); ExitApp(); }
                 }; timer.Start();

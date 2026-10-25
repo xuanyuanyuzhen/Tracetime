@@ -37,6 +37,7 @@ if (Test-Path -LiteralPath (Join-Path $taskQa 'overview.error.txt')) { throw (Ge
 Get-Content -LiteralPath (Join-Path $taskQa 'overview.checks.txt')
 Get-Content -LiteralPath (Join-Path $taskQa 'overview.features.txt')
 Get-Content -LiteralPath (Join-Path $taskQa 'overview.ai-flow.txt')
+Get-Content -LiteralPath (Join-Path $taskQa 'overview.polish.txt')
 'PASS published app works with the system .NET runtime; demo captures created'
 
 # Restart with a saved choice, then check that the launched UI actually uses it.

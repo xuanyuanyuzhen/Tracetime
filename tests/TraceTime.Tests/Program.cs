@@ -98,7 +98,7 @@ var tests = new (string Name, Action Test)[]
         var zone=TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"); var (a,b)=ReportBuilder.Bounds(new(2026,3,8),zone); Near((b-a).TotalHours,23);
     })
 };
-tests = tests.Concat(FeatureTests.All).ToArray();
+tests = tests.Concat(FeatureTests.All).Concat(PolishTests.All).ToArray();
 var failures=0;
 foreach(var (name,test) in tests) { try { test(); Console.WriteLine($"PASS {name}"); } catch(Exception e) { failures++; Console.Error.WriteLine($"FAIL {name}: {e}"); } }
 Console.WriteLine($"{tests.Length-failures}/{tests.Length} passed");

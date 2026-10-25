@@ -21,10 +21,11 @@ public partial class MainWindow
     {
         try
         {
-            var selected = (LimitAppPicker.SelectedItem as AppIdentity)?.Key;
+            var selected = (LimitAppPicker.SelectedItem as AppVisual)?.Key;
             _tracker?.Flush(); var apps = _db.RecordedApps();
             _knownLimitApps = apps.ToDictionary(x => x.Key);
-            LimitAppPicker.ItemsSource = apps; LimitAppPicker.SelectedItem = apps.FirstOrDefault(x => x.Key == selected) ?? apps.FirstOrDefault();
+            var choices=apps.Select(_icons.Get).ToArray();
+            LimitAppPicker.ItemsSource = choices; LimitAppPicker.SelectedItem = choices.FirstOrDefault(x => x.Key == selected) ?? choices.FirstOrDefault();
             NoRecordedApps.Visibility = apps.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
             SaveLimitButton.IsEnabled = apps.Count > 0;
         }
@@ -32,7 +33,8 @@ public partial class MainWindow
     }
     private void SaveLimitRule(object sender, RoutedEventArgs e)
     {
-        if (LimitAppPicker.SelectedItem is not AppIdentity app) { LimitFeedback.Text = "请先打开目标应用并在前台记录几秒，再刷新选择。"; return; }
+        if (LimitAppPicker.SelectedItem is not AppVisual choice) { LimitFeedback.Text = "请先打开目标应用并在前台记录几秒，再刷新选择。"; return; }
+        var app=choice.App;
         if (!int.TryParse(LimitMinutes.Text, out var minutes) || minutes is < 1 or > 1440) { LimitFeedback.Text = "每日额度须为 1–1440 之间的整数分钟。"; return; }
         try
         {
@@ -82,6 +84,7 @@ public partial class MainWindow
                 var seconds = LimitPolicy.Seconds(report.Apps.FirstOrDefault(x => x.App.Key == rule.AppKey), rule.Metric);
                 var state = _db.LoadLimitDay(rule, day); var fraction = Math.Clamp(seconds / (rule.Minutes * 60d), 0, 1);
                 return new {
+                    Visual = _icons.Get(_knownLimitApps.GetValueOrDefault(rule.AppKey) ?? new(rule.AppKey,"已删除使用记录的应用")),
                     rule.AppKey, Name = _knownLimitApps.GetValueOrDefault(rule.AppKey)?.Name ?? "已删除使用记录的应用", LevelText = LevelName(rule.Level), ToggleText = rule.Enabled ? "暂停规则" : "启用规则",
                     ProgressText = $"{MetricName(rule.Metric)}  {FormatTime(TimeSpan.FromSeconds(seconds))} / {rule.Minutes} 分钟 · {seconds / (rule.Minutes * 60d):P0}",
                     Fraction = new GridLength(fraction, GridUnitType.Star), Rest = new GridLength(1 - fraction, GridUnitType.Star),
@@ -136,7 +139,7 @@ public partial class MainWindow
     {
         _alertRule = rule; _alertDay = day;
         if (rule.Level == ReminderLevel.Severe) { Reveal(); ShowLimits(this,new()); }
-        var dialog = new LimitReminderWindow(name, rule, seconds); _limitAlert = dialog;
+        var dialog = new LimitReminderWindow(name, rule, seconds,_icons.Get(_knownLimitApps.GetValueOrDefault(rule.AppKey) ?? new(rule.AppKey,name))); _limitAlert = dialog;
         dialog.Accept = snooze => {
             try
             {

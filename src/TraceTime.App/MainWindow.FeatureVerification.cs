@@ -19,7 +19,7 @@ public partial class MainWindow
         Today(this,new()); ForegroundMetric.IsChecked = true;
         ChangeAppearance(new("light", "glass"), false); ShowLimits(this,new());
         Check(LimitAppPicker.Items.Count > 0, "已记录应用列表为空");
-        var selected=(AppIdentity)LimitAppPicker.SelectedItem;
+        var selected=((AppVisual)LimitAppPicker.SelectedItem).App;
         LimitMinutes.Text="0"; SaveLimitRule(this,new()); Check(LimitFeedback.Text.Contains("1–1440"),"额度校验缺失");
         LimitMinutes.Text="60"; LevelMedium.IsChecked=true; SaveLimitRule(this,new());
         var rule=_limits.Single(x=>x.AppKey==selected.Key); var day=DateOnly.FromDateTime(DateTime.Today);
@@ -58,18 +58,30 @@ public partial class MainWindow
         RankingTab.IsChecked=true; save(Image("analysis-ranking"));
         SummaryTab.IsChecked=true; save(Image("analysis-summary"));
         Check(_analysis is not null && _analysis.Days.Count==30 && LocalSummary.Text.Contains("空闲"),"本地分析视图失败");
-        AiEndpoint.Text="http://localhost:11434/v1/chat/completions"; AiModel.Text="your-model"; AiKey.Password="synthetic-qa-key";
-        SaveAiConfig(this,new()); var saved=File.ReadAllText(_aiSettingsPath);
+        var config=new AiConfigWindow(_aiSettings,_aiSettingsPath); config.Show();
+        config.LocalPreset.IsChecked=true; config.ConfigName.Text="本机演示配置"; config.ManualModel.Text="your-model"; config.KeyInput.Password="synthetic-qa-key";
+        config.UpdateLayout(); saveElement((FrameworkElement)config.Content,Image("ai-config"));
+        config.Height=600; config.Width=560; config.ConfigScroller.ScrollToBottom(); config.UpdateLayout(); saveElement((FrameworkElement)config.Content,Image("ai-config-compact"));
+        config.Height=760; config.Width=680; config.ConfigScroller.ScrollToTop();
+        ChangeAppearance(new("light","glass"),false); config.UpdateLayout(); saveElement((FrameworkElement)config.Content,Image("ai-config-light"));
+        ChangeAppearance(new("dark","glass"),false);
+        config.SaveButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Check(config.Saved is not null,"配置弹窗未保存"); _aiSettings=config.Saved!; UpdateAiServiceSummary();
+        var saved=File.ReadAllText(_aiSettingsPath);
         Check(!saved.Contains("synthetic-qa-key") && AiSettings.Load(_aiSettingsPath).Key()=="synthetic-qa-key","密钥未保护或不能恢复");
-        ForgetAiKey(this,new()); Check(AiSettings.Load(_aiSettingsPath).ProtectedKey=="","清除密钥失败");
+        Check(!saved.Contains("Prompt"),"配置仍保存可修改提示词");
+        var clear=new AiConfigWindow(_aiSettings,_aiSettingsPath); clear.Show(); clear.ClearKeyButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); clear.SaveButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); _aiSettings=clear.Saved!;
+        Check(AiSettings.Load(_aiSettingsPath).ProtectedKey=="","清除密钥失败");
         PrepareAiPreview(this,new()); Check(_prepared is not null && !AiSend.IsEnabled,"AI预览未准备或未经确认可发送");
+        Check(!AiPreview.Text.Contains("你是 TraceTime") && !AiPreview.Text.Contains("messages"),"预览暴露内部提示词");
         AiConsent.IsChecked=true; Check(AiSend.IsEnabled,"AI同意控件未生效");
-        AiModel.Text="changed-model"; Check(_prepared is null && !AiSend.IsEnabled && AiConsent.IsChecked!=true,"修改配置没有使同意失效");
-        AiModel.Text="your-model"; PrepareAiPreview(this,new());
-        AiConfigExpander.IsExpanded=true; AnalysisPanel.ScrollToBottom(); save(Image("ai-preview"));
+        InvalidateAiPreview(); Check(_prepared is null && !AiSend.IsEnabled && AiConsent.IsChecked!=true,"修改配置没有使同意失效");
+        PrepareAiPreview(this,new()); AnalysisPanel.ScrollToBottom(); save(Image("ai-preview"));
         Width=900; Height=680; save(Image("ai-compact")); Width=1160; Height=860;
         ChangeAppearance(new("light","glass"),false); AnalysisPanel.ScrollToTop(); TrendTab.IsChecked=true; save(Image("analysis-light"));
         _db.DeleteLimit(selected.Key); _limits=_db.LoadLimits();
+        foreach(var picker in new[]{AnalysisEnd,RangeStart,RangeEnd})
+            VerifyRecordedCalendar(picker,DateOnly.FromDateTime(DateTime.Today),DateOnly.FromDateTime(DateTime.Today).AddDays(-1));
         // A fresh, separate window verifies first-use messaging without deleting seeded records.
         using (var emptyDb=new TraceTime.Storage.UsageDatabase(Path.Combine(Path.GetDirectoryName(path)!,"empty-features","usage.db")))
         {

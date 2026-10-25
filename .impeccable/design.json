@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-25",
-  "title": "Design System: TraceTime 0.3",
+  "generatedAt": "2026-10-26",
+  "title": "Design System: TraceTime 0.4",
   "extensions": {
     "shadows": [],
     "motion": [
@@ -30,7 +30,10 @@
       "Internal translucent material without desktop sampling",
       "Five native WPF destinations with scrolling access",
       "Application limits remind without closing or blocking applications",
-      "Local 7/30-day analysis with optional manually approved aggregate sharing"
+      "Local 7/30-day analysis with optional manually approved aggregate sharing",
+      "Shared cached local application icons alongside names, including time slices",
+      "Separate option-led AI configuration dialog; internal fixed prompt",
+      "Recorded-day calendar markers independent of selected-day state"
     ],
     "rules": [
       {

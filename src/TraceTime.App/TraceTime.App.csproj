@@ -3,7 +3,7 @@
     <OutputType>WinExe</OutputType><TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF><UseWindowsForms>true</UseWindowsForms><ImplicitUsings>disable</ImplicitUsings>
     <AssemblyName>TraceTime</AssemblyName><ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>0.3.0</Version>
+    <Version>0.4.0</Version>
   </PropertyGroup>
   <ItemGroup><ProjectReference Include="..\TraceTime.Core\TraceTime.Core.csproj"/><ProjectReference Include="..\TraceTime.Storage\TraceTime.Storage.csproj"/></ItemGroup>
 </Project>

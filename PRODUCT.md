@@ -28,7 +28,7 @@ Confirmed in PLAN.md: two distinct duration metrics, application-level browser a
 
 0.3 adds one daily limit per recorded application, 1–1440 minutes using either metric, with progress, editing, pause/resume, deletion and today's ignore action. Light reminders use a notification and sound; medium reminders stay on top without requesting activation; severe reminders request TraceTime foreground focus, with taskbar flashing if Windows refuses. Medium and severe reminders require acknowledgement or a further 10 minutes. Limits never close or block the target application.
 
-Local analysis offers daily trends with a numeric table, application ranking and a text summary for 7/30 days ending on a chosen date. AI configuration and sending are optional; local analysis stays usable without them. AI previews contain dates, application summaries and both duration metrics, with application names anonymous by default. They exclude paths, raw time segments, titles, URLs, documents, keyboard contents and screenshots. The API key uses PasswordBox input and current-user Windows DPAPI storage; it is excluded from previews and exports. Requests can be cancelled, results can be exported, and AI does not change limit rules.
+Local analysis offers daily trends with a numeric table, application ranking and a text summary for 7/30 days ending on a chosen date. AI configuration and sending are optional; local analysis stays usable without them. AI previews contain dates, application summaries and both duration metrics, with application names anonymous by default. They exclude paths, raw time segments, titles, URLs, documents, keyboard contents and screenshots. The API key uses PasswordBox input in the 0.4 configuration dialog and current-user Windows DPAPI storage; it is excluded from previews and exports. Requests can be cancelled, results can be exported, and AI does not change limit rules.
 
 ## Product Principles
 
@@ -44,3 +44,11 @@ Confirmed by the user for 0.2: first launch follows the system color mode and us
 Preserve readable Windows-native interaction and Simplified Chinese copy. Glass is an internal WPF translucent layered treatment; it does not capture the desktop. No productivity claims or seeded data in normal mode. System dialogs remain native. Small windows scroll to retain access rather than dropping controls.
 
 0.3 retains these appearance commitments. The sidebar now provides five destinations: daily overview, application limits, time analysis, appearance and themes, settings and data. New controls reuse the existing theme and native interaction patterns.
+
+## 0.4 interaction commitments
+
+Application icons and names appear together in rankings, limit selection/rules, reminders and ordinary/idle time slices. Shared local EXE-resource icons are cached separately from usage records, with bounded memory/disk storage; missing icons use consistent initials. Non-application gaps have no app icon.
+
+AI connection settings live in a separate modal with provider presets, base/full address modes, fetched model selection or manual model entry, optional display name and DPAPI-protected credentials. Save commits changes; cancel preserves the existing configuration. Changing service authority does not automatically reuse the old key. Fetching models is explicit and sends no usage records. The analysis prompt is internal and fixed; no end-user edit/reset/copy entry remains. The preview and copied content contain user aggregates only.
+
+All four date pickers highlight recorded foreground dates with a dot, including idle foreground periods. Unrecorded days are subdued but selectable; selected state and today's outline remain distinct. New or deleted usage refreshes the markers.

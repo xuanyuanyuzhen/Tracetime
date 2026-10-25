@@ -15,7 +15,7 @@ internal static class DemoData
         var editor=new AppIdentity("demo-editor","Visual Studio Code");
         var browser=new AppIdentity("demo-browser","Microsoft Edge");
         var notes=new AppIdentity("demo-notes","Obsidian");
-        var files=new AppIdentity("demo-files","文件资源管理器");
+        var files=new AppIdentity("demo-files","文件资源管理器",System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows),"explorer.exe"));
         Add(9,0,10,12,editor,35,48); Add(10,12,10,42,browser); Add(10,42,11,32,editor);
         Add(11,32,11,58,notes); Add(13,10,13,43,browser,12,25); Add(13,43,14,5,files);
         Add(14,5,15,0,editor); Add(15,0,15,28,notes); Add(15,28,16,12,browser,15,32);

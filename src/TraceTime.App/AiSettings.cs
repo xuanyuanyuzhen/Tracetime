@@ -9,7 +9,7 @@ using TraceTime.Core;
 
 namespace TraceTime.App;
 
-internal sealed record AiSettings(string Endpoint = "https://api.openai.com/v1/chat/completions", string Model = "", string ProtectedKey = "", string Prompt = UsageAnalysis.DefaultPrompt, bool Anonymous = true)
+internal sealed record AiSettings(string Endpoint = "https://api.openai.com/v1/chat/completions", string Model = "", string ProtectedKey = "", bool Anonymous = true, string Provider = "openai", string Name = "", string[]? Models = null)
 {
     internal static AiSettings Load(string path)
     {
