@@ -10,7 +10,7 @@ Remove-Item Env:DOTNET_ROOT -ErrorAction SilentlyContinue
 Remove-Item Env:DOTNET_ROOT_X64 -ErrorAction SilentlyContinue
 $taskQa = Join-Path $taskRoot ('artifacts\qa\release-' + $taskVersion + '-' + [guid]::NewGuid().ToString('N').Substring(0,8))
 New-Item -ItemType Directory -Path $taskQa -Force | Out-Null
-function Invoke-ReleaseCheck([string[]]$TaskArguments, [int]$TaskTimeout = 25000) {
+function Invoke-ReleaseCheck([string[]]$TaskArguments, [int]$TaskTimeout = 45000) {
     $taskProcess = Start-Process -FilePath $taskExe -ArgumentList $TaskArguments -WindowStyle Hidden -PassThru
     if (!$taskProcess.WaitForExit($TaskTimeout)) { $taskProcess.Kill(); throw '发布包验证超时。' }
     if ($taskProcess.ExitCode -ne 0) { throw "程序异常退出：$($taskProcess.ExitCode)" }
@@ -35,6 +35,8 @@ try {
 Invoke-ReleaseCheck @('--demo', '--data-dir', (Join-Path $taskQa 'demo'), '--capture', (Join-Path $taskQa 'overview.png'))
 if (Test-Path -LiteralPath (Join-Path $taskQa 'overview.error.txt')) { throw (Get-Content -LiteralPath (Join-Path $taskQa 'overview.error.txt') -Raw) }
 Get-Content -LiteralPath (Join-Path $taskQa 'overview.checks.txt')
+Get-Content -LiteralPath (Join-Path $taskQa 'overview.features.txt')
+Get-Content -LiteralPath (Join-Path $taskQa 'overview.ai-flow.txt')
 'PASS published app works with the system .NET runtime; demo captures created'
 
 # Restart with a saved choice, then check that the launched UI actually uses it.

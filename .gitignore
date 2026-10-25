@@ -16,3 +16,5 @@ scripts/save-global-preference.ps1
 .env.*
 *.pfx
 *.p12
+ai-settings.json
+ai-settings.json.tmp

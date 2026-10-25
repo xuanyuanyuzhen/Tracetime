@@ -44,6 +44,7 @@ public partial class MainWindow : Window
         _appearance = AppearanceSettings.Load(_appearancePath);
         ThemeManager.Apply(_appearance);
         InitializeComponent();
+        _limits = _db.LoadLimits(); InitializeAnalysis();
         SourceInitialized += (_, _) => ThemeManager.ApplyTitleBar(this);
         SystemEvents.UserPreferenceChanged += SystemThemeChanged;
         DayPicker.DisplayDateEnd = DateTime.Today; DayPicker.SelectedDate = DateTime.Today;
@@ -56,6 +57,8 @@ public partial class MainWindow : Window
         if (_tracker is not null) _tracker.Changed += UpdateStatus;
         _refreshTimer = new DispatcherTimer(TimeSpan.FromSeconds(5), DispatcherPriority.Background, (_, _) => {
             if (IsVisible && OverviewPanel.Visibility == Visibility.Visible) RefreshReport();
+            CheckLimits();
+            if (IsVisible && LimitsPanel.Visibility == Visibility.Visible) RenderLimitProgress();
         }, Dispatcher);
         _ready = true; SyncAppearanceControls(); SetPage("overview"); RefreshReport(); UpdateStatus();
     }
@@ -135,6 +138,7 @@ public partial class MainWindow : Window
     private void UpdateStatus()
     {
         if (!_ready) return;
+        if (_tracker is not null && !_tracker.CanPresentReminder) _limitAlert?.Hide();
         StatusText.Text = _demo ? "演示数据 · 不采集" : _tracker?.Status ?? "未记录";
         PauseButton.Content = _tracker?.Paused == true ? "恢复记录" : "暂停记录";
         StatusDot.Fill = ThemeManager.Get(_tracker?.Paused == true ? "Warning" : "Accent");
@@ -277,13 +281,14 @@ public partial class MainWindow : Window
     }
     internal void DisposeTray()
     {
+        _aiCancellation?.Cancel(); CloseLimitAlert();
         SystemEvents.UserPreferenceChanged -= SystemThemeChanged;
         _refreshTimer.Stop(); if(_tracker is not null) _tracker.Changed-=UpdateStatus;
         if(_tray is not null) { _tray.Visible=false; _tray.ContextMenuStrip?.Dispose(); _tray.Dispose(); }
         _trayIcon?.Dispose();
     }
 
-    internal void CloseTransientViews() => DayPicker.IsDropDownOpen = false;
+    internal void CloseTransientViews() { DayPicker.IsDropDownOpen = false; LimitAppPicker.IsDropDownOpen = false; CloseLimitAlert(); }
 
     internal void Capture(string path)
     {
@@ -336,6 +341,7 @@ public partial class MainWindow : Window
         ShowOverview(this,new()); Width=1160; Height=860; DayPicker.SelectedDate=DateTime.Today.AddDays(-1); Save(Path.ChangeExtension(path,"empty.png"));
         DayPicker.SelectedDate=DateTime.Today.AddDays(-2); ActiveMetric.IsChecked=true; Save(Path.ChangeExtension(path,"all-idle.png"));
         ForegroundMetric.IsChecked=true; OverviewPanel.ScrollToBottom(); Save(Path.ChangeExtension(path,"details.png"));
+        VerifyFeatureViews(path,Save,SaveElement);
         File.WriteAllText(Path.ChangeExtension(path,"checks.txt"),"PASS appearance controls, persistence, invalid colors, reset, 54 surface and actual selected-control contrast combinations, unchanged usage data, seven weekday headings, year picker, rendered primary button contrast, and theme captures");
         void Save(string target)
         {

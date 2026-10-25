@@ -48,9 +48,9 @@ public partial class App : Application
             if(Option("--capture") is { } capture && demo)
             {
                 var timer=new DispatcherTimer {Interval=TimeSpan.FromMilliseconds(650)};
-                timer.Tick+=(_,_)=> {
+                timer.Tick+=async (_,_)=> {
                     timer.Stop();
-                    try { window.Capture(capture); }
+                    try { window.Capture(capture); await window.VerifyAiUiAsync(capture); }
                     catch(Exception ex) { Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(capture))!); File.WriteAllText(Path.ChangeExtension(capture,"error.txt"),ex.ToString()); }
                     finally { window.CloseTransientViews(); ExitApp(); }
                 }; timer.Start();

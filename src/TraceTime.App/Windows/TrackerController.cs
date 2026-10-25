@@ -21,6 +21,7 @@ internal sealed class TrackerController : IDisposable
     private GapInterval? _gap;
     private int _ticks;
     public bool Paused { get; private set; }
+    public bool CanPresentReminder => !_disposed && _mode.Length == 0 && Error is null;
     public bool IsIdle => _engine.IsIdle;
     public string? Error { get; private set; }
     public AppIdentity CurrentApp { get; private set; } = AppIdentity.Unknown;

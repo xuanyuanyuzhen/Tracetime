@@ -5,7 +5,7 @@ using TraceTime.Core;
 
 namespace TraceTime.Storage;
 
-public sealed class UsageDatabase : ITrackingSink, IDisposable
+public sealed partial class UsageDatabase : ITrackingSink, IDisposable
 {
     private readonly SqliteConnection _connection;
     public string FilePath { get; }
@@ -28,8 +28,8 @@ public sealed class UsageDatabase : ITrackingSink, IDisposable
             CREATE TABLE IF NOT EXISTS gaps (
                 id TEXT PRIMARY KEY, start_ticks INTEGER NOT NULL, end_ticks INTEGER NOT NULL, reason TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
-            PRAGMA user_version=1;
             """);
+        InitializeLimits();
     }
 
     public void Save(ChangeBatch changes)

@@ -32,6 +32,8 @@ if ($Publish) {
     $taskPackageScreenshots = Join-Path $taskPackageDocs 'screenshots'
     New-Item -ItemType Directory -Path $taskPackageScreenshots -Force | Out-Null
     Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\VALIDATION.md') -Destination $taskPackageDocs
+    Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\LIMITS-AND-ANALYSIS.md') -Destination $taskPackageDocs
+    Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\AI-PROMPT.txt') -Destination $taskPackageDocs
     Get-ChildItem -LiteralPath (Join-Path $taskRoot 'docs\screenshots') -Filter '*.png' | ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $taskPackageScreenshots }
     Set-Content -LiteralPath (Join-Path $taskOutput 'PACKAGE-TYPE.txt') -Value $(if ($SelfContained) { 'Self-contained Windows x64 package.' } else { 'Requires Microsoft .NET 10 Desktop Runtime x64.' }) -Encoding UTF8
     $taskArchive = Join-Path $taskRoot "artifacts\release\$taskPackageName.zip"
