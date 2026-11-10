@@ -4,6 +4,7 @@
 
 ## 0.8.1 轻量化优化（2026-11-10）
 
+- 发布回验：`e0e4aed`提交后的正式重建0警告/错误，程序集版本与提交一致；`verify-publish-0.8.1.txt` / `release-0.8.1-c27d800d`完整包验证通过（单实例持续8.454秒），`package-publish-0.8.1.txt`确认50文件与49本地链接。GitHub v0.8.1已公开为Latest，ZIP与SHA-256未认证下载及远端README一致性均通过；见`github-public-download-0.8.1.txt`与`github-final-state-0.8.1.json`。
 - `build-performance-reviewed.txt`：构建0警告/错误、98/98场景通过。新增3600片段全天汇总的重复读取分配上限、小时合计、片段保留及边界裁剪不改变原汇总。
 - `verify-performance-final.txt` / `release-0.8.1-fa931b6e`：win-x64实际包使用系统.NET桌面运行时启动，8项采集流程、单实例持续记录8.372秒、54组主题及既有图表/提醒/音频/邮件模拟、搜索、历史管理、重启偏好均通过。
 - `overview.performance.txt`：托盘冷启动无概览读取；首次打开有排行；稳定排序时保持行容器和选择且绑定时长更新；时间线收起释放派生视图、重新展开时间片完整；隐藏/最小化不重建报告、恢复后立即刷新。浅色概览与深色紧凑时间线截图已检查，未做视觉改造。

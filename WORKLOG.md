@@ -2,17 +2,31 @@
 
 最后更新：2026-11-10
 
-## 本轮任务 · 发布0.8.1并核对README（进行中）
+## 本轮任务 · 发布0.8.1并核对README（已完成）
 
-- 用户明确要求“发布吧，是否有提交新的README”，已授权提交、推送和公开Release。接手已读WORKLOG与PLAN；README、性能优化与文档目前仍在本地工作树，尚未提交0.8.1。
-- 沿用此前98/98场景、正式包验证与同机资源对照证据。先核对远端状态和发布文案，再提交源码，从该提交重建独立发布目录，核对包与标签后上传ZIP及SHA-256、公开下载回验。
-- 下一步：同步README下载版本和0.8.1发布说明，验证GitHub权限及远端main/tag，完成提交与发布；不修改旧Release附件或用户数据。
+- 用户明确要求“发布吧，是否有提交新的README”，已授权提交、推送和公开Release。接手已读WORKLOG与PLAN，完成24项源码/文档提交与正式发布。
+- 当前：GitHub Release v0.8.1已公开并设为Latest，源码与标签指向`e0e4aed`。新版README已提交推送，远端README对象与该提交一致，公开下载内容也一致；ZIP/SHA-256已上传并通过公开下载回验。
+- 本轮无剩余实施或发布步骤。后续仅为实际使用反馈和PERFORMANCE.md所列长期测量；历史阶段中的待办描述不代表当前状态。
+
+### 2026-11-10 · 公开发布与README回验完成
+
+- Release [v0.8.1](https://github.com/xuanyuanyuzhen/Tracetime/releases/tag/v0.8.1) ID `440212548`，`draft=false`、`prerelease=false`，latest端点已确认。发布提交`e0e4aed8165ab8b426bf831fda57590024048c2e`包含新版README与性能/版本说明；远端README对象为`aeff444dc60125a4c1c616564b56c584e8f09ea6`，公开下载与提交内容一致。
+- 正式ZIP `TraceTime-0.8.1-win-x64.zip`为4,627,440字节（约4.41MiB），SHA-256 `169b29679ca9019dcb42afb46ce029f3bfd929f0817ab59321b58e570f1c63b6`；校验附件95字节。GitHub digest、长度、本地文件、未认证下载及校验文件全部一致，公开Release页面200。
+- 证据：`artifacts/qa/github-release-published-0.8.1.json`、`github-public-download-0.8.1.txt`、`github-final-state-0.8.1.json`。正式运行目录`artifacts/release/github-v0.8.1/TraceTime-0.8.1-win-x64`，依赖.NET 10 Desktop Runtime x64。
+- 发布结果作为独立文档提交同步main，不移动已发布标签或替换附件。用户原0.7.1进程与默认数据未改动；升级时由用户退出旧版托盘并启动新版。
 
 ### 2026-11-10 · 发布文案与远端检查完成
 
 - 远端main仍为`cd1f34e`，最新Release为v0.8.0；v0.8.1标签/Release不存在，当前凭据具备push权限。保留正在运行的用户0.7.1实例，改用`artifacts/release/github-v0.8.1`作为本次独立发布根目录。
 - README下载文件名、校验指令、升级和文档导航已改为0.8.1；性能说明及Release说明去除本地未发布措辞，规划/产品状态标记为授权发布中。GitHub Markdown接口渲染通过，28个本地链接有效；此前98/98及完整包验证日志已核对。
 - 下一步：提交全部24项授权变更，从该提交构建正式附件并回归验证。公开成功后另记发布回验，不提前将发布状态写成完成。
+
+### 2026-11-10 · 正式提交、重建验证与推送完成
+
+- `e0e4aed8165ab8b426bf831fda57590024048c2e`已提交24个文件，包含新版README、轻量化实现、性能说明和0.8.1版本说明。暂存检查发现测量脚本尾部多余空行并修正；最终diff检查通过。
+- 从该干净提交重建`artifacts/release/github-v0.8.1`，`build-publish-0.8.1.txt`为0警告/错误，程序集版本`0.8.1+e0e4aed...`与源码一致。`verify-publish-0.8.1.txt` / `release-0.8.1-c27d800d`完整通过8项流程、单实例持续8.454秒、主题/模拟功能/休息/性能行为与重启配置检查。没有重复资源基准测试。
+- `package-publish-0.8.1.txt`确认50个文件逐项一致、49个包内链接有效，无用户数据/凭据/调试文件；最终ZIP为4,627,440字节，SHA-256 `169b29679ca9019dcb42afb46ce029f3bfd929f0817ab59321b58e570f1c63b6`。同级校验文件一致。
+- main与签注标签v0.8.1已原子推送，远端标签解引用均为`e0e4aed`；旧credential-manager-core警告后已有备用凭据成功，已核对远端结果。README已在GitHub源码提交中。下一步：创建草稿、上传两附件、公开并从公开链接下载回验。
 
 ## 本轮任务 · 轻量化审计与资源优化（本地交付完成）
 

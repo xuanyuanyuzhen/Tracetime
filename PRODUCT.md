@@ -2,7 +2,7 @@
 
 <!-- impeccable:product-schema 1 -->
 
-Current source: 0.8.1 (lightweight optimization) · Updated 2026-11-10. Implementation and validation are complete; the user has authorized publication. See WORKLOG.md for the current release and public-download verification status.
+Current release: v0.8.1 (lightweight optimization) · Published 2026-11-10 from e0e4aed. The updated README is committed and verified on GitHub; the Windows x64 ZIP and SHA-256 were downloaded publicly and matched the local artifacts. See WORKLOG.md for publication evidence.
 
 Lightweight operation is a core product priority. Version 0.8.1 defers tray-start reports and collapsed timelines, suppresses hidden/minimized view refresh, reuses stable ranking containers and immutable summaries/brushes, and reuses foreground-reader buffers. Tracking cadence and reminder behavior remain intact. The Windows x64 package resolves only its own native dependencies. Record controlled measurements and limitations in docs/PERFORMANCE.md; do not promise a fixed memory footprint or force collection/working-set trimming to improve displayed numbers.
 
