@@ -42,7 +42,7 @@ public partial class MainWindow
 
         SaveViewPreferences(_viewPreferences with {SidebarCollapsed=true,DayChart="timeline"});Layout();
         Check(SidebarColumn.ActualWidth==72 && BrandLabel.Visibility==Visibility.Collapsed && ViewPreferences.Load(_viewPreferencesPath)==_viewPreferences,"侧栏和图表偏好保存失败");
-        foreach(var (nav,panel) in new[]{(LimitsNav,LimitsPanel),(AnalysisNav,AnalysisPanel),(AppearanceNav,AppearancePanel),(SettingsNav,SettingsPanel),(OverviewNav,OverviewPanel)})
+        foreach(var (nav,panel) in new[]{(LimitsNav,LimitsPanel),(BreaksNav,BreaksPanel),(AnalysisNav,AnalysisPanel),(AppearanceNav,AppearancePanel),(SettingsNav,SettingsPanel),(OverviewNav,OverviewPanel)})
         {
             nav.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Layout();
             Check(panel.Visibility==Visibility.Visible && !string.IsNullOrWhiteSpace(nav.ToolTip as string),"图标侧栏导航或名称提示失效");
@@ -55,6 +55,6 @@ public partial class MainWindow
         Width=1160;Height=860;ChangeAppearance(new("light","glass"),false);
         SaveViewPreferences(original);ShowOverview(this,new());TimelineExpander.IsExpanded=false;OverviewPanel.ScrollToTop();
         save(Path.ChangeExtension(path,"overview-final.png"));
-        File.WriteAllText(Path.ChangeExtension(path,"navigation.txt"),"PASS 45 application rows have no inner scroll; routed wheel over ranking/details scrolls the page; all five icon destinations, sidebar collapse/expand, preferences persistence, compact and dark views.");
+        File.WriteAllText(Path.ChangeExtension(path,"navigation.txt"),"PASS 45 application rows have no inner scroll; routed wheel over ranking/details scrolls the page; all six icon destinations, sidebar collapse/expand, preferences persistence, compact and dark views.");
     }
 }

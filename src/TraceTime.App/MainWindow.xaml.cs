@@ -51,7 +51,9 @@ public partial class MainWindow : Window
         _viewPreferences = ViewPreferences.Load(_viewPreferencesPath);
         ThemeManager.Apply(_appearance);
         InitializeComponent();
+        InitializeResourceMonitor();
         InitializeEmailReminders();
+        InitializeBreakReminders();
         ApplyViewPreferences();
         Timeline.HourSelected+=hour=>{_activityHour=hour;RenderTimeline();};
         _limits = _db.LoadLimits(); InitializeAnalysis();
@@ -71,6 +73,7 @@ public partial class MainWindow : Window
             RenderQuietState();
             if (IsVisible && OverviewPanel.Visibility == Visibility.Visible) RefreshReport();
             CheckLimits();
+            TickBreakReminder();
             _recordedCalendar.RefreshOpen();
             if (IsVisible && LimitsPanel.Visibility == Visibility.Visible) RenderLimitProgress();
         }, Dispatcher);
@@ -158,6 +161,7 @@ public partial class MainWindow : Window
     {
         if (!_ready) return;
         if (ObserveLimitVisit()) CheckLimits();
+        TickBreakReminder();
         if(_tracker is not null && _lastIconApp!=_tracker.CurrentApp.Key) { _lastIconApp=_tracker.CurrentApp.Key; _icons.Get(_tracker.CurrentApp); }
         if (_tracker is not null && !_tracker.CanPresentReminder) { _limitAlert?.Hide(); _reminderAudio.Stop(); }
         StatusText.Text = _demo ? "演示数据 · 不采集" : _tracker?.Status ?? "未记录";
@@ -307,6 +311,8 @@ public partial class MainWindow : Window
     }
     internal void DisposeTray()
     {
+        CloseBreakAlert(); CloseBreakPreview(); _breakAudio.Dispose();
+        DisposeResourceMonitor();
         _emailService.Dispose();
         _effectsWindow?.Close();CloseReminderPreview();_reminderAudio.Dispose();
         _aiCancellation?.Cancel(); CloseLimitAlert();
@@ -316,13 +322,15 @@ public partial class MainWindow : Window
         _trayIcon?.Dispose();
     }
 
-    internal void CloseTransientViews() { DayPicker.IsDropDownOpen = false; LimitAppPicker.IsDropDownOpen = false; CloseLimitAlert(); }
+    internal void CloseTransientViews() { DayPicker.IsDropDownOpen = false; LimitAppPicker.IsDropDownOpen = false; CloseLimitAlert(); CloseBreakAlert(); CloseBreakPreview(); }
 
-    internal void Capture(string path, bool dayOnly = false)
+    internal void Capture(string path, bool dayOnly = false, bool chartsOnly = false, bool breaksOnly = false)
     {
         if(!_demo) throw new InvalidOperationException("只有隔离演示模式可以生成界面检查图片。");
         // Capture tests inject deterministic reports; a five-second refresh must not replace them mid-assertion.
         _refreshTimer.Stop();
+        if(breaksOnly) { VerifyBreakViews(path,Save,SaveElement); return; }
+        if(chartsOnly) { VerifyChartResourceViews(path,Save,SaveElement); return; }
         if(dayOnly)
         {
             ChangeAppearance(new("light","glass"), false);
@@ -392,6 +400,8 @@ public partial class MainWindow : Window
         VerifyNavigationViews(path,Save);
         VerifyLimitOptionsViews(path,Save,SaveElement);
         VerifyHistoryQuickViews(path,Save,SaveElement);
+        VerifyChartResourceViews(path,Save,SaveElement);
+        VerifyBreakViews(path,Save,SaveElement);
         File.WriteAllText(Path.ChangeExtension(path,"checks.txt"),"PASS appearance controls, persistence, invalid colors, reset, 54 surface and actual selected-control contrast combinations, unchanged usage data, seven weekday headings, year picker, rendered primary button contrast, and theme captures");
         void Save(string target)
         {
@@ -456,4 +466,5 @@ internal static class Palette
     private static readonly string[] DarkColors=["#70C5C8","#93A7E8","#D6AB71","#BB9ADB","#84BF9A","#DE99AA","#7ABAE4"];
     public static SolidColorBrush Brush(string hex) { var brush=new SolidColorBrush((Color)ColorConverter.ConvertFromString(hex)); brush.Freeze(); return brush; }
     public static SolidColorBrush ForApp(string key) { uint hash=2166136261; foreach(var c in key) hash=(hash^c)*16777619; return Brush((ThemeManager.IsDark?DarkColors:Colors)[hash%Colors.Length]); }
+    public static SolidColorBrush At(int index) => Brush((ThemeManager.IsDark ? DarkColors : Colors)[Math.Abs(index) % Colors.Length]);
 }

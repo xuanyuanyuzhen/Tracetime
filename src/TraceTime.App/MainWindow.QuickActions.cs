@@ -50,7 +50,7 @@ public partial class MainWindow
         {
             var today=DateOnly.FromDateTime(DateTime.Today);var quiet=!_db.IsReminderQuiet(today);
             _db.SetReminderQuiet(today,quiet);
-            if(quiet) { _db.CancelQueuedEmails("今日全部静默，已取消未发送邮件"); _emailService.CancelActive(); CloseLimitAlert(); }
+            if(quiet) { _db.CancelQueuedEmails("今日全部静默，已取消未发送邮件"); _emailService.CancelActive(); CloseLimitAlert(); CloseBreakAlert(); }
             RenderLimitProgress();
         }
         catch(Exception ex) { LimitFeedback.Text="今日静默未能保存："+ex.Message; }
@@ -58,9 +58,10 @@ public partial class MainWindow
     private void RenderQuietState()
     {
         var quiet=_db.IsReminderQuiet(DateOnly.FromDateTime(DateTime.Today));
+        _allRemindersQuiet = quiet; _quietStateDay = DateOnly.FromDateTime(DateTime.Today);
         QuietTodayButton.Content=quiet?"恢复今日提醒":"今日全部静默";
-        QuietTodayHint.Text=quiet?"今天所有应用的本地和邮件提醒已暂停，明天自动恢复。计时与临时额度继续累计。"
-            :"适用于所有规则（包括搜索未显示的规则），不改每应用设置和已选择的今日忽略。";
+        QuietTodayHint.Text=quiet?"今天所有应用的本地、邮件及休息提醒已暂停，明天自动恢复。计时与临时额度继续累计。"
+            :"适用于所有应用规则和休息提醒（包括搜索未显示的规则），不改每应用设置和已选择的今日忽略。";
         QuietStatus.Visibility=quiet?Visibility.Visible:Visibility.Collapsed;
     }
 }

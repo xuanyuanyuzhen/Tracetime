@@ -45,6 +45,9 @@ Get-Content -LiteralPath (Join-Path $taskQa 'overview.navigation.txt')
 Get-Content -LiteralPath (Join-Path $taskQa 'overview.limit-options.txt')
 Get-Content -LiteralPath (Join-Path $taskQa 'overview.email-flow.txt')
 Get-Content -LiteralPath (Join-Path $taskQa 'overview.history-quick.txt')
+Get-Content -LiteralPath (Join-Path $taskQa 'overview.chart-resources.txt')
+Get-Content -LiteralPath (Join-Path $taskQa 'overview.break-reminders.txt')
+Get-Content -LiteralPath (Join-Path $taskQa 'overview.break-audio-cancel.txt')
 'PASS published app works with the system .NET runtime; demo captures created'
 
 # Restart with a saved choice, then check that the launched UI actually uses it.
@@ -66,3 +69,11 @@ if ((Get-Content -LiteralPath (Join-Path $taskAppearance 'view-loaded.txt') -Raw
 if ((Get-Content -LiteralPath (Join-Path $taskAppearance 'temporary-loaded.txt') -Raw).Trim() -ne '25') { throw '新进程未恢复常用临时分钟。' }
 'PASS default and preferred temporary minutes restore in a new process'
 Write-Output "验证目录：$taskQa"
+
+$taskBreakRestart = Join-Path $taskQa 'break-restart'
+Invoke-ReleaseCheck @('--demo', '--data-dir', $taskBreakRestart, '--verify-break-load')
+if ((Get-Content -LiteralPath (Join-Path $taskBreakRestart 'break-loaded.txt') -Raw).Trim() -ne 'False|30|Medium||0') { throw '首次休息提醒没有默认关闭。' }
+@{ Enabled = $true; Minutes = 45; Level = 2; IgnoredOn = '2026-11-10' } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $taskBreakRestart 'break-reminder.json') -Encoding utf8
+Invoke-ReleaseCheck @('--demo', '--data-dir', $taskBreakRestart, '--verify-break-load')
+if ((Get-Content -LiteralPath (Join-Path $taskBreakRestart 'break-loaded.txt') -Raw).Trim() -ne 'True|45|Severe|2026-11-10|0') { throw '休息设置或新启动从零计时未恢复。' }
+'PASS break reminder defaults off; new process restores enabled/interval/intensity/today-ignore and starts a fresh session'

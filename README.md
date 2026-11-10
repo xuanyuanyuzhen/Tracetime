@@ -31,7 +31,9 @@ TraceTime 常驻系统托盘，自动记录当前前台应用。你可以回看�
 | 每日回顾 | 查看双时长排行、完整时间片、分时柱状图、状态时间轴和时长占比环图；按小时查看各应用使用情况 |
 | 搜索与日期导航 | 按名称搜索应用与额度规则；通过记录日历、上 / 下个有记录日和最近有记录日快速跳转 |
 | 应用使用提醒 | 每日额度可选两种统计口径；轻度 / 中度 / 严重三档提醒、超时后再次进入提醒、临时使用和今日全部静默 |
-| 趋势与分析 | 本地近 7 / 30 日趋势、应用排行与摘要；可选手动发送汇总给 AI 分析 |
+| 休息提醒 | 默认关闭，按连续用机时长提示休息；多个时间预设、自定义间隔、三档强度与独立音效 |
+| 趋势与分析 | 本地近 7 / 30 日趋势、应用占比饼图、排行与摘要；图表悬停显示时长到秒，可选手动发送汇总给 AI 分析 |
+| 自身资源占用 | 侧栏显示TraceTime的CPU与内存，每2秒更新；隐藏/最小化时暂停资源采样 |
 | 数据管理 | 导出双时长 CSV、按日期删除、完整历史备份、按月归档与恢复；归档默认保留原记录 |
 | 外观与音效 | 跟随系统 / 浅色 / 深色，液态玻璃 / 柔和 / 极简，预设与自定义强调色、可收起侧栏，以及提醒音效预览 |
 | 可选邮件提醒 | 使用自己的 SMTP STARTTLS 服务发送额度或临时使用到期提醒；全局与每条规则均默认关闭 |
@@ -40,10 +42,10 @@ TraceTime 常驻系统托盘，自动记录当前前台应用。你可以回看�
 
 ### 下载与运行
 
-当前版本为 **0.7.0**，提供 Windows x64 ZIP 包；已验证平台为 Windows 11 x64。
+当前版本为 **0.8.0**，提供 Windows x64 ZIP 包，合并此前0.7.1的全部改进并新增休息提醒；已验证平台为 Windows 11 x64。
 
 1. 安装 [Microsoft .NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)，在 **.NET Desktop Runtime** 下选择 **Windows x64**。运行应用无需安装 SDK。
-2. 打开 [最新 Release](https://github.com/xuanyuanyuzhen/Tracetime/releases/latest)，在 **Assets** 下载 `TraceTime-0.7.0-win-x64.zip`。GitHub 自动生成的 `Source code` 是源码包。
+2. 打开 [最新 Release](https://github.com/xuanyuanyuzhen/Tracetime/releases/latest)，在 **Assets** 下载 `TraceTime-0.8.0-win-x64.zip`。GitHub 自动生成的 `Source code` 是源码包。
 3. 将 ZIP 完整解压到固定文件夹，运行其中的 `TraceTime.exe`。请保留全部文件，不要只复制 EXE。
 4. 正常启动后即开始记录。在「每日概览」查看使用情况，在「设置与数据」调整空闲阈值、导出或备份历史。
 
@@ -52,11 +54,11 @@ TraceTime 常驻系统托盘，自动记录当前前台应用。你可以回看�
 <details>
 <summary>校验下载文件</summary>
 
-Release 同时提供 `TraceTime-0.7.0-win-x64.zip.sha256`。在下载目录运行：
+Release 同时提供 `TraceTime-0.8.0-win-x64.zip.sha256`。在下载目录运行：
 
 ```powershell
-Get-FileHash .\TraceTime-0.7.0-win-x64.zip -Algorithm SHA256
-Get-Content .\TraceTime-0.7.0-win-x64.zip.sha256
+Get-FileHash .\TraceTime-0.8.0-win-x64.zip -Algorithm SHA256
+Get-Content .\TraceTime-0.8.0-win-x64.zip.sha256
 ```
 
 两处 SHA-256 应一致，字母大小写不影响比较。
@@ -67,11 +69,19 @@ Get-Content .\TraceTime-0.7.0-win-x64.zip.sha256
 
 升级前先备份数据：旧版支持历史备份时，可通过「设置与数据 → 历史备份与归档」操作；更早版本请先退出，再复制整个 `%LOCALAPPDATA%\TraceTime` 目录。随后从旧版托盘菜单选择「退出」（如仍在运行），解压并启动新版本。程序文件与用户数据分开保存，同一 Windows 用户启动新版时会继续使用原有数据目录。
 
-如果启用了开机启动并更换了程序位置，请在新版设置中重新勾选并保存启动选项。当前没有安装器、自动更新或代码签名。版本变化见 [0.7.0 发布说明](docs/releases/v0.7.0.md)。
+如果启用了开机启动并更换了程序位置，请在新版设置中重新勾选并保存启动选项。当前没有安装器、自动更新或代码签名。版本变化见 [0.8.0 发布说明](docs/releases/v0.8.0.md)。
 
 ## 界面预览
 
 下列图片均来自隔离演示数据，不包含个人使用记录。
+
+### 可选的连续用机休息提醒
+
+![休息提醒设置、预设间隔与提醒强度](docs/screenshots/break-settings.png)
+
+### 应用占比与自身资源占用
+
+![双口径应用饼图与侧栏CPU/内存](docs/screenshots/analysis-pie.png)
 
 ### 一天的使用与空档
 
@@ -144,6 +154,8 @@ AI 密钥和 SMTP 凭据使用当前 Windows 用户的 DPAPI 保护。邮件支�
 
 **临时使用的分钟数如何扣减？** 按目标应用的前台停留累计，含空闲；后台、暂停和锁屏不消耗。可设 1–120 分钟、保存常用时长，到次日结束。
 
+**休息提醒怎样计时？** 按本轮连续使用电脑累计，切换应用和键鼠空闲不重置；主动休息或锁屏/休眠满5分钟后归零。暂停记录只暂停累计，重启从零开始。休息提醒默认关闭，音效独立，详见 [使用说明](docs/BREAK-REMINDERS.md)。
+
 **归档会删掉记录吗？** 默认仅复制。移除已结束月份须另行确认；恢复前自动备份，再替换归档覆盖范围，重复恢复不会叠加时长。操作细节见 [历史管理说明](docs/HISTORY-AND-QUICK-ACTIONS.md)。
 
 ## 从源码构建
@@ -167,7 +179,7 @@ cd Tracetime
 .\scripts\verify-release.ps1
 ```
 
-产物位于 `artifacts\release\TraceTime-0.7.0-win-x64`。依赖已恢复时可使用 `-Offline`；需要自行生成包含运行时的包时可使用 `-SelfContained`（需要下载对应运行时依赖，当前 Release 附件为框架依赖包）。
+产物位于 `artifacts\release\TraceTime-0.8.0-win-x64`。依赖已恢复时可使用 `-Offline`；需要自行生成包含运行时的包时可使用 `-SelfContained`（需要下载对应运行时依赖，当前 Release 附件为框架依赖包）。
 
 若默认发布目录中的程序正在运行，可给构建和验证脚本都传入 `-ReleaseRoot artifacts\release\fresh`，在独立目录生成并验证包，避免覆盖运行中的文件。
 
@@ -189,7 +201,7 @@ WORKLOG.md             # 当前进度、验证结果与接手入口
 
 ### 验证状态
 
-0.7.0 已通过 **80 项确定性场景**、**8 项隔离应用流程**及单实例检查；主题、日历、图表、搜索、历史恢复与偏好重启检查的范围见 [验证记录](docs/VALIDATION.md)。AI 与邮件使用模拟服务验证。
+核心累计 **97 项场景**通过；休息提醒的配置、时钟边界、弹窗互斥、按钮、自定义音效及紧凑布局已验证。正式包应用流程、单实例、主题、日历、图表、搜索、历史恢复与偏好重启检查的具体证据见 [验证记录](docs/VALIDATION.md)。AI 与邮件使用模拟服务验证。
 
 实际锁屏 / 休眠、多显示器、长期资源占用、真实 AI / SMTP 服务和大型历史归档仍需进一步实测。项目目前提供 Windows 桌面端；手机端与多设备同步尚未实现。
 
@@ -197,7 +209,8 @@ WORKLOG.md             # 当前进度、验证结果与接手入口
 
 | 文档 | 内容 |
 | --- | --- |
-| [0.7.0 发布说明](docs/releases/v0.7.0.md) | 本次公开发布内容、下载与升级须知 |
+| [0.8.0 发布说明](docs/releases/v0.8.0.md) | 新休息提醒、合并0.7.1改进与升级须知 |
+| [连续用机休息提醒](docs/BREAK-REMINDERS.md) | 开关、间隔、强度、音效、休息/稍后与计时规则 |
 | [搜索、快捷操作与历史管理](docs/HISTORY-AND-QUICK-ACTIONS.md) | 日期跳转、今日静默、常用分钟、备份和恢复 |
 | [全天分布与提醒音效](docs/DAY-AND-REMINDERS.md) | 图表操作、时段明细、提醒预览和自定义 WAV |
 | [应用额度与分析](docs/LIMITS-AND-ANALYSIS.md) | 额度规则、本地趋势与可选 AI 分析 |

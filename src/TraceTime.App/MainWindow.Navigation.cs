@@ -22,6 +22,7 @@ public partial class MainWindow
         try
         {
             var compact = _viewPreferences.SidebarCollapsed;
+            ApplyResourceLayout(compact);
             SidebarColumn.Width = new GridLength(compact ? 72 : 200);
             SidebarContent.Margin = new Thickness(compact ? 12 : 16, 28, compact ? 12 : 16, 22);
             BrandPanel.HorizontalAlignment = compact ? HorizontalAlignment.Center : HorizontalAlignment.Left;
@@ -29,7 +30,7 @@ public partial class MainWindow
             BrandIcon.Margin = new Thickness(0, 0, compact ? 0 : 10, 0);
             foreach (var label in new FrameworkElement[] { BrandLabel, SidebarToggleLabel, SidebarNote, SidebarVersion })
                 label.Visibility = compact ? Visibility.Collapsed : Visibility.Visible;
-            foreach (var button in new[] { OverviewNav, LimitsNav, AnalysisNav, AppearanceNav, SettingsNav, QuickThemeButton, SidebarToggle })
+            foreach (var button in new[] { OverviewNav, LimitsNav, BreaksNav, AnalysisNav, AppearanceNav, SettingsNav, QuickThemeButton, SidebarToggle })
             {
                 button.HorizontalContentAlignment = compact ? HorizontalAlignment.Center : HorizontalAlignment.Left;
                 button.Padding = new Thickness(compact ? 10 : 14, 12, compact ? 10 : 14, 12);

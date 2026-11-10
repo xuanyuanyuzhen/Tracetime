@@ -14,6 +14,7 @@ public partial class MainWindow
     private void OpenReminderEffects(object sender,RoutedEventArgs e)
     {
         if(_effectsWindow is not null){_effectsWindow.Activate();return;}
+        if(_breakAlert is not null){LimitFeedback.Text="请先处理当前休息提醒，再预览其他效果。";return;}
         if(_limitAlert is not null){_limitAlert.Activate();LimitFeedback.Text="请先处理当前额度提醒，再预览其他效果。";return;}
         var level=LevelSevere.IsChecked==true?ReminderLevel.Severe:LevelMedium.IsChecked==true?ReminderLevel.Medium:ReminderLevel.Light;
         var dialog=new ReminderEffectsWindow(_reminderAudio,level,(l,s,b)=>PreviewReminderAsync(l,s,b),CloseReminderPreview){Owner=this};_effectsWindow=dialog;_previewOpen=true;

@@ -114,7 +114,8 @@ public partial class MainWindow
     private void CheckLimits()
     {
         if (_demo || _tracker is null || !_ready || _checkingLimits || _historyBusy) return;
-        if(_previewOpen)return;
+        if (_breakClock.ManualRest) { _limitAlert?.Hide(); _reminderAudio.Stop(); return; }
+        if(_previewOpen || _breakAlert is not null || System.Diagnostics.Stopwatch.GetElapsedTime(_lastReminderSoundAt) < TimeSpan.FromSeconds(6))return;
         ObserveLimitVisit();
         if (!_tracker.CanPresentReminder) { _limitAlert?.Hide(); return; }
         _checkingLimits = true;
@@ -138,6 +139,7 @@ public partial class MainWindow
                 var rule=next.Rule; var state=next.State; var app=next.Usage; var seconds=next.Seconds;
                 var expired = LimitPolicy.TemporaryExpired(state, app.Foreground.TotalSeconds) && !state.TemporaryNotified;
                 state = LimitPolicy.BeginPresentation(state, app.Foreground.TotalSeconds, seconds);
+                _lastReminderSoundAt = System.Diagnostics.Stopwatch.GetTimestamp();
                 _db.SaveLimitDay(state); _limitVisits.Presented(rule, today);
                 if (rule.Level == ReminderLevel.Light)
                 {

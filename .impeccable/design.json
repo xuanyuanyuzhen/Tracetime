@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-02",
-  "title": "Design System: TraceTime 0.7",
+  "generatedAt": "2026-11-10",
+  "title": "Design System: TraceTime 0.8",
   "extensions": {
     "shadows": [],
     "motion": [
@@ -22,13 +22,13 @@
   "components": [],
   "narrative": {
     "northStar": "清楚看见时间的去向",
-    "overview": "沿用 Windows 桌面操作习惯，以清晰的数据行、可区分的双时长和轻量导航呈现应用使用。应用额度、全天分布、本地分析、临时使用与可选邮件延续同一视觉系统；0.7 增加应用搜索、记录日跳转、常用临时分钟、今日全部静默和历史备份归档。用户可以独立选择明暗模式、材质和强调色；默认首次跟随系统并使用液态玻璃，之后恢复已保存的选择。界面使用简体中文。",
+    "overview": "沿用 Windows 桌面操作习惯，以清晰的数据行、可区分的双时长和轻量导航呈现应用使用。应用额度、全天分布、本地分析、临时使用与可选邮件延续同一视觉系统；0.7 增加应用搜索、记录日跳转、常用临时分钟、今日全部静默和历史备份归档，0.7.1 增加应用占比与秒级图表详情、键盘专属焦点和自身资源栏，0.8 增加独立的连续用机休息提醒。用户可以独立选择明暗模式、材质和强调色；默认首次跟随系统并使用液态玻璃，之后恢复已保存的选择。界面使用简体中文。",
     "keyCharacteristics": [
       "Separate foreground and without-idle durations",
       "Persist independent mode/material/accent choices",
       "Theme tokens computed from user color and mode",
       "Internal translucent material without desktop sampling",
-      "Five native WPF destinations with scrolling access",
+      "Six native WPF destinations with independent navigation scrolling and fixed bottom resources/theme controls",
       "Application limits remind without closing or blocking applications",
       "Local 7/30-day analysis with optional manually approved aggregate sharing",
       "Shared cached local application icons alongside names, including time slices",
@@ -46,7 +46,15 @@
       "Application-name search preserves totals, original ranks, percentage denominators and charts; recorded-day navigation includes idle foreground periods",
       "Optional remembered temporary duration, initially 10 minutes, reused by later reminders",
       "Quiet-today toggle in the existing limits heading and footer marker; covers hidden and new rules without changing their state or stopping timing",
-      "Native history backup, month archive and range-replacement restore with preview, safety backup and separate post-commit cleanup feedback"
+      "Native history backup, month archive and range-replacement restore with preview, safety backup and separate post-commit cleanup feedback",
+      "Keyboard-only button focus; mouse selection retains the selected background",
+      "Native application-share pie with dual metrics, top-five-plus-other grouping and exact-second hover/keyboard details",
+      "Current-process CPU and working-set indicators every two seconds; suspend sampling while hidden or minimized",
+      "Optional break reminders default off, initially 30 minutes and medium intensity, with 20/30/45/60/90 presets and explicit 5–240-minute save",
+      "Continuous use spans applications and input inactivity; pause/maintenance preserve the round and unknown gaps prove neither use nor rest",
+      "Manual rest or known lock/sleep of five minutes resets the round; startup begins at zero without offline backfill",
+      "Break-only per-level audio and isolated previews; light notifications repeat at the selected interval, popup snooze counts five more use minutes",
+      "Break and application popups do not overlap; global quiet also covers breaks, and disable/quiet/manual rest stop active and pending audio"
     ],
     "rules": [
       {
@@ -70,7 +78,8 @@
       "Explain that temporary use consumes foreground time including idle, pauses in background/lock/tracking pause, ends at local midnight and reminds even below the daily limit",
       "Require explicit global and rule email enablement, STARTTLS and current-user DPAPI; changing sending service or account requires credentials again",
       "Keep archived history by default; confirm ended-month removal separately after archive validation and locking",
-      "Preview and hash-bind restoration, create a safety backup, replace the range transactionally and distinguish success from cleanup warnings"
+      "Preview and hash-bind restoration, create a safety backup, replace the range transactionally and distinguish success from cleanup warnings",
+      "将休息提醒默认关闭、独立配置与音效、明确保存和本轮状态呈现清楚；六项导航可滚动，资源与主题操作固定底部。"
     ],
     "donts": [
       "Do not treat idle as proof of not working",
@@ -81,7 +90,8 @@
       "Do not equate current acknowledgement with dismissal for the whole day",
       "Do not send paths, raw slices or screen contents in reminder email, support implicit TLS on port 465, or claim SMTP acceptance guarantees inbox delivery",
       "Do not include rules, appearance, preferences or credentials in history archives; clearly disclose historical executable paths and unencrypted storage",
-      "Do not report original history retained after a committed restore merely because temporary-file cleanup failed"
+      "Do not report original history retained after a committed restore merely because temporary-file cleanup failed",
+      "不要将无键鼠输入或未知空档当成已经休息，也不要将休息文案写成治疗或预防效果承诺。"
     ]
   }
 }

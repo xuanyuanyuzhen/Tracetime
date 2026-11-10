@@ -20,4 +20,6 @@ ai-settings.json
 ai-settings.json.tmp
 email-settings.json
 email-settings.json.tmp
+break-reminder.json
+break-reminder.json.tmp
 *.ttarchive

@@ -52,6 +52,11 @@ public partial class App : Application
                 File.WriteAllText(Path.Combine(dataDir,"temporary-loaded.txt"),window.PreferredTemporaryMinutes.ToString());
                 ExitApp(); return;
             }
+            if(demo && e.Args.Contains("--verify-break-load"))
+            {
+                File.WriteAllText(Path.Combine(dataDir,"break-loaded.txt"),window.BreakLoadedState);
+                ExitApp(); return;
+            }
             if(Option("--capture") is { } capture && demo)
             {
                 var timer=new DispatcherTimer {Interval=TimeSpan.FromMilliseconds(650)};
@@ -60,11 +65,17 @@ public partial class App : Application
                     try
                     {
                         var dayOnly=e.Args.Contains("--day-only");
-                        if(!dayOnly)await window.PreparePolishCaptureAsync(capture);
-                        window.Capture(capture,dayOnly);
-                        if(!dayOnly)await window.VerifyAiUiAsync(capture);
-                        await window.VerifyAudioPipelineAsync(capture);
-                        if(!dayOnly)await window.VerifyEmailPipelineAsync(capture);
+                        var chartsOnly=e.Args.Contains("--charts-only");
+                        var breaksOnly=e.Args.Contains("--breaks-only");
+                        if(!dayOnly && !chartsOnly && !breaksOnly)await window.PreparePolishCaptureAsync(capture);
+                        window.Capture(capture,dayOnly,chartsOnly,breaksOnly);
+                        if(!chartsOnly && !dayOnly)await window.VerifyBreakAudioCancellationAsync(capture);
+                        if(!chartsOnly && !breaksOnly)
+                        {
+                            if(!dayOnly)await window.VerifyAiUiAsync(capture);
+                            await window.VerifyAudioPipelineAsync(capture);
+                            if(!dayOnly)await window.VerifyEmailPipelineAsync(capture);
+                        }
                     }
                     catch(Exception ex) { Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(capture))!); File.WriteAllText(Path.ChangeExtension(capture,"error.txt"),ex.ToString()); }
                     finally { window.CloseTransientViews(); ExitApp(); }

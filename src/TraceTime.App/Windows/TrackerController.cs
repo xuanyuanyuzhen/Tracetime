@@ -23,6 +23,8 @@ internal sealed class TrackerController : IDisposable
     public bool Paused { get; private set; }
     public bool CanPresentReminder => !_disposed && _mode.Length == 0 && Error is null;
     public bool IsIdle => _engine.IsIdle;
+    public ComputerUseState ComputerUseState => _locked || _sleeping ? ComputerUseState.Away
+        : Paused || _maintaining ? ComputerUseState.Paused : ComputerUseState.Using;
     public string? Error { get; private set; }
     public AppIdentity CurrentApp { get; private set; } = AppIdentity.Unknown;
     public AppSettings Settings { get; private set; }

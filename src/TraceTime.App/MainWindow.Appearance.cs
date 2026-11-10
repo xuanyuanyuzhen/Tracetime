@@ -27,14 +27,15 @@ public partial class MainWindow
         SettingsPanel.Visibility = page == "settings" ? Visibility.Visible : Visibility.Collapsed;
         AppearancePanel.Visibility = page == "appearance" ? Visibility.Visible : Visibility.Collapsed;
         LimitsPanel.Visibility = page == "limits" ? Visibility.Visible : Visibility.Collapsed;
+        BreaksPanel.Visibility = page == "breaks" ? Visibility.Visible : Visibility.Collapsed;
         AnalysisPanel.Visibility = page == "analysis" ? Visibility.Visible : Visibility.Collapsed;
-        foreach (var (button, name) in new[] { (OverviewNav,"overview"), (AppearanceNav,"appearance"), (SettingsNav,"settings"), (LimitsNav,"limits"), (AnalysisNav,"analysis") })
+        foreach (var (button, name) in new[] { (OverviewNav,"overview"), (AppearanceNav,"appearance"), (SettingsNav,"settings"), (LimitsNav,"limits"), (BreaksNav,"breaks"), (AnalysisNav,"analysis") })
             button.SetResourceReference(BackgroundProperty, name == page ? "AccentSoft" : "Sidebar");
-        PageTitle.Text = page switch { "limits" => "应用时长限制", "analysis" => "时长分析", "appearance" => "外观与主题", "settings" => "设置与数据", _ => "每日概览" };
-        PageSubtitle.Text = page switch { "limits" => "给时间留一道温和的边界。", "analysis" => "回看趋势，按自己的节奏调整。", "appearance" => "让记录时间的地方，更像你。", "settings" => "按你的习惯记录，数据由你掌握。", _ => "看见时间的去向。" };
+        PageTitle.Text = page switch { "limits" => "应用时长限制", "breaks" => "休息提醒", "analysis" => "时长分析", "appearance" => "外观与主题", "settings" => "设置与数据", _ => "每日概览" };
+        PageSubtitle.Text = page switch { "limits" => "给时间留一道温和的边界。", "breaks" => "看一会儿远处，让双眼放松。", "analysis" => "回看趋势，按自己的节奏调整。", "appearance" => "让记录时间的地方，更像你。", "settings" => "按你的习惯记录，数据由你掌握。", _ => "看见时间的去向。" };
         if (changed && SystemParameters.ClientAreaAnimation && !_demo)
         {
-            var panel = page == "analysis" ? AnalysisPanel : page == "limits" ? LimitsPanel : page == "appearance" ? AppearancePanel : page == "settings" ? SettingsPanel : OverviewPanel;
+            var panel = page == "analysis" ? AnalysisPanel : page == "limits" ? LimitsPanel : page == "breaks" ? BreaksPanel : page == "appearance" ? AppearancePanel : page == "settings" ? SettingsPanel : OverviewPanel;
             panel.BeginAnimation(OpacityProperty, new DoubleAnimation(.7,1,TimeSpan.FromMilliseconds(140)) { FillBehavior = FillBehavior.Stop });
         }
     }
@@ -72,6 +73,7 @@ public partial class MainWindow
             _appearance = normalized; ThemeManager.Apply(_appearance, this);
             SyncAppearanceControls(); SetPage(_page); RenderRows(); RenderTimeline(); UpdateStatus();
             TrendChart.InvalidateVisual();
+            AnalysisPie.InvalidateVisual();
             AppearanceFeedback.Text = save ? "已保存。下次打开会恢复当前外观。" : "选择后立即生效，自动保存。";
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)

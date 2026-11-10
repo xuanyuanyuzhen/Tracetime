@@ -60,6 +60,8 @@ public partial class MainWindow
     private void ApplyAnalysisView()
     {
         TrendPanel.Visibility = TrendTab.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+        AnalysisPiePanel.Visibility = PieTab.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+        AnalysisMetricPicker.Visibility = PieTab.IsChecked == true || RankingTab.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
         AnalysisRankingPanel.Visibility = RankingTab.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
         LocalSummary.Visibility = SummaryTab.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
     }
@@ -68,7 +70,13 @@ public partial class MainWindow
     {
         if (_analysis is null) return;
         var active = AnalysisIdle.IsChecked == true; var total = active ? _analysis.WithoutIdle : _analysis.Foreground;
-        AnalysisApps.ItemsSource = _analysis.Apps.OrderByDescending(x => active ? x.WithoutIdle : x.Foreground).Select(x => new { Visual = _icons.Get(x.App), Name = x.App.Name, Duration = FormatTime(active ? x.WithoutIdle : x.Foreground), Percent = total.Ticks == 0 ? "0%" : ((active ? x.WithoutIdle : x.Foreground).Ticks / (double)total.Ticks).ToString("P1") }).ToArray();
+        var apps = _analysis.Apps;
+        AnalysisApps.ItemsSource = apps.OrderByDescending(x => active ? x.WithoutIdle : x.Foreground).Select(x => new { Visual = _icons.Get(x.App), Name = x.App.Name, Duration = FormatTime(active ? x.WithoutIdle : x.Foreground), Percent = total.Ticks == 0 ? "0%" : ((active ? x.WithoutIdle : x.Foreground).Ticks / (double)total.Ticks).ToString("P1") }).ToArray();
+        var shares = UsageDistribution.Build(apps, active);
+        var scope = _analysis.Days.Count == 0 ? "暂无记录" : $"{_analysis.Days.First().Date:yyyy-MM-dd} 至 {_analysis.Days.Last().Date:yyyy-MM-dd}";
+        AnalysisPie.SetData(shares, active, total, scope);
+        AnalysisPieHint.Text = $"{(active ? "扣除空闲后" : "前台停留")} · 合计 {ChartDetails.Duration(total)}\n" +
+            (shares.Any(x => x.IsOther) ? "前 5 个应用单独显示，其余合并；完整明细见应用排行。" : "悬停扇区或图例查看具体时长；方向键可逐项查看。");
         AnalysisNoApps.Visibility = total == TimeSpan.Zero ? Visibility.Visible : Visibility.Collapsed;
     }
     private void OpenAiConfig(object sender, RoutedEventArgs e)

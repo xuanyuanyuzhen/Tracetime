@@ -37,9 +37,10 @@ if ($Publish) {
     Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\DAY-AND-REMINDERS.md') -Destination $taskPackageDocs
     Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\REMINDERS-AND-ROADMAP.md') -Destination $taskPackageDocs
     Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\HISTORY-AND-QUICK-ACTIONS.md') -Destination $taskPackageDocs
+    Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\BREAK-REMINDERS.md') -Destination $taskPackageDocs
     $taskPackageReleaseNotes = Join-Path $taskPackageDocs 'releases'
     New-Item -ItemType Directory -Path $taskPackageReleaseNotes -Force | Out-Null
-    Copy-Item -LiteralPath (Join-Path $taskRoot "docs\releases\v$taskVersion.md") -Destination $taskPackageReleaseNotes
+    Get-ChildItem -LiteralPath (Join-Path $taskRoot 'docs\releases') -Filter '*.md' | ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $taskPackageReleaseNotes }
     Get-ChildItem -LiteralPath (Join-Path $taskRoot 'docs\screenshots') -Filter '*.png' | ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $taskPackageScreenshots }
     Set-Content -LiteralPath (Join-Path $taskOutput 'PACKAGE-TYPE.txt') -Value $(if ($SelfContained) { 'Self-contained Windows x64 package.' } else { 'Requires Microsoft .NET 10 Desktop Runtime x64.' }) -Encoding UTF8
     $taskArchive = Join-Path $taskReleaseRoot "$taskPackageName.zip"

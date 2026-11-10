@@ -8,6 +8,9 @@ using TraceTime.Core;
 
 namespace TraceTime.App;
 
+internal sealed record ReminderMessage(string Title, string Heading, string Name, string Detail, string Hint,
+    string Confirm = "开始休息", string Snooze = "5 分钟后提醒", string Ignore = "今天不再提醒");
+
 internal sealed class LimitReminderWindow : Window
 {
     private bool _allowClose;
@@ -16,7 +19,7 @@ internal sealed class LimitReminderWindow : Window
     internal Button ConfirmButton { get; }
     internal Button SnoozeButton { get; }
     internal Button IgnoreButton { get; }
-    internal LimitReminderWindow(string name, UsageLimit rule, double seconds,AppVisual? visual = null,bool preview=false,bool temporaryExpired=false,int temporaryMinutes=10)
+    internal LimitReminderWindow(string name, UsageLimit rule, double seconds,AppVisual? visual = null,bool preview=false,bool temporaryExpired=false,int temporaryMinutes=10,ReminderMessage? message=null)
     {
         Style = (Style)Application.Current.FindResource(typeof(Window));
         Title = preview?"TraceTime · 提醒效果预览":"TraceTime · 时长提醒"; Width = 480; SizeToContent = SizeToContent.Height; MinHeight = 340; MaxHeight = SystemParameters.WorkArea.Height;
@@ -34,6 +37,13 @@ internal sealed class LimitReminderWindow : Window
         ConfirmButton.Style = (Style)Application.Current.FindResource("PrimaryButton");
         SnoozeButton = new Button { Content = $"临时使用 {temporaryMinutes} 分钟", Margin = new Thickness(0,0,0,10) };
         IgnoreButton = new Button { Content = "今天不再提醒" };
+        if (message is not null)
+        {
+            Title = preview ? "TraceTime · 休息提醒预览" : message.Title; heading.Text = (preview ? "效果预览 · " : "") + message.Heading;
+            appHeader.Children.Clear(); appHeader.Children.Add(new TextBlock { Text = message.Name, TextWrapping = TextWrapping.Wrap });
+            detail.Text = message.Detail; hint.Text = preview ? "这是预览，下面按钮只关闭预览，不改变休息计时或今日提醒状态。" : message.Hint;
+            ConfirmButton.Content = message.Confirm; SnoozeButton.Content = message.Snooze; IgnoreButton.Content = message.Ignore;
+        }
         ConfirmButton.Click += (_, _) => { if (Acknowledge is null) Answer(false); else if (Acknowledge()) { _allowClose=true; Close(); } };
         SnoozeButton.Click += (_, _) => Answer(true); IgnoreButton.Click += (_, _) => Answer(false);
         panel.Children.Add(heading); panel.Children.Add(appHeader); panel.Children.Add(detail); panel.Children.Add(hint); panel.Children.Add(ConfirmButton); panel.Children.Add(SnoozeButton); panel.Children.Add(IgnoreButton);
