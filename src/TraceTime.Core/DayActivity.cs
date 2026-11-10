@@ -20,7 +20,7 @@ public sealed class DayActivity
     public DateTimeOffset End { get; }
     public IReadOnlyList<TimelineEntry> Entries { get; }
     public IReadOnlyList<ActivityHour> Hours { get; }
-    public ActivitySlice Whole => Slice(Start, End);
+    public ActivitySlice Whole { get; }
 
     public DayActivity(DayReport report, TimeZoneInfo zone, DateTimeOffset observedUntil)
     {
@@ -52,6 +52,7 @@ public sealed class DayActivity
         AddUntil(cutoff);
         if (cutoff < End) entries.Add(new(cutoff, End, "", "尚未到来", "future"));
         Entries = entries;
+        Whole = Slice(Start, End);
         var hours = new List<ActivityHour>();
         for (var a = Start; a < End; a = a.AddHours(1))
         {
@@ -67,7 +68,8 @@ public sealed class DayActivity
     {
         start = ReportBuilder.Max(Start, start); end = ReportBuilder.Min(End, end);
         if (end < start) throw new ArgumentException("时段终点不能早于起点。");
-        var entries = Entries.Where(x => x.Start < end && x.End > start).Select(x => x with { Start = ReportBuilder.Max(start, x.Start), End = ReportBuilder.Min(end, x.End) }).ToArray();
+        var entries = Entries.Where(x => x.Start < end && x.End > start)
+            .Select(x => x.Start >= start && x.End <= end ? x : x with { Start = ReportBuilder.Max(start, x.Start), End = ReportBuilder.Min(end, x.End) }).ToArray();
         var apps = entries.Where(x => x.Kind is "active" or "idle").GroupBy(x => x.AppKey).Select(g => new AppUsage(
             _apps.GetValueOrDefault(g.Key) ?? new(g.Key, g.First().Label), TimeSpan.FromTicks(g.Sum(x => (x.End - x.Start).Ticks)),
             TimeSpan.FromTicks(g.Where(x => x.Kind == "active").Sum(x => (x.End - x.Start).Ticks)))).OrderByDescending(x => x.Foreground).ToArray();

@@ -2,6 +2,8 @@ using TraceTime.Core;
 using TraceTime.Storage;
 using TraceTime.App;
 
+if(args.Length==2 && args[0]=="--seed-performance") { PerformanceTests.Seed(args[1]); return 0; }
+
 var tests = new (string Name, Action Test)[]
 {
     ("前台切换与多窗口归并", () => {
@@ -98,7 +100,7 @@ var tests = new (string Name, Action Test)[]
         var zone=TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"); var (a,b)=ReportBuilder.Bounds(new(2026,3,8),zone); Near((b-a).TotalHours,23);
     })
 };
-tests = tests.Concat(FeatureTests.All).Concat(PolishTests.All).Concat(DaySoundTests.All).Concat(ReminderTests.All).Concat(HistoryTests.All).Concat(ChartResourceTests.All).Concat(BreakReminderTests.All).ToArray();
+tests = tests.Concat(FeatureTests.All).Concat(PolishTests.All).Concat(DaySoundTests.All).Concat(ReminderTests.All).Concat(HistoryTests.All).Concat(ChartResourceTests.All).Concat(BreakReminderTests.All).Concat(PerformanceTests.All).ToArray();
 var failures=0;
 foreach(var (name,test) in tests) { try { test(); Console.WriteLine($"PASS {name}"); } catch(Exception e) { failures++; Console.Error.WriteLine($"FAIL {name}: {e}"); } }
 Console.WriteLine($"{tests.Length-failures}/{tests.Length} passed");

@@ -40,7 +40,7 @@ public partial class MainWindow : Window
     private DateOnly SelectedDay => DateOnly.FromDateTime(DayPicker.SelectedDate ?? DateTime.Today);
     private bool WithoutIdle => ActiveMetric.IsChecked == true;
 
-    internal MainWindow(UsageDatabase db, TrackerController? tracker, bool demo)
+    internal MainWindow(UsageDatabase db, TrackerController? tracker, bool demo, bool deferOverview = false)
     {
         _db = db; _tracker = tracker; _demo = demo;
         _reminderAudio=new ReminderAudioService(Path.GetDirectoryName(db.FilePath)!);
@@ -68,21 +68,32 @@ public partial class MainWindow : Window
         try { StartupCheck.IsChecked = StartupRegistration.IsEnabled(); } catch { StartupCheck.IsChecked = false; }
         if (_demo) { Title = "TraceTime · 演示数据"; PauseButton.IsEnabled = false; StartupCheck.IsEnabled = false; }
         if (_tracker is not null) _tracker.Changed += UpdateStatus;
-        _refreshTimer = new DispatcherTimer(TimeSpan.FromSeconds(5), DispatcherPriority.Background, (_, _) => {
-            if (_historyBusy) return;
-            RenderQuietState();
-            if (IsVisible && OverviewPanel.Visibility == Visibility.Visible) RefreshReport();
-            CheckLimits();
-            TickBreakReminder();
-            _recordedCalendar.RefreshOpen();
-            if (IsVisible && LimitsPanel.Visibility == Visibility.Visible) RenderLimitProgress();
-        }, Dispatcher);
-        _ready = true; SyncAppearanceControls(); SetPage("overview"); RefreshReport(); UpdateStatus(); RenderQuietState();
+        _refreshTimer = new DispatcherTimer(TimeSpan.FromSeconds(5), DispatcherPriority.Background, (_, _) => RefreshBackground(), Dispatcher);
+        StateChanged += RefreshRestoredOverview;
+        _ready = true; SyncAppearanceControls(); SetPage("overview");
+        if (!deferOverview) RefreshReport(allowHidden: true);
+        UpdateStatus(); RenderQuietState();
     }
 
-    private void RefreshReport()
+    private bool CanRefreshViews => IsVisible && WindowState != WindowState.Minimized;
+    private void RefreshBackground()
     {
-        if (!_ready || _historyBusy) return;
+        if (_historyBusy) return;
+        if (_quietStateDay != DateOnly.FromDateTime(DateTime.Today)) RenderQuietState();
+        CheckLimits();
+        TickBreakReminder();
+        if (!CanRefreshViews) return;
+        if (OverviewPanel.Visibility == Visibility.Visible) RefreshReport();
+        _recordedCalendar.RefreshOpen();
+        if (LimitsPanel.Visibility == Visibility.Visible) RenderLimitProgress();
+    }
+    private void RefreshRestoredOverview(object? sender, EventArgs e)
+    {
+        if (_ready && CanRefreshViews && OverviewPanel.Visibility == Visibility.Visible) RefreshReport();
+    }
+    private void RefreshReport(bool allowHidden = false)
+    {
+        if (!_ready || _historyBusy || (!allowHidden && !CanRefreshViews)) return;
         try
         {
             if(_lastToday!=DateTime.Today)
@@ -115,7 +126,12 @@ public partial class MainWindow : Window
         AppCountLabel.Text = $"{sorted.Length} 个应用";
         AppSearchHint.Text = string.IsNullOrWhiteSpace(AppSearch.Text) ? "按应用名称查找；总计、占比与图表仍按全部应用计算。" : rows.Length==0 ? "没有匹配的应用，请修改或清空搜索。" : $"显示 {rows.Length} / {sorted.Length} 个应用；总计和占比不变。";
         _refreshing = true;
-        AppList.ItemsSource = rows;
+        if (AppList.ItemsSource is AppRow[] currentRows && currentRows.Select(x => x.Key).SequenceEqual(rows.Select(x => x.Key)))
+        {
+            for (var i = 0; i < rows.Length; i++) currentRows[i].UpdateFrom(rows[i]);
+            rows = currentRows;
+        }
+        else AppList.ItemsSource = rows;
         AppList.SelectedItem = rows.FirstOrDefault(x => x.Key == selected);
         _selectedApp = (AppList.SelectedItem as AppRow)?.Key;
         _refreshing = false;
@@ -141,7 +157,7 @@ public partial class MainWindow : Window
 
     private void RenderTimeline(DateTimeOffset? observedUntil = null)
     {
-        if (_report is null) return;
+        if (_report is null || !TimelineExpander.IsExpanded) return;
         RenderActivity(observedUntil);
         SelectionLabel.Text = "时间片筛选：" + (_selectedApp is null ? "全部应用" : _report.Apps.FirstOrDefault(x => x.App.Key == _selectedApp)?.App.Name ?? "全部应用");
         var entries = SelectedActivity().Entries.Where(x => _selectedApp is null || x.AppKey == _selectedApp).OrderByDescending(x => x.Start).ToArray();
@@ -162,13 +178,15 @@ public partial class MainWindow : Window
         if (!_ready) return;
         if (ObserveLimitVisit()) CheckLimits();
         TickBreakReminder();
-        if(_tracker is not null && _lastIconApp!=_tracker.CurrentApp.Key) { _lastIconApp=_tracker.CurrentApp.Key; _icons.Get(_tracker.CurrentApp); }
+        if(CanRefreshViews && _tracker is not null && _lastIconApp!=_tracker.CurrentApp.Key) { _lastIconApp=_tracker.CurrentApp.Key; _icons.Get(_tracker.CurrentApp); }
         if (_tracker is not null && !_tracker.CanPresentReminder) { _limitAlert?.Hide(); _reminderAudio.Stop(); }
         StatusText.Text = _demo ? "演示数据 · 不采集" : _tracker?.Status ?? "未记录";
         PauseButton.Content = _tracker?.Paused == true ? "恢复记录" : "暂停记录";
         StatusDot.Fill = ThemeManager.Get(_tracker?.Paused == true ? "Warning" : "Accent");
-        if (_tray is not null) _tray.Text = "TraceTime · " + StatusText.Text;
-        if (_trayPause is not null) _trayPause.Text = _tracker?.Paused == true ? "恢复记录" : "暂停记录";
+        var trayText = "TraceTime · " + StatusText.Text;
+        if (_tray is not null && _tray.Text != trayText) _tray.Text = trayText;
+        var pauseText = _tracker?.Paused == true ? "恢复记录" : "暂停记录";
+        if (_trayPause is not null && _trayPause.Text != pauseText) _trayPause.Text = pauseText;
         if (_tracker?.Error is { } error) ShowError(error);
         else if (ErrorBanner.Tag as string == "tracker") ErrorBanner.Visibility = Visibility.Collapsed;
     }
@@ -188,7 +206,15 @@ public partial class MainWindow : Window
     private void AppSelected(object sender, SelectionChangedEventArgs e) { if (!_ready || _refreshing) return; _selectedApp = (AppList.SelectedItem as AppRow)?.Key; RenderTimeline(); }
     private void ClearSelection(object sender, RoutedEventArgs e) { _selectedApp = null; AppList.SelectedItem = null; RenderTimeline(); }
     private void TimelineExpanded(object sender, RoutedEventArgs e) { if (_ready) { TimelineExpander.Header = "收起每日时间线"; RenderTimeline(); } }
-    private void TimelineCollapsed(object sender, RoutedEventArgs e) { if (_ready) TimelineExpander.Header = "展开每日时间线"; }
+    private void TimelineCollapsed(object sender, RoutedEventArgs e)
+    {
+        if (!_ready) return;
+        TimelineExpander.Header = "展开每日时间线";
+        _dayActivity = null; Timeline.Activity = null;
+        DetailsList.ItemsSource = PeriodApps.ItemsSource = null;
+        _updatingActivity = true;
+        try { ActivityPeriod.ItemsSource = null; } finally { _updatingActivity = false; }
+    }
 
     private void ShowOverview(object sender, RoutedEventArgs e)
     {
@@ -261,7 +287,7 @@ public partial class MainWindow : Window
     { try { Process.Start(new ProcessStartInfo("explorer.exe", $"\"{Path.GetDirectoryName(_db.FilePath)}\"") { UseShellExecute=true }); } catch(Exception ex) { ShowError(ex.Message); } }
     private void ExitApp(object sender, RoutedEventArgs e) => ((App)Application.Current).ExitApp();
     private void WindowClosing(object? sender, CancelEventArgs e) { if(!((App)Application.Current).Exiting) { e.Cancel=true; Hide(); } }
-    internal void Reveal() { Show(); if(WindowState==WindowState.Minimized) WindowState=WindowState.Normal; Activate(); RefreshReport(); }
+    internal void Reveal() { Show(); if(WindowState==WindowState.Minimized) WindowState=WindowState.Normal; else RefreshReport(); Activate(); }
 
     internal void VerifyViewFlow()
     {
@@ -402,6 +428,7 @@ public partial class MainWindow : Window
         VerifyHistoryQuickViews(path,Save,SaveElement);
         VerifyChartResourceViews(path,Save,SaveElement);
         VerifyBreakViews(path,Save,SaveElement);
+        VerifyPerformanceViews(path);
         File.WriteAllText(Path.ChangeExtension(path,"checks.txt"),"PASS appearance controls, persistence, invalid colors, reset, 54 surface and actual selected-control contrast combinations, unchanged usage data, seven weekday headings, year picker, rendered primary button contrast, and theme captures");
         void Save(string target)
         {
@@ -434,20 +461,35 @@ public partial class MainWindow : Window
     [DllImport("user32.dll")] private static extern bool DestroyIcon(IntPtr icon);
 }
 
-internal sealed class AppRow
+internal sealed class AppRow : INotifyPropertyChanged
 {
     public string Key {get;}
-    public string Name {get;}
+    public string Name {get;private set;}
     public string Initial => string.IsNullOrWhiteSpace(Name)?"?":Name[..1];
-    public string Duration {get;}
-    public string Percent {get;}
-    public double BarWidth {get;}
-    public int Rank {get;}
-    public GridLength BarFraction {get;}
-    public GridLength RemainingFraction {get;}
-    public Brush Brush {get;}
-    public Brush Tint {get;}
-    public AppVisual Visual {get;}
+    public string Duration {get;private set;}
+    public string Percent {get;private set;}
+    public double BarWidth {get;private set;}
+    public int Rank {get;private set;}
+    public GridLength BarFraction {get;private set;}
+    public GridLength RemainingFraction {get;private set;}
+    public Brush Brush {get;private set;}
+    public Brush Tint {get;private set;}
+    public AppVisual Visual {get;private set;}
+    public event PropertyChangedEventHandler? PropertyChanged;
+    private void Notify(string property) => PropertyChanged?.Invoke(this, new(property));
+    internal void UpdateFrom(AppRow row)
+    {
+        if(Name!=row.Name){Name=row.Name;Notify(nameof(Name));Notify(nameof(Initial));}
+        if(Duration!=row.Duration){Duration=row.Duration;Notify(nameof(Duration));}
+        if(Percent!=row.Percent){Percent=row.Percent;Notify(nameof(Percent));}
+        if(BarWidth!=row.BarWidth){BarWidth=row.BarWidth;Notify(nameof(BarWidth));}
+        if(Rank!=row.Rank){Rank=row.Rank;Notify(nameof(Rank));}
+        if(BarFraction!=row.BarFraction){BarFraction=row.BarFraction;Notify(nameof(BarFraction));}
+        if(RemainingFraction!=row.RemainingFraction){RemainingFraction=row.RemainingFraction;Notify(nameof(RemainingFraction));}
+        if(Brush!=row.Brush){Brush=row.Brush;Notify(nameof(Brush));}
+        if(Tint!=row.Tint){Tint=row.Tint;Notify(nameof(Tint));}
+        if(Visual!=row.Visual){Visual=row.Visual;Notify(nameof(Visual));}
+    }
     public AppRow(AppUsage row,bool withoutIdle,TimeSpan total,double maximum,int rank,AppIconCache icons)
     {
         Key=row.App.Key; Name=row.App.Name; var duration=withoutIdle?row.WithoutIdle:row.Foreground;
@@ -464,7 +506,9 @@ internal static class Palette
 {
     private static readonly string[] Colors=["#24777B","#576CA8","#9B692F","#7F65A0","#3F7F62","#A85D61","#386F98"];
     private static readonly string[] DarkColors=["#70C5C8","#93A7E8","#D6AB71","#BB9ADB","#84BF9A","#DE99AA","#7ABAE4"];
+    private static readonly SolidColorBrush[] LightBrushes = Colors.Select(Brush).ToArray();
+    private static readonly SolidColorBrush[] DarkBrushes = DarkColors.Select(Brush).ToArray();
     public static SolidColorBrush Brush(string hex) { var brush=new SolidColorBrush((Color)ColorConverter.ConvertFromString(hex)); brush.Freeze(); return brush; }
-    public static SolidColorBrush ForApp(string key) { uint hash=2166136261; foreach(var c in key) hash=(hash^c)*16777619; return Brush((ThemeManager.IsDark?DarkColors:Colors)[hash%Colors.Length]); }
-    public static SolidColorBrush At(int index) => Brush((ThemeManager.IsDark ? DarkColors : Colors)[Math.Abs(index) % Colors.Length]);
+    public static SolidColorBrush ForApp(string key) { uint hash=2166136261; foreach(var c in key) hash=(hash^c)*16777619; return (ThemeManager.IsDark?DarkBrushes:LightBrushes)[hash%Colors.Length]; }
+    public static SolidColorBrush At(int index) => (ThemeManager.IsDark ? DarkBrushes : LightBrushes)[Math.Abs(index) % Colors.Length];
 }

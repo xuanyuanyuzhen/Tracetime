@@ -1,6 +1,6 @@
 <h1 align="center">TraceTime</h1>
 
-<p align="center"><strong>看见时间的去向。</strong><br>Windows 本地应用时间记录工具，让每天的应用使用、空闲与记录空档清楚可见。</p>
+<p align="center"><strong>看见时间的去向。</strong><br>以轻量常驻为目标的 Windows 本地应用时间记录工具。</p>
 
 <p align="center">
   <a href="https://github.com/xuanyuanyuzhen/Tracetime/releases"><img src="https://img.shields.io/github/v/release/xuanyuanyuzhen/Tracetime?color=24777B" alt="GitHub Release"></a>
@@ -38,14 +38,22 @@ TraceTime 常驻系统托盘，自动记录当前前台应用。你可以回看�
 | 外观与音效 | 跟随系统 / 浅色 / 深色，液态玻璃 / 柔和 / 极简，预设与自定义强调色、可收起侧栏，以及提醒音效预览 |
 | 可选邮件提醒 | 使用自己的 SMTP STARTTLS 服务发送额度或临时使用到期提醒；全局与每条规则均默认关闭 |
 
+## 轻量化优先
+
+0.8.1将托盘概览和时间线改为按需计算，隐藏或最小化时暂停界面刷新，复用排行控件、统计结果和前台识别缓冲区。计时采样与提醒继续运行，功能默认值保持不变。Windows x64运行包也只保留需要的原生依赖。
+
+占用随历史数据、界面状态与系统环境变化。具体对照数据、复测脚本和长期测量边界见[轻量化与资源测量](docs/PERFORMANCE.md)；侧栏瞬时数字不作为固定内存承诺。
+
+本次同机合成数据短测中，托盘平均工作集约 **121 → 94 MiB**；框架依赖ZIP约 **19.88 → 4.41 MiB**。这两项分别衡量运行内存与下载体积，测试条件见上方说明。
+
 ## 快速开始
 
 ### 下载与运行
 
-当前版本为 **0.8.0**，提供 Windows x64 ZIP 包，合并此前0.7.1的全部改进并新增休息提醒；已验证平台为 Windows 11 x64。
+**0.8.1** 提供 Windows x64 ZIP 包，在0.8.0的休息提醒、图表和资源占用显示基础上进一步降低常驻开销与下载体积。已验证平台为 Windows 11 x64，见[发布说明](docs/releases/v0.8.1.md)。
 
 1. 安装 [Microsoft .NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)，在 **.NET Desktop Runtime** 下选择 **Windows x64**。运行应用无需安装 SDK。
-2. 打开 [最新 Release](https://github.com/xuanyuanyuzhen/Tracetime/releases/latest)，在 **Assets** 下载 `TraceTime-0.8.0-win-x64.zip`。GitHub 自动生成的 `Source code` 是源码包。
+2. 打开 [最新 Release](https://github.com/xuanyuanyuzhen/Tracetime/releases/latest)，在 **Assets** 下载 `TraceTime-0.8.1-win-x64.zip`。GitHub 自动生成的 `Source code` 是源码包。
 3. 将 ZIP 完整解压到固定文件夹，运行其中的 `TraceTime.exe`。请保留全部文件，不要只复制 EXE。
 4. 正常启动后即开始记录。在「每日概览」查看使用情况，在「设置与数据」调整空闲阈值、导出或备份历史。
 
@@ -54,11 +62,11 @@ TraceTime 常驻系统托盘，自动记录当前前台应用。你可以回看�
 <details>
 <summary>校验下载文件</summary>
 
-Release 同时提供 `TraceTime-0.8.0-win-x64.zip.sha256`。在下载目录运行：
+Release 同时提供 `TraceTime-0.8.1-win-x64.zip.sha256`。在下载目录运行：
 
 ```powershell
-Get-FileHash .\TraceTime-0.8.0-win-x64.zip -Algorithm SHA256
-Get-Content .\TraceTime-0.8.0-win-x64.zip.sha256
+Get-FileHash .\TraceTime-0.8.1-win-x64.zip -Algorithm SHA256
+Get-Content .\TraceTime-0.8.1-win-x64.zip.sha256
 ```
 
 两处 SHA-256 应一致，字母大小写不影响比较。
@@ -69,7 +77,7 @@ Get-Content .\TraceTime-0.8.0-win-x64.zip.sha256
 
 升级前先备份数据：旧版支持历史备份时，可通过「设置与数据 → 历史备份与归档」操作；更早版本请先退出，再复制整个 `%LOCALAPPDATA%\TraceTime` 目录。随后从旧版托盘菜单选择「退出」（如仍在运行），解压并启动新版本。程序文件与用户数据分开保存，同一 Windows 用户启动新版时会继续使用原有数据目录。
 
-如果启用了开机启动并更换了程序位置，请在新版设置中重新勾选并保存启动选项。当前没有安装器、自动更新或代码签名。版本变化见 [0.8.0 发布说明](docs/releases/v0.8.0.md)。
+如果启用了开机启动并更换了程序位置，请在新版设置中重新勾选并保存启动选项。当前没有安装器、自动更新或代码签名。版本变化见 [0.8.1 发布说明](docs/releases/v0.8.1.md)。
 
 ## 界面预览
 
@@ -179,7 +187,7 @@ cd Tracetime
 .\scripts\verify-release.ps1
 ```
 
-产物位于 `artifacts\release\TraceTime-0.8.0-win-x64`。依赖已恢复时可使用 `-Offline`；需要自行生成包含运行时的包时可使用 `-SelfContained`（需要下载对应运行时依赖，当前 Release 附件为框架依赖包）。
+当前源码产物位于 `artifacts\release\TraceTime-0.8.1-win-x64`。依赖已恢复时可使用 `-Offline`；需要自行生成包含运行时的包时可使用 `-SelfContained`（需要下载对应运行时依赖，当前 Release 附件为框架依赖包）。0.8.1按win-x64解析原生依赖，避免混入其他平台的SQLite库。
 
 若默认发布目录中的程序正在运行，可给构建和验证脚本都传入 `-ReleaseRoot artifacts\release\fresh`，在独立目录生成并验证包，避免覆盖运行中的文件。
 
@@ -201,7 +209,7 @@ WORKLOG.md             # 当前进度、验证结果与接手入口
 
 ### 验证状态
 
-核心累计 **97 项场景**通过；休息提醒的配置、时钟边界、弹窗互斥、按钮、自定义音效及紧凑布局已验证。正式包应用流程、单实例、主题、日历、图表、搜索、历史恢复与偏好重启检查的具体证据见 [验证记录](docs/VALIDATION.md)。AI 与邮件使用模拟服务验证。
+当前源码累计 **98 项场景**通过；0.8.1正式包验证了托盘延迟加载、最小化停止界面刷新、恢复窗口、排行行复用及时间线完整恢复，并保留计时、提醒与双口径回归。具体证据见[验证记录](docs/VALIDATION.md)，短时资源对照见[性能说明](docs/PERFORMANCE.md)。AI与邮件使用模拟服务验证。
 
 实际锁屏 / 休眠、多显示器、长期资源占用、真实 AI / SMTP 服务和大型历史归档仍需进一步实测。项目目前提供 Windows 桌面端；手机端与多设备同步尚未实现。
 
@@ -209,7 +217,9 @@ WORKLOG.md             # 当前进度、验证结果与接手入口
 
 | 文档 | 内容 |
 | --- | --- |
+| [0.8.1 发布说明](docs/releases/v0.8.1.md) | 视图按需计算、分配减少、Windows x64包精简 |
 | [0.8.0 发布说明](docs/releases/v0.8.0.md) | 新休息提醒、合并0.7.1改进与升级须知 |
+| [轻量化与资源测量](docs/PERFORMANCE.md) | 优化措施、对照数据、复测方法与适用边界 |
 | [连续用机休息提醒](docs/BREAK-REMINDERS.md) | 开关、间隔、强度、音效、休息/稍后与计时规则 |
 | [搜索、快捷操作与历史管理](docs/HISTORY-AND-QUICK-ACTIONS.md) | 日期跳转、今日静默、常用分钟、备份和恢复 |
 | [全天分布与提醒音效](docs/DAY-AND-REMINDERS.md) | 图表操作、时段明细、提醒预览和自定义 WAV |

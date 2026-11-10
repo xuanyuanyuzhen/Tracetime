@@ -48,6 +48,7 @@ Get-Content -LiteralPath (Join-Path $taskQa 'overview.history-quick.txt')
 Get-Content -LiteralPath (Join-Path $taskQa 'overview.chart-resources.txt')
 Get-Content -LiteralPath (Join-Path $taskQa 'overview.break-reminders.txt')
 Get-Content -LiteralPath (Join-Path $taskQa 'overview.break-audio-cancel.txt')
+Get-Content -LiteralPath (Join-Path $taskQa 'overview.performance.txt')
 'PASS published app works with the system .NET runtime; demo captures created'
 
 # Restart with a saved choice, then check that the launched UI actually uses it.

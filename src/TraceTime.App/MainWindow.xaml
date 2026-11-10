@@ -24,7 +24,7 @@
      </StackPanel>
      <Button x:Name="QuickThemeButton" AutomationProperties.Name="切换明暗模式" Click="ToggleTheme" ToolTip="快速切换浅色或深色，选择会自动保存" HorizontalContentAlignment="Left" Background="Transparent" BorderBrush="{DynamicResource Divider}"><StackPanel Orientation="Horizontal"><Path Width="16" Height="16" Stretch="Uniform" Data="M12,1 C4,5 7,14 15,13 C10,20 -1,15 1,8 C2,3 6,0 12,1 Z" Stroke="{DynamicResource Accent}" StrokeThickness="1.5" Margin="0,0,10,0"/><TextBlock x:Name="QuickThemeLabel" Text="切换深色"/></StackPanel></Button>
      <TextBlock x:Name="SidebarNote" Text="本地记录 · AI 分析由你发起" Style="{StaticResource Hint}" Margin="8,22,0,0"/>
-     <TextBlock x:Name="SidebarVersion" Text="TraceTime  0.8.0" Style="{StaticResource Hint}" Margin="8,8,0,0"/>
+     <TextBlock x:Name="SidebarVersion" Text="TraceTime  0.8.1" Style="{StaticResource Hint}" Margin="8,8,0,0"/>
     </StackPanel>
    </Grid>
   </Border>

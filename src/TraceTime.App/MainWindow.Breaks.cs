@@ -83,7 +83,7 @@ public partial class MainWindow
             var quiet = _breakSettings.IgnoredOn == DateOnly.FromDateTime(DateTime.Today);
             CheckBreakReminder(BreakNow, BreakUseState, _tracker?.CanPresentReminder == true,
                 quiet || (_allRemindersQuiet && _quietStateDay == DateOnly.FromDateTime(DateTime.Today)));
-            if (BreaksPanel.IsVisible) RenderBreakProgress();
+            if (CanRefreshViews && BreaksPanel.IsVisible) RenderBreakProgress();
         }
         catch (Exception ex) { if (_breakAlert is null) _breakClock.ReleasePresentation(); BreakFeedback.Text = "休息提醒暂时无法更新，将重试：" + ex.Message; }
         finally { _checkingBreak = false; }

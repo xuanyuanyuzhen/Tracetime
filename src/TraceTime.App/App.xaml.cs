@@ -35,7 +35,7 @@ public partial class App : Application
             _db = new UsageDatabase(Path.Combine(dataDir,"usage.db"));
             if(demo) DemoData.Seed(_db);
             else _tracker = new TrackerController(_db,Dispatcher);
-            var window = new MainWindow(_db,_tracker,demo);
+            var window = new MainWindow(_db,_tracker,demo,deferOverview: !demo && e.Args.Contains("--tray"));
             MainWindow = window;
             _activationWait=ThreadPool.RegisterWaitForSingleObject(_activation,(_,_)=>Dispatcher.BeginInvoke(new Action(window.Reveal)),null,Timeout.Infinite,false);
             window.InstallTray();

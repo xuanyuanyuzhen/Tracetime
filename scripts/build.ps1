@@ -25,9 +25,19 @@ if ($Publish) {
     if ($SelfContained) {
         & $taskDotnet publish src/TraceTime.App -c Release -r win-x64 --self-contained true -o $taskOutput -p:PublishSingleFile=false -p:DebugType=None -p:DebugSymbols=false
     } else {
-        & $taskDotnet publish src/TraceTime.App -c Release --no-restore --self-contained false -o $taskOutput -p:DebugType=None -p:DebugSymbols=false
+        & $taskDotnet publish src/TraceTime.App -c Release -r win-x64 --no-restore --self-contained false -o $taskOutput -p:DebugType=None -p:DebugSymbols=false
     }
     if ($LASTEXITCODE -ne 0) { throw '发布失败。' }
+    # Earlier portable publishes included native SQLite binaries for unrelated platforms.
+    # A successful win-x64 publish resolves its required native library at the package root.
+    $taskLegacyRuntimes = Join-Path $taskOutput 'runtimes'
+    if (Test-Path -LiteralPath $taskLegacyRuntimes) {
+        if (!(Test-Path -LiteralPath (Join-Path $taskOutput 'e_sqlite3.dll'))) { throw '缺少win-x64 SQLite库，保留原运行库目录。' }
+        $taskResolvedOutput = [System.IO.Path]::GetFullPath($taskOutput).TrimEnd([char[]]'\/')
+        $taskResolvedRuntimes = (Resolve-Path -LiteralPath $taskLegacyRuntimes).Path
+        if ($taskResolvedRuntimes -ne (Join-Path $taskResolvedOutput 'runtimes')) { throw '旧运行库路径超出当前发布目录。' }
+        Remove-Item -LiteralPath $taskResolvedRuntimes -Recurse -Force
+    }
     Copy-Item -LiteralPath (Join-Path $taskRoot 'README.md') -Destination (Join-Path $taskOutput 'README.md')
     $taskPackageDocs = Join-Path $taskOutput 'docs'
     $taskPackageScreenshots = Join-Path $taskPackageDocs 'screenshots'
@@ -38,6 +48,7 @@ if ($Publish) {
     Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\REMINDERS-AND-ROADMAP.md') -Destination $taskPackageDocs
     Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\HISTORY-AND-QUICK-ACTIONS.md') -Destination $taskPackageDocs
     Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\BREAK-REMINDERS.md') -Destination $taskPackageDocs
+    Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\PERFORMANCE.md') -Destination $taskPackageDocs
     $taskPackageReleaseNotes = Join-Path $taskPackageDocs 'releases'
     New-Item -ItemType Directory -Path $taskPackageReleaseNotes -Force | Out-Null
     Get-ChildItem -LiteralPath (Join-Path $taskRoot 'docs\releases') -Filter '*.md' | ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $taskPackageReleaseNotes }

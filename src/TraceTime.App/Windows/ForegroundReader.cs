@@ -11,6 +11,9 @@ namespace TraceTime.App.Windows;
 internal sealed class ForegroundReader
 {
     private readonly Dictionary<string, AppIdentity> _apps = new(StringComparer.OrdinalIgnoreCase);
+    // Used only on the tracker dispatcher. Keep scratch buffers instead of allocating 64 KiB per tick.
+    private readonly StringBuilder _className = new(256);
+    private readonly StringBuilder _pathBuffer = new(1024);
     public TrackingSample Read()
     {
         var mono = (long)(Stopwatch.GetTimestamp() * (1000d / Stopwatch.Frequency));
@@ -28,8 +31,8 @@ internal sealed class ForegroundReader
     {
         var hwnd = GetForegroundWindow();
         if (hwnd == IntPtr.Zero) return AppIdentity.Unknown;
-        var className = new StringBuilder(256); GetClassName(hwnd, className, className.Capacity);
-        if (className.ToString() is "Progman" or "WorkerW" or "Shell_TrayWnd" or "Shell_SecondaryTrayWnd") return AppIdentity.System;
+        _className.Clear(); GetClassName(hwnd, _className, _className.Capacity);
+        if (_className.ToString() is "Progman" or "WorkerW" or "Shell_TrayWnd" or "Shell_SecondaryTrayWnd") return AppIdentity.System;
         GetWindowThreadProcessId(hwnd, out var pid);
         if (pid == 0) return AppIdentity.Unknown;
         var path = ProcessPath(pid);
@@ -59,11 +62,18 @@ internal sealed class ForegroundReader
         catch { return AppIdentity.Unknown; }
     }
 
-    private static string? ProcessPath(uint pid)
+    private string? ProcessPath(uint pid)
     {
         var handle = OpenProcess(0x1000, false, pid);
         if (handle == IntPtr.Zero) return null;
-        try { var text = new StringBuilder(32768); var size = text.Capacity; return QueryFullProcessImageName(handle, 0, text, ref size) ? text.ToString() : null; }
+        try
+        {
+            _pathBuffer.Clear(); var size = _pathBuffer.Capacity;
+            if (QueryFullProcessImageName(handle, 0, _pathBuffer, ref size)) return _pathBuffer.ToString();
+            if (Marshal.GetLastWin32Error() != 122 || _pathBuffer.Capacity >= 32768) return null;
+            _pathBuffer.EnsureCapacity(32768); size = _pathBuffer.Capacity;
+            return QueryFullProcessImageName(handle, 0, _pathBuffer, ref size) ? _pathBuffer.ToString() : null;
+        }
         finally { CloseHandle(handle); }
     }
 
@@ -76,6 +86,6 @@ internal sealed class ForegroundReader
     [DllImport("user32.dll")] private static extern bool EnumChildWindows(IntPtr parent, EnumWindowProc callback, IntPtr param);
     [DllImport("user32.dll")] private static extern bool IsWindowVisible(IntPtr hwnd);
     [DllImport("kernel32.dll")] private static extern IntPtr OpenProcess(uint access, bool inherit, uint pid);
-    [DllImport("kernel32.dll", CharSet=CharSet.Unicode)] private static extern bool QueryFullProcessImageName(IntPtr process, uint flags, StringBuilder name, ref int size);
+    [DllImport("kernel32.dll", CharSet=CharSet.Unicode, SetLastError=true)] private static extern bool QueryFullProcessImageName(IntPtr process, uint flags, StringBuilder name, ref int size);
     [DllImport("kernel32.dll")] private static extern bool CloseHandle(IntPtr handle);
 }

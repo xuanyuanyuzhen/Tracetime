@@ -2,7 +2,9 @@
 
 <!-- impeccable:product-schema 1 -->
 
-Current product: 0.8.0 (implemented, verified and published) · Updated 2026-11-10. GitHub Release v0.8.0 is Latest; its ZIP and SHA-256 were downloaded publicly and matched the local artifacts. The local 0.7.1 improvements are included in 0.8.0.
+Current source: 0.8.1 (lightweight optimization) · Updated 2026-11-10. Implementation and validation are complete; the user has authorized publication. See WORKLOG.md for the current release and public-download verification status.
+
+Lightweight operation is a core product priority. Version 0.8.1 defers tray-start reports and collapsed timelines, suppresses hidden/minimized view refresh, reuses stable ranking containers and immutable summaries/brushes, and reuses foreground-reader buffers. Tracking cadence and reminder behavior remain intact. The Windows x64 package resolves only its own native dependencies. Record controlled measurements and limitations in docs/PERFORMANCE.md; do not promise a fixed memory footprint or force collection/working-set trimming to improve displayed numbers.
 
 0.8 adds optional continuous-use break reminders with their own page, interval, intensity and sounds. The sixth navigation destination shares the existing Windows appearance; navigation scrolls independently while process resources and the theme control stay at the bottom. The included 0.7.1 work adds an application-share pie chart with both duration metrics and exact-second chart details. Mouse clicks no longer leave a navigation focus outline; keyboard navigation retains its focus visual. The sidebar shows this process's CPU percentage and resident memory every two seconds, suspending the sampler while hidden or minimized. These counters stay in memory and add no network or database writes. Current validation and release state are recorded in WORKLOG.md and docs/VALIDATION.md.
 
