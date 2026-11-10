@@ -2,13 +2,13 @@
 
 最后更新：2026-11-10
 
-## 本轮任务 · README 重写与首个 GitHub Release（进行中）
+## 本轮任务 · README 重写与首个 GitHub Release（已完成）
 
 - 用户需求：依据项目现状、参考其他 GitHub 项目的 README 重新编写首页，并添加 Release。
-- 接手已读本文、PLAN.md、AGENTS.md、现有 README、构建脚本和 0.7 使用/验证文档。当前本地版本为 0.7.0；远端 main 为 `16f1a23`（0.4），没有远端标签。0.5–0.7 源码、测试、文档及演示截图尚未提交，全部保留。
-- 当前计划：参考 ActivityWatch / Tai 的 README 信息组织；核对实际功能、截图、包与源码；重写 README 和 0.7.0 发布说明；同步源码及文档后创建带 ZIP / SHA-256 附件的 Release。
-- 初步核对：已有 0.7 ZIP、校验文件与 80 项/隔离发布验证记录；尚未完成本轮内容、附件和远端回读核验。GitHub CLI 不在 PATH，优先使用现有 Git 凭据与 GitHub 官方 REST API，不安装全局工具。
-- 下一步：读取参考 README、核对 GitHub 仓库发布权限与现有 Release，完成文档重写；本轮尚未推送或发布。
+- 完成结果：参考 ActivityWatch / Tai 重写 `README.md`，新增 `docs/releases/v0.7.0.md`；完整0.5–0.7源码、测试、文档与演示截图已提交推送。发布提交为 `2dccff1`，签注标签 `v0.7.0` 指向该提交。
+- GitHub Release 已公开并设为 Latest：[v0.7.0](https://github.com/xuanyuanyuzhen/Tracetime/releases/tag/v0.7.0)，包含ZIP与SHA-256两附件。发布使用已有Git凭据与GitHub REST API，未安装全局CLI。
+- 验证：80/80场景、8项应用流程、单实例及完整模拟/偏好流程通过；README渲染与链接通过；62个包内文件逐项一致；已实际从公开下载链接取回ZIP并确认SHA-256一致。
+- 本次发布产物在 `artifacts/release/github-v0.7.0`。原目录正在运行的0.7进程保留，默认用户数据未改动。下一步仅为正常使用反馈，本轮没有剩余实现或发布事项；未实测边界见 `docs/VALIDATION.md`。
 
 ### 2026-11-10 · 内容核对与 README 重写
 
@@ -33,6 +33,14 @@
 - ZIP首轮检查62文件逐项一致、29个包内文档链接可解析；已更新 `docs/VALIDATION.md`，最终附件将只同步该文档并重新生成ZIP/校验文件。源码候选清单未发现数据库/凭据文件或已知密钥模式。
 - 下一步：提交完整0.7源码与README、推送main和v0.7.0标签；创建草稿Release、上传并校验两附件后公开发布，回读远端结果。
 
+### 2026-11-10 · GitHub Release 公开与下载验证完成
+
+- `2dccff1c25719172951805b9ea38719acacf0d0b` 包含83个变更文件，已将main与v0.7.0签注标签原子推送；远端标签解引用与发布源码提交一致。此前0.5–0.7本地修改均纳入本次公开版本。
+- GitHub Release ID `440075421` 已从草稿发布，`draft=false`、`prerelease=false`，latest端点与页面均指向v0.7.0。地址：https://github.com/xuanyuanyuzhen/Tracetime/releases/tag/v0.7.0 。README远端blob与提交一致。
+- 两附件上传状态、长度和GitHub返回digest全部核对通过。ZIP为20,455,903字节，SHA-256 `c6cff2203af23349ba7ae9a4fe33c768889a962587eebe74b23b32aa0a059437`；同名 `.zip.sha256` 为95字节。未上传数据库、用户设置、缓存或QA记录。
+- 从公开下载URL重新下载ZIP和校验文件，三方哈希（本地、GitHub digest、公开下载）一致。证据：`artifacts/qa/github-release-published-0.7.0.json`、`github-public-download-0.7.0.txt`、`package-github-0.7.0-20261110.txt`。
+- 已完成用户请求的README重写和实际Release发布。本段与PLAN完成状态随后作为独立交接文档提交推送；不修改已发布标签、二进制或附件。
+
 ## 接手入口
 
 - 产品范围与计时规则：`PLAN.md`。
@@ -43,10 +51,10 @@
 
 - 0.7三组功能已实现：应用/规则搜索和记录日跳转、常用临时分钟与今日全部静默、历史体积/备份/按月归档/恢复。默认不删除，恢复先备份、按范围事务替换，规则/外观/凭据保留。
 - 80/80场景及正式包验证通过：`build-0.7-reviewed.txt`；8项流程/单实例为 `release-0.7.0-495c6765`，最终截图/模拟/新进程偏好补验为 `release-0.7.0-86d9b8f3`、`verify-0.7-capture-final.txt`。第8项隔离应用流程验证维护/恢复不多计、不补空档且保留暂停选择。
-- 0.7本地交付完成：独立复核唯一P2已resolved/remaining clear/ship（限列项），四份设计文档归档完成，最终ZIP与运行目录61个文件逐项SHA-256一致。运行入口 `artifacts/release/TraceTime-0.7.0-win-x64/TraceTime.exe`，需要.NET 10 Desktop Runtime x64。
+- 0.7本地功能交付与首个GitHub Release均完成。2026-11-02原包61文件一致；2026-11-10公开包62文件一致（新增版本说明、重写README及验证文档），位于 `artifacts/release/github-v0.7.0/TraceTime-0.7.0-win-x64`。独立复核唯一P2已resolved/remaining clear/ship（限列项），四份设计文档归档完成；需要.NET 10 Desktop Runtime x64。
 - 独立复核P2：事务提交后临时副本清理异常误报“原记录保留”，已通过HistoryRestoreResult/CleanupWarning分离并验证真实隔离Windows文件锁；同一审查者已复核resolved。失败前的原错误与清理诊断也分别保留。
 - 该修正的80/80场景通过，含真实隔离Windows文件锁；发布包8项采集流程及单实例通过。截图阶段旧45行导航断言失败；确认显式演示Capture仍有5秒刷新覆盖注入报告的竞争，现只在Capture入口停止该演示刷新，并补断言实值诊断。受影响的外观/截图/偏好验证已由86d9b8f3通过，不改正常采集刷新逻辑。
-- 用户真实数据只读取DB/WAL/SHM文件大小，未归档/删除/恢复；不自动启动备份、保留期清理或开机启动。已保留0.5/0.6本地改动，没有GitHub推送。
+- 0.7功能开发时对用户真实数据只读取DB/WAL/SHM文件大小，未归档/删除/恢复；不自动启动备份、保留期清理或开机启动。0.5–0.7改动已于2026-11-10随首个Release同步GitHub；本轮未更改用户真实数据。
 
 ## 0.6 交付历史
 - 0.6 已实现并通过65/65场景与正式包完整流程：再次进入超时应用提醒、提前临时使用、可选SMTP邮件、旧库迁移及日期删除同步清理。证据：`artifacts/qa/build-0.6-release.txt`、`verify-0.6-release.txt`、`release-0.6.0-620b41eb`。
