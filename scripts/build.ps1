@@ -1,4 +1,4 @@
-param([switch]$Test, [switch]$Publish, [switch]$SelfContained, [switch]$Offline)
+param([switch]$Test, [switch]$Publish, [switch]$SelfContained, [switch]$Offline, [string]$ReleaseRoot = 'artifacts\release')
 $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path $PSScriptRoot -Parent
 Set-Location $taskRoot
@@ -20,7 +20,8 @@ if ($Publish) {
     $taskProject = [xml](Get-Content -LiteralPath (Join-Path $taskRoot 'src\TraceTime.App\TraceTime.App.csproj'))
     $taskVersion = $taskProject.Project.PropertyGroup.Version
     $taskPackageName = "TraceTime-$taskVersion-win-x64"
-    $taskOutput = Join-Path $taskRoot "artifacts\release\$taskPackageName"
+    $taskReleaseRoot = if ([System.IO.Path]::IsPathRooted($ReleaseRoot)) { $ReleaseRoot } else { Join-Path $taskRoot $ReleaseRoot }
+    $taskOutput = Join-Path $taskReleaseRoot $taskPackageName
     if ($SelfContained) {
         & $taskDotnet publish src/TraceTime.App -c Release -r win-x64 --self-contained true -o $taskOutput -p:PublishSingleFile=false -p:DebugType=None -p:DebugSymbols=false
     } else {
@@ -33,9 +34,15 @@ if ($Publish) {
     New-Item -ItemType Directory -Path $taskPackageScreenshots -Force | Out-Null
     Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\VALIDATION.md') -Destination $taskPackageDocs
     Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\LIMITS-AND-ANALYSIS.md') -Destination $taskPackageDocs
+    Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\DAY-AND-REMINDERS.md') -Destination $taskPackageDocs
+    Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\REMINDERS-AND-ROADMAP.md') -Destination $taskPackageDocs
+    Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\HISTORY-AND-QUICK-ACTIONS.md') -Destination $taskPackageDocs
+    $taskPackageReleaseNotes = Join-Path $taskPackageDocs 'releases'
+    New-Item -ItemType Directory -Path $taskPackageReleaseNotes -Force | Out-Null
+    Copy-Item -LiteralPath (Join-Path $taskRoot "docs\releases\v$taskVersion.md") -Destination $taskPackageReleaseNotes
     Get-ChildItem -LiteralPath (Join-Path $taskRoot 'docs\screenshots') -Filter '*.png' | ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $taskPackageScreenshots }
     Set-Content -LiteralPath (Join-Path $taskOutput 'PACKAGE-TYPE.txt') -Value $(if ($SelfContained) { 'Self-contained Windows x64 package.' } else { 'Requires Microsoft .NET 10 Desktop Runtime x64.' }) -Encoding UTF8
-    $taskArchive = Join-Path $taskRoot "artifacts\release\$taskPackageName.zip"
+    $taskArchive = Join-Path $taskReleaseRoot "$taskPackageName.zip"
     Compress-Archive -Path $taskOutput -DestinationPath $taskArchive -Force
     $taskHash = (Get-FileHash -LiteralPath $taskArchive -Algorithm SHA256).Hash.ToLowerInvariant()
     Set-Content -LiteralPath "$taskArchive.sha256" -Value "$taskHash  $taskPackageName.zip" -Encoding ascii

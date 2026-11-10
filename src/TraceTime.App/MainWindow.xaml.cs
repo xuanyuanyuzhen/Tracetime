@@ -43,11 +43,17 @@ public partial class MainWindow : Window
     internal MainWindow(UsageDatabase db, TrackerController? tracker, bool demo)
     {
         _db = db; _tracker = tracker; _demo = demo;
+        _reminderAudio=new ReminderAudioService(Path.GetDirectoryName(db.FilePath)!);
         _icons = new AppIconCache(Path.GetDirectoryName(db.FilePath)!,Dispatcher);
         _appearancePath = Path.Combine(Path.GetDirectoryName(db.FilePath)!, "appearance.json");
         _appearance = AppearanceSettings.Load(_appearancePath);
+        _viewPreferencesPath = Path.Combine(Path.GetDirectoryName(db.FilePath)!, "view-preferences.json");
+        _viewPreferences = ViewPreferences.Load(_viewPreferencesPath);
         ThemeManager.Apply(_appearance);
         InitializeComponent();
+        InitializeEmailReminders();
+        ApplyViewPreferences();
+        Timeline.HourSelected+=hour=>{_activityHour=hour;RenderTimeline();};
         _limits = _db.LoadLimits(); InitializeAnalysis();
         _recordedCalendar = new RecordedCalendar(db,DayPicker,AnalysisEnd,RangeStart,RangeEnd);
         SourceInitialized += (_, _) => ThemeManager.ApplyTitleBar(this);
@@ -61,17 +67,19 @@ public partial class MainWindow : Window
         if (_demo) { Title = "TraceTime · 演示数据"; PauseButton.IsEnabled = false; StartupCheck.IsEnabled = false; }
         if (_tracker is not null) _tracker.Changed += UpdateStatus;
         _refreshTimer = new DispatcherTimer(TimeSpan.FromSeconds(5), DispatcherPriority.Background, (_, _) => {
+            if (_historyBusy) return;
+            RenderQuietState();
             if (IsVisible && OverviewPanel.Visibility == Visibility.Visible) RefreshReport();
             CheckLimits();
             _recordedCalendar.RefreshOpen();
             if (IsVisible && LimitsPanel.Visibility == Visibility.Visible) RenderLimitProgress();
         }, Dispatcher);
-        _ready = true; SyncAppearanceControls(); SetPage("overview"); RefreshReport(); UpdateStatus();
+        _ready = true; SyncAppearanceControls(); SetPage("overview"); RefreshReport(); UpdateStatus(); RenderQuietState();
     }
 
     private void RefreshReport()
     {
-        if (!_ready) return;
+        if (!_ready || _historyBusy) return;
         try
         {
             if(_lastToday!=DateTime.Today)
@@ -87,6 +95,7 @@ public partial class MainWindow : Window
             WithoutIdleTotal.Text = FormatTime(_report.WithoutIdle);
             DayLabel.Text = SelectedDay == DateOnly.FromDateTime(DateTime.Today) ? "今天 · " + DateTime.Today.ToString("M月d日 dddd", CultureInfo.GetCultureInfo("zh-CN")) : SelectedDay.ToString("yyyy年M月d日");
             NextDayButton.IsEnabled = SelectedDay < DateOnly.FromDateTime(DateTime.Today);
+            UpdateRecordedDayButtons();
             RenderRows(); RenderTimeline(); UpdateStatus();
         }
         catch (Exception ex) { ShowError("读取记录失败：" + ex.Message); }
@@ -99,8 +108,9 @@ public partial class MainWindow : Window
         var total = WithoutIdle ? _report.WithoutIdle : _report.Foreground;
         var sorted = _report.Apps.OrderByDescending(x => WithoutIdle ? x.WithoutIdle : x.Foreground).ToArray();
         var maximum = sorted.Length == 0 ? 0 : (WithoutIdle ? sorted[0].WithoutIdle : sorted[0].Foreground).TotalSeconds;
-        var rows = sorted.Select((x, i) => new AppRow(x, WithoutIdle, total, maximum, i + 1,_icons)).ToArray();
+        var rows = sorted.Select((x, i) => new AppRow(x, WithoutIdle, total, maximum, i + 1,_icons)).Where(x=>ApplicationQuery.Matches(x.Name,AppSearch.Text)).ToArray();
         AppCountLabel.Text = $"{sorted.Length} 个应用";
+        AppSearchHint.Text = string.IsNullOrWhiteSpace(AppSearch.Text) ? "按应用名称查找；总计、占比与图表仍按全部应用计算。" : rows.Length==0 ? "没有匹配的应用，请修改或清空搜索。" : $"显示 {rows.Length} / {sorted.Length} 个应用；总计和占比不变。";
         _refreshing = true;
         AppList.ItemsSource = rows;
         AppList.SelectedItem = rows.FirstOrDefault(x => x.Key == selected);
@@ -126,28 +136,30 @@ public partial class MainWindow : Window
         }
     }
 
-    private void RenderTimeline()
+    private void RenderTimeline(DateTimeOffset? observedUntil = null)
     {
         if (_report is null) return;
-        Timeline.Report = _report; Timeline.SelectedAppKey = _selectedApp;
-        SelectionLabel.Text = _selectedApp is null ? "全部应用" : _report.Apps.FirstOrDefault(x => x.App.Key == _selectedApp)?.App.Name ?? "全部应用";
-        var entries = _report.Timeline.Where(x => _selectedApp is null || x.AppKey == _selectedApp).OrderByDescending(x => x.Start).ToArray();
+        RenderActivity(observedUntil);
+        SelectionLabel.Text = "时间片筛选：" + (_selectedApp is null ? "全部应用" : _report.Apps.FirstOrDefault(x => x.App.Key == _selectedApp)?.App.Name ?? "全部应用");
+        var entries = SelectedActivity().Entries.Where(x => _selectedApp is null || x.AppKey == _selectedApp).OrderByDescending(x => x.Start).ToArray();
         var apps=_report.Apps.ToDictionary(x=>x.App.Key,x=>x.App);
         DetailsList.ItemsSource = entries.Select(x => new {
-            Visual = x.Kind=="gap" || string.IsNullOrEmpty(x.AppKey) ? null : _icons.Get(apps.GetValueOrDefault(x.AppKey) ?? new(x.AppKey,x.Label)),
-            Range = $"{x.Start.LocalDateTime:HH:mm:ss} – {x.End.LocalDateTime:HH:mm:ss}",
-            Label = x.Label + (x.Kind == "idle" ? " · 空闲" : ""),
+            Visual = x.Kind is not("active" or "idle") || string.IsNullOrEmpty(x.AppKey) ? null : _icons.Get(apps.GetValueOrDefault(x.AppKey) ?? new(x.AppKey,x.Label)),
+            Range = $"{x.Start.LocalDateTime:HH:mm:ss} – {(x.End==_dayActivity!.End?"24:00:00":x.End.LocalDateTime.ToString("HH:mm:ss"))}",
+            Label = x.Label + (x.Kind == "idle" ? " · 空闲（无输入）" : ""),
+            Kind = x.Kind,
             Duration = FormatTime(x.End - x.Start),
             AccessibleName=$"{x.Start.LocalDateTime:HH:mm:ss} 至 {x.End.LocalDateTime:HH:mm:ss}，{x.Label}，{(x.Kind=="idle"?"空闲，":"")}{FormatTime(x.End-x.Start)}"
         }).ToArray();
-        DetailHint.Text = entries.Length == 0 ? "暂无时间片记录。" : $"全部 {entries.Length} 个时间片 · 列表可滚动，支持方向键及 Home / End 浏览";
+        DetailHint.Text = entries.Length == 0 ? "暂无时间片记录。" : $"全部 {entries.Length} 个时间片 · 滚轮滚动页面；拖动列表滚动条或用方向键、Home / End 浏览明细";
     }
 
     private void UpdateStatus()
     {
         if (!_ready) return;
+        if (ObserveLimitVisit()) CheckLimits();
         if(_tracker is not null && _lastIconApp!=_tracker.CurrentApp.Key) { _lastIconApp=_tracker.CurrentApp.Key; _icons.Get(_tracker.CurrentApp); }
-        if (_tracker is not null && !_tracker.CanPresentReminder) _limitAlert?.Hide();
+        if (_tracker is not null && !_tracker.CanPresentReminder) { _limitAlert?.Hide(); _reminderAudio.Stop(); }
         StatusText.Text = _demo ? "演示数据 · 不采集" : _tracker?.Status ?? "未记录";
         PauseButton.Content = _tracker?.Paused == true ? "恢复记录" : "暂停记录";
         StatusDot.Fill = ThemeManager.Get(_tracker?.Paused == true ? "Warning" : "Accent");
@@ -183,6 +195,7 @@ public partial class MainWindow : Window
         SetPage("settings");
         IdleInput.Text = _db.LoadSettings().IdleMinutes.ToString(CultureInfo.InvariantCulture);
         RangeStart.SelectedDate = RangeEnd.SelectedDate = SelectedDay.ToDateTime(TimeOnly.MinValue);
+        RefreshHistoryStorage();
     }
 
     private void SavePreferences(object sender, RoutedEventArgs e)
@@ -214,6 +227,7 @@ public partial class MainWindow : Window
     }
     private void Export(object sender, RoutedEventArgs e)
     {
+        if(_historyBusy)return;
         try
         {
             var (first,last) = SelectedRange();
@@ -227,12 +241,14 @@ public partial class MainWindow : Window
     }
     private void DeleteRecords(object sender, RoutedEventArgs e)
     {
+        if(_historyBusy)return;
         try
         {
             var (first,last)=SelectedRange();
             if(MessageBox.Show(this,$"删除 {first:yyyy-MM-dd} 至 {last:yyyy-MM-dd} 的使用记录？\n此操作无法撤销，其他日期和设置会保留。", "删除记录",MessageBoxButton.YesNo,MessageBoxImage.Warning,MessageBoxResult.No)!=MessageBoxResult.Yes) return;
             var (start,_)=ReportBuilder.Bounds(first,TimeZoneInfo.Local); var (_,end)=ReportBuilder.Bounds(last,TimeZoneInfo.Local);
             if(_tracker is not null) _tracker.DeleteRange(start,end); else _db.DeleteRange(start,end);
+            if (first <= DateOnly.FromDateTime(DateTime.Today) && last >= DateOnly.FromDateTime(DateTime.Today)) { _emailService.CancelActive(); CloseLimitAlert(); }
             SettingsFeedback.Text="所选记录已删除。正在记录时，新的使用时长会继续累积。"; RefreshReport();
         }
         catch(Exception ex) { MessageBox.Show(this,ex.Message,"删除失败",MessageBoxButton.OK,MessageBoxImage.Warning); }
@@ -255,12 +271,13 @@ public partial class MainWindow : Window
         if(SettingsPanel.Visibility!=Visibility.Visible) throw new Exception("设置页面未显示");
         ShowOverview(this,new RoutedEventArgs());
         if(OverviewPanel.Visibility!=Visibility.Visible) throw new Exception("概览页面未显示");
-        var a=DateTimeOffset.UtcNow.AddHours(-2); var app=new AppIdentity("qa","验证应用");
+        var (qaStart,_)=ReportBuilder.Bounds(SelectedDay,TimeZoneInfo.Local);
+        var a=qaStart.AddHours(9); var app=new AppIdentity("qa","验证应用");
         _report=new(SelectedDay,[new(app,TimeSpan.FromMinutes(90),TimeSpan.Zero)],
             Enumerable.Range(0,45).Select(i=>new TimelineEntry(a.AddMinutes(i*2),a.AddMinutes(i*2+2),app.Key,app.Name,"idle")).ToArray());
-        _selectedApp=null; ActiveMetric.IsChecked=true; RenderRows(); RenderTimeline();
+        _selectedApp=null; ActiveMetric.IsChecked=true; RenderRows(); RenderTimeline(a.AddHours(2));
         if(EmptyTitle.Text!="扣除空闲后，暂无时长" || AppList.Visibility!=Visibility.Collapsed) throw new Exception("全空闲口径状态错误");
-        if(DetailsList.Items.Count!=45) throw new Exception("时间片列表截断");
+        if(DetailsList.Items.Cast<object>().Count(x=>x.GetType().GetProperty("Visual")?.GetValue(x) is AppVisual)!=45) throw new Exception("时间片列表截断");
         RefreshReport();
     }
 
@@ -290,6 +307,8 @@ public partial class MainWindow : Window
     }
     internal void DisposeTray()
     {
+        _emailService.Dispose();
+        _effectsWindow?.Close();CloseReminderPreview();_reminderAudio.Dispose();
         _aiCancellation?.Cancel(); CloseLimitAlert();
         SystemEvents.UserPreferenceChanged -= SystemThemeChanged;
         _refreshTimer.Stop(); if(_tracker is not null) _tracker.Changed-=UpdateStatus;
@@ -299,9 +318,18 @@ public partial class MainWindow : Window
 
     internal void CloseTransientViews() { DayPicker.IsDropDownOpen = false; LimitAppPicker.IsDropDownOpen = false; CloseLimitAlert(); }
 
-    internal void Capture(string path)
+    internal void Capture(string path, bool dayOnly = false)
     {
         if(!_demo) throw new InvalidOperationException("只有隔离演示模式可以生成界面检查图片。");
+        // Capture tests inject deterministic reports; a five-second refresh must not replace them mid-assertion.
+        _refreshTimer.Stop();
+        if(dayOnly)
+        {
+            ChangeAppearance(new("light","glass"), false);
+            VerifyDaySoundViews(path,Save,SaveElement);
+            VerifyNavigationViews(path,Save);
+            return;
+        }
         VerifyAppearanceFlow();
         VerifyRecordedCalendar(DayPicker,DateOnly.FromDateTime(DateTime.Today),DateOnly.FromDateTime(DateTime.Today).AddDays(-1));
         ChangeAppearance(new("light","glass"), false);
@@ -360,6 +388,10 @@ public partial class MainWindow : Window
         DayPicker.SelectedDate=DateTime.Today.AddDays(-2); ActiveMetric.IsChecked=true; Save(Path.ChangeExtension(path,"all-idle.png"));
         ForegroundMetric.IsChecked=true; OverviewPanel.ScrollToBottom(); Save(Path.ChangeExtension(path,"details.png"));
         VerifyFeatureViews(path,Save,SaveElement);
+        VerifyDaySoundViews(path,Save,SaveElement);
+        VerifyNavigationViews(path,Save);
+        VerifyLimitOptionsViews(path,Save,SaveElement);
+        VerifyHistoryQuickViews(path,Save,SaveElement);
         File.WriteAllText(Path.ChangeExtension(path,"checks.txt"),"PASS appearance controls, persistence, invalid colors, reset, 54 surface and actual selected-control contrast combinations, unchanged usage data, seven weekday headings, year picker, rendered primary button contrast, and theme captures");
         void Save(string target)
         {

@@ -1,0 +1,21 @@
+<Window x:Class="TraceTime.App.EmailConfigWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="TraceTime · 邮件预警设置" Width="600" Height="740" MinWidth="480" MinHeight="460" WindowStartupLocation="CenterOwner" Style="{DynamicResource {x:Type Window}}">
+ <Window.Resources><Style TargetType="Label"><Setter Property="Foreground" Value="{DynamicResource Ink}"/></Style></Window.Resources>
+ <Border Background="{DynamicResource Canvas}" Padding="26"><Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+  <StackPanel Margin="0,0,0,16"><TextBlock Text="邮件预警" FontSize="24" FontWeight="SemiBold"/><TextBlock Text="可选功能。保存配置后，还需在应用额度中开启邮件提醒。" Style="{StaticResource Hint}" Margin="0,8,0,0"/></StackPanel>
+  <ScrollViewer x:Name="FieldsScroller" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,12,0"><StackPanel>
+   <CheckBox x:Name="EnabledCheck" Content="启用邮件预警" Foreground="{DynamicResource Ink}" Margin="0,0,0,12"/>
+   <TextBlock Text="邮件会通过你配置的服务发送日期、应用名称、额度及所选口径的累计时长。不发送路径、标题、网址或时间片。关闭时不联网。" Style="{StaticResource Hint}" Margin="0,0,0,16"/>
+   <Label Content="收件邮箱" Target="{Binding ElementName=ToInput}"/><TextBox x:Name="ToInput" MaxLength="320" AutomationProperties.Name="收件邮箱"/>
+   <Expander Header="发信服务 · SMTP" IsExpanded="True" Margin="0,18,0,0"><StackPanel Margin="0,10,0,0">
+    <TextBlock Text="仅填收件邮箱无法发信，还需邮箱服务商提供的 SMTP 账号与授权码。请使用支持 STARTTLS 的服务（通常为 587 端口）。此版本不支持 465 端口。" Style="{StaticResource Hint}" Margin="0,0,0,10"/>
+    <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions><StackPanel Margin="0,0,12,0"><Label Content="SMTP 主机" Target="{Binding ElementName=HostInput}"/><TextBox x:Name="HostInput" MaxLength="253" AutomationProperties.Name="SMTP 主机"/></StackPanel><StackPanel Grid.Column="1"><Label Content="端口" Target="{Binding ElementName=PortInput}"/><TextBox x:Name="PortInput" MaxLength="5" AutomationProperties.Name="STARTTLS 端口"/></StackPanel></Grid>
+    <Label Content="发件邮箱" Target="{Binding ElementName=FromInput}" Margin="0,8,0,0"/><TextBox x:Name="FromInput" MaxLength="320" AutomationProperties.Name="发件邮箱"/>
+    <Label Content="SMTP 登录账号" Target="{Binding ElementName=UserInput}" Margin="0,8,0,0"/><TextBox x:Name="UserInput" MaxLength="320" AutomationProperties.Name="SMTP 登录账号"/>
+    <Label Content="授权码 / 应用密码" Target="{Binding ElementName=PasswordInput}" Margin="0,8,0,0"/><PasswordBox x:Name="PasswordInput" MaxLength="512" Padding="10" AutomationProperties.Name="SMTP 授权码或应用密码"/>
+    <TextBlock x:Name="PasswordHint" Style="{StaticResource Hint}" Margin="0,8,0,0" Text="凭据由当前 Windows 用户加密保存。"/>
+   </StackPanel></Expander>
+  </StackPanel></ScrollViewer>
+  <StackPanel Grid.Row="2" Margin="0,16,0,0"><TextBlock x:Name="Feedback" TextWrapping="Wrap" Foreground="{DynamicResource Danger}" Margin="0,0,0,10" AutomationProperties.LiveSetting="Polite"/><WrapPanel HorizontalAlignment="Right"><Button x:Name="SaveButton" Content="保存设置" Style="{StaticResource PrimaryButton}" Click="Save"/><Button Content="取消" Click="Cancel" IsCancel="True" Margin="10,0,0,0"/></WrapPanel></StackPanel>
+ </Grid></Border>
+</Window>

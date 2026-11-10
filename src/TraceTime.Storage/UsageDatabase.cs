@@ -22,6 +22,7 @@ public sealed partial class UsageDatabase : ITrackingSink, IDisposable
                 id TEXT PRIMARY KEY, scope TEXT NOT NULL, app_key TEXT NOT NULL, name TEXT NOT NULL,
                 path TEXT, start_ticks INTEGER NOT NULL, end_ticks INTEGER NOT NULL, threshold_ms INTEGER NOT NULL);
             CREATE INDEX IF NOT EXISTS usage_time ON usage(start_ticks, end_ticks);
+            CREATE INDEX IF NOT EXISTS usage_end ON usage(end_ticks);
             CREATE TABLE IF NOT EXISTS idle (
                 id TEXT PRIMARY KEY, scope TEXT NOT NULL, start_ticks INTEGER NOT NULL, end_ticks INTEGER NOT NULL);
             CREATE INDEX IF NOT EXISTS idle_time ON idle(start_ticks, end_ticks);
@@ -64,9 +65,9 @@ public sealed partial class UsageDatabase : ITrackingSink, IDisposable
         return ReportBuilder.Build(date, zone, ReadUsage(a, b), ReadIdle(a, b), ReadGaps(a, b));
     }
 
-    public List<UsageSegment> ReadUsage(DateTimeOffset a, DateTimeOffset b)
+    public List<UsageSegment> ReadUsage(DateTimeOffset a, DateTimeOffset b, SqliteTransaction? transaction = null, bool boundaryOnly = false)
     {
-        using var cmd = Command("SELECT id,scope,app_key,name,path,start_ticks,end_ticks,threshold_ms FROM usage WHERE end_ticks>$a AND start_ticks<$b ORDER BY start_ticks", null, ("$a", a.UtcTicks), ("$b", b.UtcTicks));
+        using var cmd = Command("SELECT id,scope,app_key,name,path,start_ticks,end_ticks,threshold_ms FROM usage WHERE end_ticks>$a AND start_ticks<$b" + (boundaryOnly ? " AND (start_ticks<$a OR end_ticks>$b)" : "") + " ORDER BY start_ticks", transaction, ("$a", a.UtcTicks), ("$b", b.UtcTicks));
         using var r = cmd.ExecuteReader();
         var rows = new List<UsageSegment>();
         while (r.Read()) rows.Add(new(r.GetString(0), r.GetString(1), new(r.GetString(2), r.GetString(3), r.IsDBNull(4) ? null : r.GetString(4)),
@@ -74,18 +75,18 @@ public sealed partial class UsageDatabase : ITrackingSink, IDisposable
         return rows;
     }
 
-    public List<IdleInterval> ReadIdle(DateTimeOffset a, DateTimeOffset b)
+    public List<IdleInterval> ReadIdle(DateTimeOffset a, DateTimeOffset b, SqliteTransaction? transaction = null, bool boundaryOnly = false)
     {
-        using var cmd = Command("SELECT id,scope,start_ticks,end_ticks FROM idle WHERE end_ticks>$a AND start_ticks<$b", null, ("$a", a.UtcTicks), ("$b", b.UtcTicks));
+        using var cmd = Command("SELECT id,scope,start_ticks,end_ticks FROM idle WHERE end_ticks>$a AND start_ticks<$b" + (boundaryOnly ? " AND (start_ticks<$a OR end_ticks>$b)" : ""), transaction, ("$a", a.UtcTicks), ("$b", b.UtcTicks));
         using var r = cmd.ExecuteReader();
         var rows = new List<IdleInterval>();
         while (r.Read()) rows.Add(new(r.GetString(0), r.GetString(1), Stamp(r.GetInt64(2)), Stamp(r.GetInt64(3))));
         return rows;
     }
 
-    public List<GapInterval> ReadGaps(DateTimeOffset a, DateTimeOffset b)
+    public List<GapInterval> ReadGaps(DateTimeOffset a, DateTimeOffset b, SqliteTransaction? transaction = null, bool boundaryOnly = false)
     {
-        using var cmd = Command("SELECT id,start_ticks,end_ticks,reason FROM gaps WHERE end_ticks>$a AND start_ticks<$b", null, ("$a", a.UtcTicks), ("$b", b.UtcTicks));
+        using var cmd = Command("SELECT id,start_ticks,end_ticks,reason FROM gaps WHERE end_ticks>$a AND start_ticks<$b" + (boundaryOnly ? " AND (start_ticks<$a OR end_ticks>$b)" : ""), transaction, ("$a", a.UtcTicks), ("$b", b.UtcTicks));
         using var r = cmd.ExecuteReader();
         var rows = new List<GapInterval>();
         while (r.Read()) rows.Add(new(r.GetString(0), Stamp(r.GetInt64(1)), Stamp(r.GetInt64(2)), r.GetString(3)));
@@ -106,11 +107,20 @@ public sealed partial class UsageDatabase : ITrackingSink, IDisposable
     }
 
     // Clip crossing segments instead of erasing the neighboring day's history.
-    public void DeleteRange(DateTimeOffset a, DateTimeOffset b)
+    public void DeleteRange(DateTimeOffset a, DateTimeOffset b, TimeZoneInfo? reminderZone = null)
     {
         if (b <= a) throw new ArgumentException("结束日期须晚于开始日期。");
-        var usage = ReadUsage(a, b); var idle = ReadIdle(a, b); var gaps = ReadGaps(a, b);
         using var tx = _connection.BeginTransaction();
+        DeleteRangeCore(a,b,reminderZone ?? TimeZoneInfo.Local,tx);
+        tx.Commit(); HistoryRevision++;
+    }
+    private void DeleteRangeCore(DateTimeOffset a, DateTimeOffset b, TimeZoneInfo zone, SqliteTransaction tx)
+    {
+        var usage = ReadUsage(a, b,tx,true); var idle = ReadIdle(a, b,tx,true); var gaps = ReadGaps(a, b,tx,true);
+        var firstDay = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(a,zone).DateTime).ToString("yyyy-MM-dd");
+        var lastDay = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(b.AddTicks(-1),zone).DateTime).ToString("yyyy-MM-dd");
+        Execute("DELETE FROM email_notices WHERE day >= $first AND day <= $last",tx,("$first",firstDay),("$last",lastDay));
+        Execute("DELETE FROM limit_days WHERE day >= $first AND day <= $last",tx,("$first",firstDay),("$last",lastDay));
         foreach (var table in new[] { "usage", "idle", "gaps" })
             Execute($"DELETE FROM {table} WHERE end_ticks>$a AND start_ticks<$b", tx, ("$a", a.UtcTicks), ("$b", b.UtcTicks));
         foreach (var s in usage)
@@ -128,8 +138,6 @@ public sealed partial class UsageDatabase : ITrackingSink, IDisposable
             if (s.Start < a) InsertGap(s with { Id = Id(), End = a }, tx);
             if (s.End > b) InsertGap(s with { Id = Id(), Start = b }, tx);
         }
-        tx.Commit();
-        HistoryRevision++;
     }
 
     private void InsertGap(GapInterval g, SqliteTransaction tx) => Execute("INSERT INTO gaps VALUES($id,$a,$b,$r)", tx,

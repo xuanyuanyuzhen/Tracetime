@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-26",
-  "title": "Design System: TraceTime 0.4",
+  "generatedAt": "2026-11-02",
+  "title": "Design System: TraceTime 0.7",
   "extensions": {
     "shadows": [],
     "motion": [
@@ -22,7 +22,7 @@
   "components": [],
   "narrative": {
     "northStar": "清楚看见时间的去向",
-    "overview": "沿用 Windows 桌面操作习惯，以清晰的数据行、可区分的双时长和轻量导航呈现应用使用。0.3 增加应用每日额度、近 7/30 天本地分析和用户手动发起的可选 AI 回顾。用户可以独立选择明暗模式、材质和强调色；默认首次跟随系统并使用液态玻璃，之后恢复已保存的选择。界面使用简体中文。",
+    "overview": "沿用 Windows 桌面操作习惯，以清晰的数据行、可区分的双时长和轻量导航呈现应用使用。应用额度、全天分布、本地分析、临时使用与可选邮件延续同一视觉系统；0.7 增加应用搜索、记录日跳转、常用临时分钟、今日全部静默和历史备份归档。用户可以独立选择明暗模式、材质和强调色；默认首次跟随系统并使用液态玻璃，之后恢复已保存的选择。界面使用简体中文。",
     "keyCharacteristics": [
       "Separate foreground and without-idle durations",
       "Persist independent mode/material/accent choices",
@@ -33,7 +33,20 @@
       "Local 7/30-day analysis with optional manually approved aggregate sharing",
       "Shared cached local application icons alongside names, including time slices",
       "Separate option-led AI configuration dialog; internal fixed prompt",
-      "Recorded-day calendar markers independent of selected-day state"
+      "Recorded-day calendar markers independent of selected-day state",
+      "Full-day chart coverage including idle, interruptions, gaps and future",
+      "Persisted 200/72 DIP sidebar and native chart selection",
+      "Overview wheel scrolling with complete accessible application lists",
+      "Per-level reminder sound and effect previews; local short PCM WAV imports",
+      "Same-level repeat-entry reminders with per-rule opt-out, visit deduplication and TraceTime-window exclusion",
+      "Current acknowledgement separate from today's local-and-email dismissal",
+      "Advance 1–120-minute foreground allowances with 5/10/15/30 shortcuts, adjustment, cancellation and same-day restart recovery",
+      "Optional SMTP with global and rule switches defaulting off; native 600×740 DIP settings dialog, minimum 480×460, fixed actions and scrolling form",
+      "Asynchronous email statuses, manual failure retry and no old-day delivery",
+      "Application-name search preserves totals, original ranks, percentage denominators and charts; recorded-day navigation includes idle foreground periods",
+      "Optional remembered temporary duration, initially 10 minutes, reused by later reminders",
+      "Quiet-today toggle in the existing limits heading and footer marker; covers hidden and new rules without changing their state or stopping timing",
+      "Native history backup, month archive and range-replacement restore with preview, safety backup and separate post-commit cleanup feedback"
     ],
     "rules": [
       {
@@ -53,14 +66,22 @@
       "Preserve the original user accent in stored preferences",
       "Keep both duration metrics explicit in charts, limits and summaries",
       "Require preview, consent and a send action for optional AI requests; support cancellation",
-      "Document native WPF components and DIP dimensions without invented HTML/CSS snippets"
+      "Document native WPF components and DIP dimensions without invented HTML/CSS snippets",
+      "Explain that temporary use consumes foreground time including idle, pauses in background/lock/tracking pause, ends at local midnight and reminds even below the daily limit",
+      "Require explicit global and rule email enablement, STARTTLS and current-user DPAPI; changing sending service or account requires credentials again",
+      "Keep archived history by default; confirm ended-month removal separately after archive validation and locking",
+      "Preview and hash-bind restoration, create a safety backup, replace the range transactionally and distinguish success from cleanup warnings"
     ],
     "donts": [
       "Do not treat idle as proof of not working",
       "Do not record titles, URLs, document names, keystrokes or screenshots",
       "Do not describe the material as desktop backdrop sampling",
       "Do not close or block target applications or apply AI suggestions as limit rules",
-      "Do not include keys, paths or raw time segments in AI preview data or exports"
+      "Do not include keys, paths or raw time segments in AI preview data or exports",
+      "Do not equate current acknowledgement with dismissal for the whole day",
+      "Do not send paths, raw slices or screen contents in reminder email, support implicit TLS on port 465, or claim SMTP acceptance guarantees inbox delivery",
+      "Do not include rules, appearance, preferences or credentials in history archives; clearly disclose historical executable paths and unencrypted storage",
+      "Do not report original history retained after a committed restore merely because temporary-file cleanup failed"
     ]
   }
 }

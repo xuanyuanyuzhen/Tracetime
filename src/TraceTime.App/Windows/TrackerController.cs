@@ -16,7 +16,7 @@ internal sealed class TrackerController : IDisposable
     private readonly DispatcherTimer _timer;
     private readonly WinEventProc _callback;
     private IntPtr _hook;
-    private bool _locked, _sleeping, _disposed;
+    private bool _locked, _sleeping, _disposed, _maintaining;
     private string _mode = "";
     private GapInterval? _gap;
     private int _ticks;
@@ -50,7 +50,7 @@ internal sealed class TrackerController : IDisposable
     }
     private void Tick()
     {
-        if (_disposed) return;
+        if (_disposed || _maintaining) return;
         if (_mode.Length == 0) Observe();
         if (++_ticks % 5 == 0) Flush();
         Changed?.Invoke();
@@ -67,10 +67,12 @@ internal sealed class TrackerController : IDisposable
         catch (Exception ex) { Error = "无法保存记录：" + ex.Message; }
     }
 
-    public void TogglePause() { Paused = !Paused; ApplyMode(); }
+    public void TogglePause() { if(_maintaining)return; Paused = !Paused; ApplyMode(); }
+    public void BeginMaintenance() { _maintaining=true; ApplyMode(); if(Error is not null) { _maintaining=false; ApplyMode(); throw new InvalidOperationException(Error); } }
+    public void EndMaintenance() { _maintaining=false; ApplyMode(); }
     private void ApplyMode()
     {
-        var next = _sleeping ? "休眠" : _locked ? "锁屏 / 会话断开" : Paused ? "已暂停" : "";
+        var next = _maintaining ? "数据维护" : _sleeping ? "休眠" : _locked ? "锁屏 / 会话断开" : Paused ? "已暂停" : "";
         if (next == _mode) return;
         if (_mode.Length == 0) { Observe(); _engine.Stop(); }
         Flush();

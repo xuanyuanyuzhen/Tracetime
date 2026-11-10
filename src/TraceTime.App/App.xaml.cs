@@ -45,12 +45,27 @@ public partial class App : Application
                 File.WriteAllText(Path.Combine(dataDir,"appearance-loaded.txt"),$"{ThemeManager.Current.Mode}|{ThemeManager.Current.Material}|{ThemeManager.Current.Accent}|dark={ThemeManager.IsDark}");
                 ExitApp(); return;
             }
+            if(demo && e.Args.Contains("--verify-view-load"))
+            {
+                window.UpdateLayout();
+                File.WriteAllText(Path.Combine(dataDir,"view-loaded.txt"),$"{window.SidebarColumn.ActualWidth}|{window.Timeline.Mode}|{window.SidebarToggle.ToolTip}");
+                File.WriteAllText(Path.Combine(dataDir,"temporary-loaded.txt"),window.PreferredTemporaryMinutes.ToString());
+                ExitApp(); return;
+            }
             if(Option("--capture") is { } capture && demo)
             {
                 var timer=new DispatcherTimer {Interval=TimeSpan.FromMilliseconds(650)};
                 timer.Tick+=async (_,_)=> {
                     timer.Stop();
-                    try { await window.PreparePolishCaptureAsync(capture); window.Capture(capture); await window.VerifyAiUiAsync(capture); }
+                    try
+                    {
+                        var dayOnly=e.Args.Contains("--day-only");
+                        if(!dayOnly)await window.PreparePolishCaptureAsync(capture);
+                        window.Capture(capture,dayOnly);
+                        if(!dayOnly)await window.VerifyAiUiAsync(capture);
+                        await window.VerifyAudioPipelineAsync(capture);
+                        if(!dayOnly)await window.VerifyEmailPipelineAsync(capture);
+                    }
                     catch(Exception ex) { Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(capture))!); File.WriteAllText(Path.ChangeExtension(capture,"error.txt"),ex.ToString()); }
                     finally { window.CloseTransientViews(); ExitApp(); }
                 }; timer.Start();
@@ -76,7 +91,7 @@ public partial class App : Application
         }
     }
 
-    internal void ExitApp() { Exiting=true; Shutdown(); }
+    internal void ExitApp() { if(MainWindow is MainWindow { HistoryBusy: true } busy) { busy.Reveal(); return; } Exiting=true; Shutdown(); }
 
     private async System.Threading.Tasks.Task VerifyFlowAsync(MainWindow window,string dataDir)
     {
@@ -105,6 +120,17 @@ public partial class App : Application
             lines.Add("PASS reveal restores window");
             window.VerifyViewFlow(); lines.Add("PASS history, metric, timeline and preference views");
             window.VerifyAppearanceFlow(); lines.Add("PASS theme controls, palette contrast and appearance persistence");
+            _tracker.BeginMaintenance();
+            var maintenanceAt=_db.GetDay(date,TimeZoneInfo.Local).Foreground;
+            var archive=TraceTime.Storage.UsageDatabase.CreateHistoryArchive(_db.FilePath,Path.Combine(dataDir,"flow-history.ttarchive"),TimeZoneInfo.Local);
+            _db.RestoreHistoryArchive(archive.Path,archive.Sha256,Path.Combine(dataDir,"flow-before.ttarchive"),date,TimeZoneInfo.Local);
+            await System.Threading.Tasks.Task.Delay(1400);
+            if(_db.GetDay(date,TimeZoneInfo.Local).Foreground!=maintenanceAt)throw new Exception("数据维护期间仍计入前台时长");
+            _tracker.EndMaintenance();await System.Threading.Tasks.Task.Delay(2200);_tracker.Flush();
+            if((_db.GetDay(date,TimeZoneInfo.Local).Foreground-maintenanceAt).TotalSeconds is <1 or >4)throw new Exception("维护后续记重复或未恢复");
+            _tracker.TogglePause();_tracker.BeginMaintenance();_tracker.EndMaintenance();
+            if(!_tracker.Paused)throw new Exception("维护改变了原有暂停选择");_tracker.TogglePause();
+            lines.Add("PASS live collector maintenance/restore excludes gap, resumes once and preserves prior pause; safety archive exists");
         }
         catch(Exception ex) { lines.Add("FAIL "+ex); }
         finally { File.WriteAllLines(Path.Combine(dataDir,"flow-result.txt"),lines); ExitApp(); }

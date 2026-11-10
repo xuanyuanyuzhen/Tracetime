@@ -1,9 +1,10 @@
-param([switch]$AppearanceOnly)
+param([switch]$AppearanceOnly, [string]$ReleaseRoot = 'artifacts\release')
 $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path $PSScriptRoot -Parent
 $taskProject = [xml](Get-Content -LiteralPath (Join-Path $taskRoot 'src\TraceTime.App\TraceTime.App.csproj'))
 $taskVersion = $taskProject.Project.PropertyGroup.Version
-$taskExe = Join-Path $taskRoot "artifacts\release\TraceTime-$taskVersion-win-x64\TraceTime.exe"
+$taskReleaseRoot = if ([System.IO.Path]::IsPathRooted($ReleaseRoot)) { $ReleaseRoot } else { Join-Path $taskRoot $ReleaseRoot }
+$taskExe = Join-Path $taskReleaseRoot "TraceTime-$taskVersion-win-x64\TraceTime.exe"
 if (!(Test-Path -LiteralPath $taskExe)) { throw '请先生成发布包。' }
 # Use the system-installed runtime, not the development SDK runtime.
 Remove-Item Env:DOTNET_ROOT -ErrorAction SilentlyContinue
@@ -38,6 +39,12 @@ Get-Content -LiteralPath (Join-Path $taskQa 'overview.checks.txt')
 Get-Content -LiteralPath (Join-Path $taskQa 'overview.features.txt')
 Get-Content -LiteralPath (Join-Path $taskQa 'overview.ai-flow.txt')
 Get-Content -LiteralPath (Join-Path $taskQa 'overview.polish.txt')
+Get-Content -LiteralPath (Join-Path $taskQa 'overview.day-sound.txt')
+Get-Content -LiteralPath (Join-Path $taskQa 'overview.audio-flow.txt')
+Get-Content -LiteralPath (Join-Path $taskQa 'overview.navigation.txt')
+Get-Content -LiteralPath (Join-Path $taskQa 'overview.limit-options.txt')
+Get-Content -LiteralPath (Join-Path $taskQa 'overview.email-flow.txt')
+Get-Content -LiteralPath (Join-Path $taskQa 'overview.history-quick.txt')
 'PASS published app works with the system .NET runtime; demo captures created'
 
 # Restart with a saved choice, then check that the launched UI actually uses it.
@@ -49,4 +56,13 @@ if ((Get-Content -LiteralPath (Join-Path $taskAppearance 'appearance-loaded.txt'
 Invoke-ReleaseCheck @('--demo', '--data-dir', $taskAppearance, '--verify-appearance-load')
 if ((Get-Content -LiteralPath (Join-Path $taskAppearance 'appearance-loaded.txt') -Raw).Trim() -ne 'dark|minimal|#7956B3|dark=True') { throw '重新启动没有恢复已选外观。' }
 'PASS first launch follows system with glass; restart restores saved dark/minimal/custom color'
+Invoke-ReleaseCheck @('--demo', '--data-dir', $taskAppearance, '--verify-view-load')
+if ((Get-Content -LiteralPath (Join-Path $taskAppearance 'view-loaded.txt') -Raw).Trim() -ne '200|bar|收起侧边栏') { throw '首次导航默认状态不正确。' }
+if ((Get-Content -LiteralPath (Join-Path $taskAppearance 'temporary-loaded.txt') -Raw).Trim() -ne '10') { throw '旧配置缺省临时分钟错误。' }
+@{ SidebarCollapsed = $true; DayChart = 'ring'; TemporaryMinutes = 25 } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $taskAppearance 'view-preferences.json') -Encoding utf8
+Invoke-ReleaseCheck @('--demo', '--data-dir', $taskAppearance, '--verify-view-load')
+if ((Get-Content -LiteralPath (Join-Path $taskAppearance 'view-loaded.txt') -Raw).Trim() -ne '72|ring|展开侧边栏') { throw '重启没有恢复图标侧栏和环图选择。' }
+'PASS new process restores collapsed sidebar and selected chart'
+if ((Get-Content -LiteralPath (Join-Path $taskAppearance 'temporary-loaded.txt') -Raw).Trim() -ne '25') { throw '新进程未恢复常用临时分钟。' }
+'PASS default and preferred temporary minutes restore in a new process'
 Write-Output "验证目录：$taskQa"

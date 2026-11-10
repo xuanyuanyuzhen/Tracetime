@@ -42,7 +42,9 @@ public partial class MainWindow
         Check(reminder.SnoozeButton.ActualHeight>0 && reminder.ConfirmButton.ActualHeight>0,"提醒按钮未布局");
         saveElement((FrameworkElement)reminder.Content,Image("reminder-medium"));
         reminder.SnoozeButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-        Check(_limitAlert is null && _db.LoadLimitDay(rule,day).NextSeconds>rule.Minutes*60,"延后状态未保存");
+        var temporary = _db.LoadLimitDay(rule,day);
+        var currentForeground = LimitPolicy.Seconds(_db.GetDay(day,TimeZoneInfo.Local).Apps.FirstOrDefault(x=>x.App.Key==rule.AppKey),UsageMetric.Foreground);
+        Check(_limitAlert is null && temporary.TemporaryUntilForeground == currentForeground + 600,"前台临时使用额度未保存");
         // Severe window is inspected without triggering focus theft during automated QA.
         var severe=new LimitReminderWindow(selected.Name,rule with {Level=ReminderLevel.Severe},3700) {ShowActivated=false};
         severe.Show(); severe.UpdateLayout();

@@ -1,0 +1,18 @@
+<Window x:Class="TraceTime.App.ReminderEffectsWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="提醒预览与音效 · TraceTime" Width="630" Height="690" MinWidth="540" MinHeight="490" Style="{StaticResource {x:Type Window}}" WindowStartupLocation="CenterOwner">
+ <Border Background="{DynamicResource Canvas}" Padding="26"><Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+  <StackPanel Margin="0,0,0,18"><TextBlock Text="提醒预览与音效" FontSize="24" FontWeight="SemiBold"/><TextBlock Text="按强度分别设置；预览不会保存额度、扣减时间或修改今日提醒状态。" Style="{StaticResource Hint}" Margin="0,8,0,0"/></StackPanel>
+  <ScrollViewer x:Name="EffectsScroller" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,8,0"><StackPanel>
+   <UniformGrid Columns="3" Margin="0,0,0,16"><RadioButton x:Name="LightTab" Content="轻度" Tag="Light" GroupName="PreviewLevel" Style="{StaticResource Choice}" Checked="LevelChanged"/><RadioButton x:Name="MediumTab" Content="中度" Tag="Medium" GroupName="PreviewLevel" Style="{StaticResource Choice}" Checked="LevelChanged"/><RadioButton x:Name="SevereTab" Content="严重" Tag="Severe" GroupName="PreviewLevel" Style="{StaticResource Choice}" Checked="LevelChanged"/></UniformGrid>
+   <Border Background="{DynamicResource AccentSoft}" CornerRadius="10" Padding="16" Margin="0,0,0,20"><TextBlock x:Name="EffectDescription" TextWrapping="Wrap"/></Border>
+   <TextBlock Text="提示音" FontWeight="SemiBold" Margin="0,0,0,8"/><ComboBox x:Name="SoundPicker" SelectedValuePath="Kind" MinHeight="40" SelectionChanged="SoundChanged" AutomationProperties.Name="提示音类型"><ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Name}"/></DataTemplate></ComboBox.ItemTemplate></ComboBox>
+   <WrapPanel Margin="0,12,0,0"><Button x:Name="ChooseFileButton" Content="选择自定义 WAV…" Click="ChooseFile"/><TextBlock x:Name="CustomStatus" Style="{StaticResource Hint}" VerticalAlignment="Center" Margin="12,0,0,0"/></WrapPanel>
+   <TextBlock Text="支持本地 PCM WAV（8/16 位，单/双声道），最长10秒、不超过2MB。保存时复制到数据目录，原文件移动后仍可播放。" Style="{StaticResource Hint}" Margin="0,9,0,18"/>
+   <DockPanel><TextBlock Text="音量" FontWeight="SemiBold"/><TextBlock x:Name="VolumeLabel" HorizontalAlignment="Right" Foreground="{DynamicResource Muted}"/></DockPanel>
+   <Slider x:Name="VolumeSlider" Minimum="0" Maximum="100" Value="60" TickFrequency="10" IsSnapToTickEnabled="True" ValueChanged="VolumeChanged" Margin="0,12,0,5" AutomationProperties.Name="提示音音量百分比"/>
+   <TextBlock x:Name="VolumeHint" Style="{StaticResource Hint}" Margin="0,0,0,18"/>
+   <WrapPanel><Button x:Name="ListenButton" Content="试听声音" Click="Listen"/><Button x:Name="StopButton" Content="停止声音" Click="Stop" Margin="8,0,0,0"/><Button x:Name="PreviewButton" Content="预览此档效果" Click="Preview" Margin="8,0,0,0"/></WrapPanel>
+   <TextBlock Text="效果预览会按当前档位显示通知或弹窗，并播放所选声音。严重档会请求置前；系统静音、免打扰或焦点规则仍可能影响呈现。" Style="{StaticResource Hint}" Margin="0,12,0,10"/>
+  </StackPanel></ScrollViewer>
+  <StackPanel Grid.Row="2" Margin="0,16,0,0"><TextBlock x:Name="Feedback" Foreground="{DynamicResource Warning}" TextWrapping="Wrap" Margin="0,0,0,12" AutomationProperties.LiveSetting="Polite"/><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="恢复默认" Click="Reset"/><Button Content="取消" IsCancel="True" Click="Cancel" Margin="8,0,0,0"/><Button x:Name="SaveButton" Content="保存音效设置" Style="{StaticResource PrimaryButton}" Click="Save" Margin="8,0,0,0"/></StackPanel></StackPanel>
+ </Grid></Border>
+</Window>
