@@ -10,7 +10,8 @@
 - 独立复核已检查五张浅/深/紧凑截图，发现轻度音效在无弹窗时关闭/静默未停止。统一关闭路径已直接停止音频；`build-0.8-reviewed.txt`重新构建0警告/错误并打包，最终包定向重验见 `breaks-reviewed/overview.break-reminders.txt` 与 `overview.break-audio-cancel.txt`。后者以假输出覆盖关闭保存、休息静默、全局静默、主动休息四个入口的正在播放/异步加载取消，不调用真实声卡。
 - 精选演示图为 `docs/screenshots/break-settings.png` 与 `break-reminder.png`。计时使用模拟单调时钟/状态事件，未锁屏、休眠或修改系统时间；未测新功能的物理鼠标/读屏、真实系统通知/声音/焦点、长期运行和全部DPI/多屏组合。下方0.7.1的物理输入检查仅覆盖当时的导航/图表范围。
 - 同一独立审查者在 `breaks-reviewed/independent-review.md` 给出唯一P2 resolved、remaining clear、disposition ship（仅本次修复复核）；五张确认图逐张查看。README再次经GitHub官方Markdown接口渲染成功，包含4张表、12张图片（含徽章）。
-- 0.7.1未单独公开，本次全部纳入0.8.0。ZIP逐文件一致性及公开下载回验状态持续记录于WORKLOG.md；不将尚未发布写为已发布。
+- 0.7.1未单独公开，本次全部纳入0.8.0。提交后从标签1d82a2a重建，使程序集版本元数据对应正式源码；构建0警告/错误，最终包 `breaks-tagged` 的休息与音效取消定向检查通过。`package-0.8-tagged.txt`确认69文件逐项SHA-256一致、41个包内文档链接有效。
+- GitHub Release v0.8.0已公开为Latest，ZIP与校验附件的长度/digest一致；`github-public-download-0.8.txt`实际未认证下载后核对通过。ZIP为20,844,078字节，SHA-256为 `bcdfeaaae3c79760ff57442c12806ff8e0af31f982954cf7395fb959874a895f`。这些发布后记录仅更新源码文档，不替换已发布附件或标签。
 
 ## 0.7.1 侧栏、图表与资源占用（2026-11-10）
 

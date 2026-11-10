@@ -70,7 +70,7 @@ components:
 
 # Design System: TraceTime 0.8
 
-更新日期：2026-11-10。0.8 已实现并验证，尚待发布；当前 GitHub 公开版本仍为0.7.0。
+更新日期：2026-11-10。0.8 已实现、验证并公开为GitHub Release v0.8.0；发布证据见WORKLOG.md。
 
 ## Overview
 
