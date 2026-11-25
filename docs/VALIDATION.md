@@ -1,6 +1,16 @@
 # TraceTime 验证记录
 
-最后更新：2026-11-25。平台：Windows 11 x64。
+最后更新：2026-11-26。平台：Windows 11 x64。
+
+## 0.8.3 正式发布回验（2026-11-26）
+
+- 发布源码为`fe429e607a37ca6a2b79dc72f6c434df02ad0831`，签注标签`v0.8.3`与远端提交一致。以下证据位于`artifacts/qa/release-0.8.3-20261125/`。
+- `build-tagged.txt`：从该提交锁定恢复并构建，0警告/错误，118/118场景通过；`version-verified.json`确认EXE文件版本`0.8.3.0`、产品版本`0.8.3+fe429e607a37ca6a2b79dc72f6c434df02ad0831`。
+- `verify-tagged.txt` / `artifacts/qa/release-0.8.3-af196781/`：正式包完整隔离回归通过，包含采集、单实例、主题与模拟功能、历史、提醒、配置重启和启动偏好验证。没有新增产品修改或重复性能测量。
+- `package-verified.json`核对53个ZIP文件逐项一致、59条包内本地链接有效且无用户数据库/配置/调试文件。ZIP为4,640,492字节，SHA-256为`eae7cb39a29a11f2ce5b8a1b11303c2389155a76b090057a2723502b2dadcb20`。
+- `release-published.json`和`release-latest-public.json`确认Release `458331577`已公开且为Latest；`public-download-verified.json`确认ZIP与95字节校验文件无登录下载HTTP 200，内容、大小和SHA-256与本地及GitHub digest一致，公开页面HTTP 200。首次发布HTTP 500后确认仍为草稿，再次请求成功；没有重复创建。
+- GitHub Actions配置存在且远端内容匹配，但工作流/运行/检查套件无记录，手动触发HTTP 502；最后`ci-runs-final.json`仍为0条。远端CI未验证，不将本地通过替代云端运行结果。
+- 正式包从`artifacts/release/github-v0.8.3`构建，ZIP和校验文件另同步到默认`artifacts/release`；用户运行目录未覆盖。发布后文档独立提交，不移动标签或更新已回验附件。长期常驻、真实重启/电源/网络与完整DPI矩阵仍不在本次证据范围。
 
 ## 0.8.3 版本与默认目录交付（2026-11-25）
 

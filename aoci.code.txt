@@ -7,11 +7,11 @@ AGENTS.md[SG9S]: F:约束项目接手、计时隐私边界及AOCI认知建立和
 DESIGN.md[SU7S]: F:归档当前WPF语义颜色、尺寸、组件和六页交互设计 | R:code:.impeccable/design.json,code:src/TraceTime.App/ThemeManager.cs,code:docs/overview-design.md | A:- | S:尺寸为DIP；色种不等于运行时画刷，当前主题以ThemeManager为准；历史验证不代表真实设备全覆盖
 Directory.Build.props[FV5T]: F:向各.NET项目提供可空检查、隐式引用、确定性构建和锁文件生成设置 | R:code:TraceTime.sln | A:Nullable,ImplicitUsings,LangVersion,Deterministic,RestorePackagesWithLockFile | S:生成锁文件不等于以locked-mode恢复依赖
 NuGet.Config[FV5T]: F:固定NuGet官方包源并将包缓存放入仓库内.packages | R:code:.gitignore,code:Directory.Build.props | A:packageSources,globalPackagesFolder | S:-
-PLAN.md[SG9M]: F:保存产品范围、双口径计时规则、版本演进与优化阶段验收约定 | R:code:PRODUCT.md,code:WORKLOG.md,code:docs/dev/PLAYBOOK-REVIEW.md,code:docs/dev/TIME-MODEL-ADR.md | A:- | S:顶部当前阶段优先，历史段落不覆盖新决定；首批切片不表示全部WS完成，UI替换、历史时区归属与双进程仍需对应决策
+PLAN.md[SG9M]: F:保存产品范围、双口径计时规则、版本演进与优化阶段验收约定 | R:code:PRODUCT.md,code:WORKLOG.md,code:docs/dev/PLAYBOOK-REVIEW.md,code:docs/dev/TIME-MODEL-ADR.md | A:- | S:顶部当前阶段优先，历史段落不覆盖新决定；首批发布不表示全部WS完成，本地验证不能代替远端CI；UI替换、历史时区归属与双进程仍需对应决策
 PRODUCT.md[SG8S]: F:定义Windows本地时长产品定位、用户可控功能和已确认交互承诺 | R:code:PLAN.md,code:DESIGN.md | A:- | S:AI需预览同意后手动发送，邮件是双开关启用后的事件发送；两者授权边界不可混用
 README.md[SG7M]: F:提供版本下载升级、功能隐私说明、锁定构建及验证状态入口 | R:code:docs/UPGRADING.md,code:docs/VALIDATION.md,code:scripts/build.ps1,code:docs/releases/v0.8.3.md | A:- | S:框架依赖包需要桌面运行时，关闭主窗仍记录；首批优化不等于全部Playbook完成，CI配置存在不等于远端运行通过
 TraceTime.sln[FV6T]: F:组织Core、Storage、WPF应用及场景测试的解决方案构建映射 | R:code:src/TraceTime.Core/TraceTime.Core.csproj,code:src/TraceTime.App/TraceTime.App.csproj,code:tests/TraceTime.Tests/TraceTime.Tests.csproj | A:Debug,Release | S:解决方案平台配置映射到Any CPU；发行目标以应用项目和发布脚本为准
-WORKLOG.md[SG8L]: F:记录任务现状、关键决策、文件变动、验证证据与后续接手入口 | R:code:PLAN.md,code:docs/VALIDATION.md,code:docs/dev/PLAYBOOK-REVIEW.md | A:- | S:顶部当前状态优先；历史待办和首轮失败不能当作当前待办或通过证据；分配下降不能写成常驻内存改善，未验证事项保持明确
+WORKLOG.md[SG8L]: F:记录任务现状、关键决策、文件变动、验证发布证据与后续接手入口 | R:code:PLAN.md,code:docs/VALIDATION.md,code:docs/dev/PLAYBOOK-REVIEW.md | A:- | S:顶部当前状态优先；历史待办和首轮失败不能当作当前待办或通过证据；分配下降不能写成常驻改善，公开发布不证明远端CI；发布后文档独立提交而不移动已验证标签
 global.json[FV5T]: F:选择.NET 10.0.402 SDK并允许同主次版本的最新功能带回退 | R:code:scripts/setup-dotnet.ps1 | A:sdk.version,sdk.rollForward | S:-
 
 ===E:/AI_Code/Tracetime/.impeccable/===
@@ -26,13 +26,13 @@ LIMITS-AND-ANALYSIS.md[SU6T]: F:说明应用额度、本地分析、AI配置与�
 PERFORMANCE.md[SP7S]: F:记录提醒纯汇总与历史轻量化的测量方法、对照数据和收益边界 | R:code:scripts/measure-resources.ps1,code:tests/TraceTime.Tests/PerformanceTests.cs | A:- | S:90天合成读路径分配下降不等于进程占用下降；10秒对照未呈一致CPU或驻留改善，不证明长期无泄漏
 REMINDERS-AND-ROADMAP.md[SB6T]: F:说明再进入提醒、提前临时使用、SMTP行为及待评估的轻量化和移动端方向 | R:code:src/TraceTime.Core/UsageLimits.cs,code:src/TraceTime.App/ReminderEmailService.cs | A:- | S:邮件仅支持STARTTLS且失败不自动重试；手机端仅为可行性讨论，不能标成已实现
 UPGRADING.md[SV7T]: F:区分旧版手动修复与0.8.2自动接续启动项的升级步骤 | R:code:src/TraceTime.App/Windows/StartupPreferences.cs,code:src/TraceTime.App/Windows/StartupRegistration.cs | A:- | S:需先退出旧托盘实例；未开启及Windows禁用状态保持不动，数据目录不随EXE迁移
-VALIDATION.md[SQ8S]: F:归档版本元数据、时间边界、纯汇总及历次隔离发布验证证据和限制 | R:code:WORKLOG.md,code:scripts/verify-release.ps1,code:tests/TraceTime.Tests/Program.cs | A:- | S:118场景和本地包通过不证明远端CI或真实电源网络行为；保留首轮失败与复验区别，自包含构建不等于重跑该包全套WPF验证
+VALIDATION.md[SQ8S]: F:归档版本元数据、确定性场景、隔离包及公开下载回验的证据和限制 | R:code:WORKLOG.md,code:scripts/verify-release.ps1,code:tests/TraceTime.Tests/Program.cs | A:- | S:118场景、本地包和公开下载通过不证明远端CI或真实电源网络行为；保留首轮失败与复验区别，自包含构建不等于重跑该包全套WPF验证
 design-v0.1.md[SU3M]: F:保存0.1版WPF浅色双页界面的视觉和交互历史快照 | R:code:DESIGN.md | A:- | S:历史快照不能覆盖当前主题与导航约定
 overview-design.md[SU6T]: F:记录概览到额度、休息、分析及历史管理的用户流程和设计方向 | R:code:DESIGN.md,code:PRODUCT.md | A:- | S:保留原生WPF语义和完整时间片；演示截图只代表视口与对应验证范围
 
 ===E:/AI_Code/Tracetime/docs/dev/===
 AOCI.md[SQ6T]: F:记录AOCI本机接入、完整索引与增量覆盖证据及日常维护入口 | R:code:AGENTS.md,code:WORKLOG.md | A:- | S:文本覆盖不含二进制截图；机器配置不跨机提交，源码索引不连接用户库；路径存在不等于关系语义正确，索引检查不替代产品测试
-PLAYBOOK-REVIEW.md[SG7T]: F:核实外部Playbook假设并按WS记录首批发布完成矩阵与后续决策 | R:code:PLAN.md,code:docs/PERFORMANCE.md,code:docs/dev/TIME-MODEL-ADR.md | A:- | S:历史只读和索引未建不代表当前；首批完成不等于WS全验收，纯汇总仍查询区间，历史时区与完整UI和双进程仍待决策
+PLAYBOOK-REVIEW.md[SG7T]: F:核实外部Playbook假设并按WS记录首批发布完成矩阵与后续决策 | R:code:PLAN.md,code:docs/PERFORMANCE.md,code:docs/dev/TIME-MODEL-ADR.md | A:- | S:历史只读和索引未建不代表当前；首批发布不等于WS全验收或云端CI通过，纯汇总仍查询区间；历史时区、完整UI与双进程仍待决策
 TIME-MODEL-ADR.md[SB8T]: F:记录UTC锚点与单调计时、时区分日及回拨异常的现状和未决语义 | R:code:src/TraceTime.Core/TrackingEngine.cs,code:src/TraceTime.Core/ReportBuilder.cs,code:tests/TraceTime.Tests/TimeBoundaryTests.cs | A:- | S:大幅回拨的新旧Scope可在墙钟上重叠，累计总量与规整时间轴可不同；测试仅刻画现状，不能直接去重或声称历史归属已解决
 
 ===E:/AI_Code/Tracetime/docs/releases/===
@@ -41,7 +41,7 @@ v0.7.1.md[SV3T]: F:记录饼图、秒级提示和自身资源显示的本地版�
 v0.8.0.md[SV3T]: F:记录休息提醒首发及合入0.7.1的公开版本说明 | R:code:docs/BREAK-REMINDERS.md | A:- | S:连续用机进度不跨进程保存
 v0.8.1.md[SV3T]: F:记录延迟加载、隐藏停止刷新和包体瘦身的发布说明 | R:code:docs/PERFORMANCE.md | A:- | S:短测数据不是固定资源占用承诺
 v0.8.2.md[SV5T]: F:记录已启用启动项在升级后自动接续的修复与升级方式 | R:code:docs/UPGRADING.md,code:docs/releases/v0.8.3.md | A:- | S:未单独公开，改进合入0.8.3；不自动开启原先关闭的启动项
-v0.8.3.md[SV5T]: F:说明提醒汇总与启动项接续的版本范围、升级方式和验证边界 | R:code:docs/PERFORMANCE.md,code:docs/VALIDATION.md,code:docs/UPGRADING.md | A:- | S:首批发布不表示完整Playbook完成；分配减少不表示常驻改善，墙钟回拨重叠仍未修复
+v0.8.3.md[SV5T]: F:说明提醒汇总与启动项接续的发布范围、交付方式和验证边界 | R:code:docs/PERFORMANCE.md,code:docs/VALIDATION.md,code:docs/UPGRADING.md | A:- | S:首批发布不表示完整Playbook或远端CI通过；分配减少不表示常驻改善，墙钟回拨重叠仍未修复
 
 ===E:/AI_Code/Tracetime/scripts/===
 build.ps1[OV8T]: F:执行锁定恢复、Release构建、场景验证与Windows包和校验和生成 | R:code:TraceTime.sln,code:src/TraceTime.App/TraceTime.App.csproj,code:scripts/verify-release.ps1 | A:Test,Publish,SelfContained,Offline,UpdateLockFile,ReleaseRoot | S:默认locked-mode，UpdateLockFile显式重算且不能与Offline组合；run和publish禁隐式恢复，自包含沿用App声明RID避免污染Core锁目标；清旧runtimes先验证边界和SQLite库
