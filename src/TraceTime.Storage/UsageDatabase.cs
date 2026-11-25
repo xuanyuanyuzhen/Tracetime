@@ -65,6 +65,13 @@ public sealed partial class UsageDatabase : ITrackingSink, IDisposable
         return ReportBuilder.Build(date, zone, ReadUsage(a, b), ReadIdle(a, b), ReadGaps(a, b));
     }
 
+    /// <summary>Fresh application totals, without reading gaps or constructing a timeline. No cache.</summary>
+    public DayReport GetDaySummary(DateOnly date, TimeZoneInfo zone)
+    {
+        var (a, b) = ReportBuilder.Bounds(date, zone);
+        return ReportBuilder.BuildSummary(date, zone, ReadUsage(a, b), ReadIdle(a, b));
+    }
+
     public List<UsageSegment> ReadUsage(DateTimeOffset a, DateTimeOffset b, SqliteTransaction? transaction = null, bool boundaryOnly = false)
     {
         using var cmd = Command("SELECT id,scope,app_key,name,path,start_ticks,end_ticks,threshold_ms FROM usage WHERE end_ticks>$a AND start_ticks<$b" + (boundaryOnly ? " AND (start_ticks<$a OR end_ticks>$b)" : "") + " ORDER BY start_ticks", transaction, ("$a", a.UtcTicks), ("$b", b.UtcTicks));

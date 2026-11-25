@@ -1,0 +1,67 @@
+name: Windows build and scenarios
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      verify_ui:
+        description: Run isolated WPF package checks (hosted desktop validation)
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+      NUGET_PACKAGES: ${{ github.workspace }}/.packages
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+      - name: Locked restore, build, scenarios and portable package
+        run: ./scripts/build.ps1 -Test -Publish -ReleaseRoot artifacts/release/ci
+      - name: Verify lock files are unchanged
+        run: git diff --exit-code -- ':(glob)**/packages.lock.json'
+      - name: Isolated WPF package checks
+        if: github.event_name == 'workflow_dispatch' && inputs.verify_ui
+        run: ./scripts/verify-release.ps1 -ReleaseRoot artifacts/release/ci
+      - name: Upload package
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: windows-x64-portable
+          path: |
+            artifacts/release/ci/*.zip
+            artifacts/release/ci/*.sha256
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload isolated verification evidence
+        if: always() && github.event_name == 'workflow_dispatch' && inputs.verify_ui
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: isolated-ui-evidence
+          path: |
+            artifacts/qa/release-*/*.txt
+            artifacts/qa/release-*/*.png
+          if-no-files-found: warn
+          retention-days: 7

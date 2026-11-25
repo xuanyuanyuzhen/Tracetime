@@ -1,6 +1,108 @@
 # TraceTime 工作记录
 
-最后更新：2026-11-10
+最后更新：2026-11-25
+
+## 本轮任务 · 0.8.3复核、提交与公开发布（进行中）
+
+- 用户明确要求重新核对先前Playbook对应修改，完成后提交到仓库并发布新Release；后续追加在`E:/aoci`编写供其他工作区Agent复用的通用接入文档。该最新授权覆盖本轮提交、推送与发布，附件中禁止发布的历史执行建议不覆盖用户请求。
+- 已读WORKLOG、PLAN、原Playbook与评估报告。复核范围为既有0.8.3首批切片，不宣称整份WS0–WS8已完成；UI替换、身份别名、安装器/签名、快照、双进程等仍属后续阶段。
+- 当前正在检查实际差异、构建与性能证据、远端状态和发布配置；下一步同步准确的完成矩阵与README/版本说明，提交后从对应提交构建并隔离验证，再上传ZIP/校验文件并核对公开下载。保留用户运行实例和数据，不自动启用启动项。
+- 复核完成：ReportBuilder共享双口径聚合，GetDaySummary跳过gaps与时间线，CheckLimits在Flush成功后读取；6组时间与4组汇总场景证据完整。90天基准分配减少21.8%，短测未证明常驻占用改善；原Playbook未完成部分已逐WS列于PLAYBOOK-REVIEW。未发现本版新增发布阻断，历史回拨重叠继续明确披露。
+- 远端main与本地HEAD一致，当前公开版为v0.8.1，v0.8.3尚不存在；API确认仓库push权限。CI三个固定Action提交可从官方仓库解析。README/0.8.3说明已按本次发布内容更新；用户正在运行默认目录0.8.3，因此正式构建使用`artifacts/release/github-v0.8.3`，不覆盖或结束现有进程。
+- 已创建通用本机接入文档`E:/aoci/README.md`，按已安装0.1.1帮助及MCP合同核对init/范围/doctor/Guide/完整索引/压缩恢复/增量维护；包含可复制的Agent启动句。它属于本机AOCI目录，不加入TraceTime发布包或Git提交，没有对其他真实工作区自动初始化。
+- 下一步：维护当前文档索引并提交已复核的源码/文档/AOCI资产，从该提交构建验证并推送，等待远端CI后发布附件。最终远端证据将保存在`artifacts/qa/release-0.8.3-20261125/`；当前尚未发布。
+
+## 本轮任务 · 0.8.3版本与交付目录修正（本地交付完成）
+
+- 用户指出上一轮优化包仍使用0.8.2，要求直接与旧版放在同一目录。本轮将源码版本与侧栏标识同步为0.8.3，使用默认`artifacts/release`输出，不再放入优化子目录；保留历史版本。
+- 已恢复AOCI完整认知134条、3块、Challenge 10/10通过；阅读WORKLOG、PLAN及构建/验证脚本，原有未提交修改保留。修改前哈希见`artifacts/qa/version-0.8.3-20261125/workspace-before.json`。
+- 当前：版本标识、默认目录交付、118项场景、隔离发布包、校验和及索引维护已完成。下列逐步记录保留验证过程；最终状态以本条及机器证据为准。下一步由用户从旧版托盘退出后启动0.8.3。
+- 源码版本与侧栏已统一为0.8.3，README/PLAN和新增`docs/releases/v0.8.3.md`已同步。`build-publish.txt`锁定恢复、Release构建和118/118场景通过，默认目录已生成0.8.3目录、ZIP和校验文件；下一步验证该包的实际运行、程序集版本与包内容。
+- 隔离发布包全流程通过：`verify-release.txt` / `release-0.8.3-bf55ff1f`，真实包截图侧栏已查看为0.8.3；`versions.json`确认EXE/DLL文件及程序集版本0.8.3.0。更新VALIDATION后只同步包内文档再压缩，二进制保持已测版本；下一步校验包、保留原有文件并完成AOCI收尾。
+- `package-check.json`已通过：53个包文件逐项哈希一致，59条本地Markdown链接有效，已测二进制、4份锁文件、HEAD及154个范围外文件保持不变。ZIP为4,640,175字节，SHA-256为`d937506e4837792408aed519e0c20b34943cb5ac7c68c1369e12524309f01c22`；EXE、ZIP及校验文件均在默认发布根目录。当前仅剩AOCI维护及Verify→Check→Guide，不再修改产品或包内容。
+- AOCI本轮7项完整批次已应用，正式索引135条；`aoci-verify.json`结构有效且治理对齐，`aoci-check.json`为ok，`aoci-guide.json`为complete=true/next_action=none。此完成记录再做文档基线维护，最终机器证明另存`aoci-*-final.json`。无剩余产品修改或公开发布步骤；未提交、推送或更改真实启动设置。
+
+## 本轮任务 · Playbook 首批优化（本地交付完成）
+
+- 用户已要求按先前优化文档开始修改；本轮从评估报告推荐的三项就绪切片执行：WS1锁定恢复/Windows CI，WS2模拟时间边界与ADR，WS4提醒纯汇总读路径及90天合成数据测量。沿用既有双口径、UTC/单调时钟与本地隐私约定。
+- 已读WORKLOG、PLAN、原Playbook和PLAYBOOK-REVIEW；AOCI完整交付129条、3块，Challenge 9/10通过且治理对齐。现有0.8.2及AOCI未提交内容已记录于`artifacts/qa/optimization-20261125/workspace-before.json`，修改时保留。
+- 验收：锁定恢复不改锁文件、全部确定性场景通过、汇总与完整报告逐tick一致、合成数据时间/分配对照、隔离发布包回归、文档与AOCI收尾。CI远端运行和真实长期资源结果不能用本地通过替代。
+- 当前首批实现、功能/性能验证、交付包与AOCI增量维护已完成。历史时区归属、UI功能删改、安装签名、自动快照默认值及双进程仍留在对应决策关卡；不由附件自动授权对外PR、发布或仓库设置操作。
+- WS1本地恢复验证完成：`scripts/build.ps1`默认locked-mode，显式`-UpdateLockFile`才重新求解依赖，run/publish禁隐式restore；新增Windows CI和Dependabot配置。首次失败是PowerShell单值数组展开为字符串字符，已用string[]修正，`locked-test-fixed.txt`为108/108通过；远端CI尚未运行。
+- WS2/WS4已加入确定性时间场景、共享聚合的BuildSummary/GetDaySummary和CheckLimits接入。首轮编译暴露测试误用ActivitySlice属性名，改为既有Active；尚待完整复验。性能与新场景通过后再同步完成状态。
+- WS2/WS4复验通过：`build-publish.txt`118/118，新增6组时间边界与4组汇总场景；`TIME-MODEL-ADR.md`明确回拨后的墙钟重叠仍未解决。90天查询对照每种30次，分配2752403→2152859字节（约-22%），中位39.38→37.88ms而p95变差，不宣称稳定提速。无schema、缓存或采样频率改变。
+- 隔离包完整验证通过：`verify-release.txt` / `release-0.8.2-1196d37e`；共享提醒读取入口在隐藏窗口仍返回等价总量且无时间线，演示不证明真实投递。四份锁文件哈希不变。自包含首轮全局-r造成NU1004，已改用App既有RID，正在验证该分支与进程资源；远端CI未执行。
+- 初轮进程资源测量与包验证/构建重叠，仅保留诊断数据，最终对照须在这些任务完成后单独顺序重测。下一步同步最终性能表、包文档与校验和，完成AOCI增量维护及Verify→Check→Guide。
+- 最终12组资源对照已单独顺序完成，`resource-comparison.json`及PERFORMANCE保留全部CPU/工作集/私有内存与逻辑I/O。未得到一致的进程占用改善，不从单行数字推导收益；本轮结论限定为汇总等价与分配减少。自包含构建已通过，未再跑该包的全套WPF流程。时间回退夹具进一步隔离单调回退条件，最终118项复验结果以`scenarios-final.txt`为准。
+- 最终锁定构建与118/118复验已通过；仅同步已验证包的README/验证/性能文档后重压缩，`package-and-preservation-check.json`确认52文件、54本地链接、二进制未变、四锁文件未变且原有无关文件哈希保持。ZIP为4638686字节，SHA256 `85e60fb1cd205082325791b3630a66af332c2dcf818f0b7d7b97e5ad092b68cb`；入口`artifacts/release/optimization-20261125/TraceTime-0.8.2-win-x64/TraceTime.exe`。包装核对脚本初次因with_suffix误解版本目录失败，改为拼接.zip后通过。
+- 业务与文档已稳定，下一步只做AOCI增量维护和机器对齐证明。恢复入口继续复用WORKLOG→PLAN→PLAYBOOK-REVIEW与时间ADR；后续优先独立的应用身份别名/查询映射设计，完整UI、时区历史归属、安装/签名、快照和双进程仍保留决策边界。本轮无提交、推送或公开发布。
+- AOCI本轮19个变更对象按机器批次15+4写入，索引增至134条；`aoci-verify.json`结构有效且治理对齐，`aoci-check.json`ok/规模134项无不匹配，`aoci-guide.json`为complete=true/next_action=none。此最终完成记录及AOCI说明更新再做文档收尾维护，最终机器证明为`aoci-*-final.json`；本地交付无剩余产品修改，远端CI和长期真实资源验收仍未运行。
+
+## 本轮任务 · 构建首次 AOCI 完整索引（已完成）
+
+- 用户已要求继续构建。项目 MCP 工具现已加载；已先读 WORKLOG/PLAN，并获取当前 `aoci_rules` 与 Guide。Guide 为 `authoring_required`，129 个唯一创作目标，包含两份新增开发文档；不能把 133 个治理发现当作文件数。
+- 按实时 Guide 领取完整批次，逐项阅读真实文件后由模型编写标签与 F/R/A/S，使用工具绑定的哈希及候选身份提交。保留现有 0.8.2 未提交产品修改，不改产品代码或用户数据。
+- 首批完成时：26条原子写入，剩余103个目标；下列记录保留各批次历史。当前完整状态见本节末尾，不能将中途未对齐状态当作当前状态。
+- 第二批完成：24 项（含 WORKLOG 增量更新）原子写入，正式条目累计 49，剩余 80；覆盖版本文档、构建/验证脚本、应用启动及配置/图表基础。已逐项读源码，未改产品文件。后续复核关系路径并继续主窗口模块；日志更新本身将在下一批同步。
+- 第三批完成：22 项写入，累计 70 条，剩余 59；覆盖主窗口分析、历史维护、提醒协调、导航与对应隔离验证。已记录AI授权失效、恢复安全备份、提醒互斥和模拟验证边界；下一步补齐Windows适配、核心计时、存储及场景测试，最终检查关系路径。
+- 第四批完成：23 项写入，累计 92 条，剩余 37；补齐主窗生命周期、动态主题、音频、邮件服务和Windows适配。关键约束包括1秒兜底/事件采样、启动项原命令回滚、隐藏视图不停止提醒、音频代次取消。下一步为核心算法、SQLite与测试。
+- 第五批完成：23 项写入，累计 114 条，剩余 15；核心计时、日边界与空闲交集、全天重叠裁切、提醒状态机、AI载荷及归档恢复均已按实现写入。当前仍未aligned，下一步完成余下存储和测试条目并验证。
+- 第六批完成：16项（含WORKLOG更新）原子写入，累计129条，剩余0；存储、锁文件及全部场景测试文件已覆盖。Verify结构有效、规模129/129匹配，Check为ok，Guide为complete=true/next_action=none，证据为QA目录的`index-*-initial.json`。
+- 引用复核完成：260条关系中发现5处错误文件名，实际读取源文件及目标后，通过cognition_optimization完整批次修正AnalysisPieChart、App入口、邮件配置窗口/设置、HoverChart条目；同步澄清邮件配置只校验参数、不试连。再次Verify→Check→Guide通过，证据`index-*-relations.json`，引用检查`index-relation-audit.json`无缺失。
+- 当前范围：129/129可索引文本对象，26张二进制截图技术跳过；未连接或读取用户SQLite记录。`index-workspace-check.json`确认148个原有产品/测试/脚本等文件哈希未变，HEAD仍为1b1505d，diff空白检查通过。此前108/108及隔离包结果沿用，没有为文档修改重复运行产品测试。
+- 收尾完成：`docs/dev/AOCI.md`、PLAN和WORKLOG已同步并整批维护，Verify→Check→Guide再次通过，`index-*-final.json`记录结构有效、治理对齐、complete=true/next_action=none；无剩余索引创作或恢复问题。此完成记录也纳入最终基线维护，最终检查文件保留最新结果。后续业务方向仍见PLAYBOOK-REVIEW，本轮未提交、推送或发布。
+
+## 前一阶段 · AOCI 工作区接入与 Playbook 可行性核实（历史记录，索引已于上节续建）
+
+- 用户要求查看 aoci-spec/aoci-code、使用 E 盘已有 AOCI 为本工作区接入，并结合下载目录的 TraceTime-Agent-Playbook.md 判断后续优化。当前范围为工具接入与基于代码的评估，不把附件中的全部改造、PR 或发布命令当作本轮实施授权。
+- 已先读 WORKLOG、PLAN 和项目 AGENTS。基线 HEAD 为 `1b1505d`，工作树含上一轮 0.8.2 未提交改动；已在 `artifacts/qa/aoci-20261125/workspace-before.json` 保存文件哈希与状态，保留这些改动。
+- 本机二进制 `E:\aoci\aoci_0.1.1_windows_amd64\aoci.exe` 报告 0.1.1 / `a9b803f`。已完成官方校验清单核对、项目级 init/scan/doctor、Codex 配置读取与独立 MCP 握手；Playbook 的 11 项假设、108 项场景和隔离发布包回归均已核实。
+- 当前未修改产品代码，尚未完成 AOCI 语义索引或宣称 WS0 全部验收。接入说明在 `docs/dev/AOCI.md`，评估在 `docs/dev/PLAYBOOK-REVIEW.md`；PLAN 已链接。下一步：重载本项目 Codex 会话后按实时 Guide 完成首次索引，再选择评估报告中的实施切片。
+
+### 2026-11-25 · 评估与本轮验证完成
+
+- 独立 stdio MCP 初始化/工具枚举成功，返回 `aoci-code 0.1.1` 和 9 个工具；诊断进程正常结束，证据 `mcp-handshake.json`。这不等于当前聊天已加载 MCP，实际工具列表仍无 `aoci_*`。
+- `build-publish.txt` 在 `artifacts/release/aoci-review-20261125` 生成隔离包；`verify-release.txt` / `release-0.8.2-596557e0` 完整通过采集、单实例、主题、模拟功能、历史、休息、性能行为和重启配置/启动项验证。本轮没有发布新版本或替换旧包。
+- `PLAYBOOK-REVIEW.md` 完成 11 项核实和 WS0–WS8 修订建议：先 CI/锁定恢复、模拟时间边界回归、提醒汇总读路径试点。现有 UTC、单调时钟、窗口事件、UWP 子窗口解析和约 5 秒检查点无需重做；历史时区语义、完整 UI、双进程、安装签名与快照默认值仍是后续决策。
+- `workspace-check.json` 确认此前所有产品源码/测试/脚本及 README/PRODUCT/VALIDATION 字节原样保留。本轮已有文件只改 `.gitignore`、`AGENTS.md`、`PLAN.md`、`WORKLOG.md`，新增 AOCI 正式资产和两份开发说明；相对文档链接、diff 空白检查通过。init 的原 AGENTS 备份移入本轮 QA 目录保留。
+- 本轮没有重做完整 DPI/明暗截图矩阵、90 天性能基线、长期常驻或真实重启。未读写默认用户数据库、未改启动项、未停止用户实例、未提交/推送/公开 Release。
+- 接续入口复用本 WORKLOG、PLAN 及 `docs/dev/AOCI.md`。首次 scan 的 127 个语义目标仍未编写；两份新增文档和 PLAN/WORKLOG 的修改由当前 Guide 如实标记 missing/unbaselined/stale。不得将 doctor 成功当作 aligned，也不以 force 扫描抹去状态。下一会话先确认工具加载、读 `aoci_rules` 和实时 Guide，再按其批次完成索引。
+
+### 2026-11-25 · 工作区接入与源码基线验证
+
+- 官方 v0.1.1 Release 下载的 SHA256SUMS 与本地 x64 ZIP 一致（`3c9eb072…80b9b6`），EXE 与 ZIP 内文件逐字节哈希一致；完成基本校验，未宣称完成签名或构建证明验证，证据 `artifacts/qa/aoci-20261125/verification.json`。
+- `init --locale zh-CN --agent codex --scope-profile full` 生成三份索引骨架、`.aoci` 策略、项目级 `.codex/config.toml` 和 AGENTS 托管区块。原 AGENTS 规则保留；宿主绝对路径配置已忽略，AOCI 正式资产保持可入 Git。初始化还生成 `.gitattributes` 固定未来文本检出为 LF，本轮未批量转换源文件。
+- 首次范围预览纳入本地 SDK/生成目录；在首次 scan 前通过 AOCI 配置显式排除 `.tools/.packages/bin/obj/.vs/.codex`、数据库、凭据和本地设置，保留源码/测试/文档。scan 成功，127 个语义目标；doctor 全部检查通过，Codex CLI 确认项目级 aoci enabled。AOCI 自身 AI endpoint 关闭；不为 TraceTime 的 SQLite 用户库配置数据库连接。
+- `build-test.txt`：Release 构建 0 警告/错误，108/108 场景通过。已确认 Playbook 的 UTC/单调时钟、UWP 子窗口解析、未知应用保留、约 5 秒检查点与窗口事件检测等假设需要修正。
+- 当前聊天尚未加载 `aoci_*` 工具，完整语义索引仍为 0 条；Guide 为 `authoring_required`，不能把 doctor/scan 成功写成索引已完成。下一步：完成独立 MCP 握手诊断、发布包隔离回归和评估文档，记录重载后接续入口。
+
+## 本轮任务 · 升级后开机启动仍打开旧版（本地交付完成）
+
+- 用户反馈换用新版后重启仍打开旧版，希望平滑过渡。接手已读WORKLOG/PLAN；工作树从`1b1505d`干净开始。
+- 根因：StartupRegistration将开关判定为“注册命令是否等于当前EXE路径”，新版既不识别旧版已开启的选择，也不迁移路径；保存时只比较布尔值，无法正确处理不同路径和回滚。当前本机只读检查确认启动项与正在运行的进程均指向0.4.0。
+- 实施范围：只迁移已存在且可识别的TraceTime启动项；正常发布版成功取得单实例并完成启动后更新到当前路径，未开启的保持关闭、Windows禁用状态保持不动，测试/演示/独立数据/开发构建不自动接管。补版本回退保护、显式保存与原始命令回滚验证，并同步升级文档。
+- 当前：0.8.2修复、108项场景、原有正式包回归、设置页定向复验及打包检查已完成。README/升级说明/验证记录同步，本轮未提交、推送或公开0.8.2，也未修改用户现有启动项或结束0.4.0进程。
+- 下一步为用户从旧版托盘退出后运行本地0.8.2；此时程序才会接续已有启动项。无需搬移默认数据目录。本轮无剩余必要实现事项，真实重启/登录行为留待正常使用验证。
+
+### 2026-11-11 · 本地修复包交付完成
+
+- 入口`artifacts/release/TraceTime-0.8.2-win-x64/TraceTime.exe`，ZIP同级，需要.NET 10 Desktop Runtime x64。ZIP为4,635,412字节，SHA-256 `8e0fbeb7d153ce9714f43913bbf9c5749543a6b01f5e526e857e19d7bb2fa47b`，同级校验文件一致。
+- `package-startup-final.txt`确认52个文件与运行目录逐项SHA一致、54条包内Markdown链接有效，不含用户数据库、配置/凭据、QA或调试文件。最终仅同步验证文档重新压缩，已验证的应用二进制保持不变；diff空白和脚本语法检查通过。
+- 首次读取缺失的StartupApproved值时PowerShell属性接口报错，尚未启动构建；改为支持空值的只读Registry API完成快照。测试始终未创建/更改真实启动项；用户旧实例保持运行。实现边界、首轮夹具失败及复验均在以下记录中保留。
+
+### 2026-11-11 · 迁移策略与首轮验证完成
+
+- `StartupPreferences.cs`将已开启状态与当前路径分开，注入存储/版本检查；旧路径仍显示勾选，升级/同版本移动/旧文件缺失时可接续，有可识别更新版本时不自动回退。未知命令或不同应用身份不接管，未开启不新建。
+- `StartupRegistration.cs`只读写当前用户Run中的TraceTime值，保留Windows StartupApproved状态；App取得单实例并安装托盘/完成窗口初始化后才同步。发布包标记和正常参数限定入口；演示、独立数据、验证参数与开发构建均不接管。已有实例且路径不同会提示先从托盘退出旧版。
+- 保存偏好改为按命令更新，支持取消旧路径、精确回滚原命令和检测期间变化；读写失败给出反馈，不阻断计时。源码版本与侧栏升为0.8.2，未新增依赖、后台服务或轮询。
+- `build-startup-first.txt`：构建0警告/错误，108/108通过（新增10组隔离场景）；微软官方Run与Registry文档已核对命令长度限制和原值读取。下一步：实际发布包的WPF设置接入与全流程验证，更新README/升级说明并核对真实启动项测试前后不变。
+
+### 2026-11-11 · 正式包与设置页接入验证完成
+
+- `verify-startup-package.txt` / `release-0.8.2-c4627170`通过原有8项采集流程、单实例、主题/模拟AI/音频/邮件、图表/资源、休息/性能与重启配置检查。最后新增的启动设置夹具首轮失败：重新进入设置会重载空闲阈值，夹具未再次填写期望值；已修正夹具，未把首轮整份脚本记为成功。
+- `build-startup-reviewed.txt`重建0警告/错误；仅修正夹具后，对最终二进制执行`--demo --data-dir ... --verify-startup`，`startup-reviewed-e75ca9e3/startup-result.txt`及`verify-startup-reviewed.txt`通过旧路径勾选、自动接续、设置刷新、显式启停、读写失败与隔离入口检查。此前108项和其他正式包回归保持有效，不重复性能基准。
+- 测试前后实际Run和StartupApproved的TraceTime值完全一致，0.4.0用户实例保持运行；未实际重启、锁屏或结束用户进程。启动迁移由内存存储和版本元数据注入验证，真实Windows重启后的启动结果未实测。
+- README新增旧版手动解决方案及0.8.2自动接续说明，新增UPGRADING与v0.8.2本地版本说明，构建携带升级文档；31条源码本地链接及构建/验证脚本语法检查通过。下一步：同步最终验证说明，检查ZIP内容、校验和与包内链接，完成本地交付。
 
 ## 本轮任务 · 发布0.8.1并核对README（已完成）
 

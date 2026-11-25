@@ -1,5 +1,6 @@
-param([switch]$Test, [switch]$Publish, [switch]$SelfContained, [switch]$Offline, [string]$ReleaseRoot = 'artifacts\release')
+param([switch]$Test, [switch]$Publish, [switch]$SelfContained, [switch]$Offline, [switch]$UpdateLockFile, [string]$ReleaseRoot = 'artifacts\release')
 $ErrorActionPreference = 'Stop'
+if ($Offline -and $UpdateLockFile) { throw 'Offline与UpdateLockFile不能同时使用。' }
 $taskRoot = Split-Path $PSScriptRoot -Parent
 Set-Location $taskRoot
 $taskDotnet = Join-Path $taskRoot '.tools\dotnet\dotnet.exe'
@@ -7,13 +8,14 @@ if (!(Test-Path -LiteralPath $taskDotnet)) { $taskDotnet = 'dotnet' }
 $env:DOTNET_CLI_HOME = Join-Path $taskRoot '.tools\cli'
 $env:DOTNET_CLI_TELEMETRY_OPTOUT = '1'
 if (!$Offline) {
-    & $taskDotnet restore TraceTime.sln
+    [string[]]$taskRestoreArgs = if ($UpdateLockFile) { '--force-evaluate' } else { '--locked-mode' }
+    & $taskDotnet restore TraceTime.sln @taskRestoreArgs
     if ($LASTEXITCODE -ne 0) { throw '依赖恢复失败。' }
 }
 & $taskDotnet build TraceTime.sln -c Release --no-restore
 if ($LASTEXITCODE -ne 0) { throw '构建失败。' }
 if ($Test) {
-    & $taskDotnet run --project tests/TraceTime.Tests -c Release --no-build
+    & $taskDotnet run --project tests/TraceTime.Tests -c Release --no-build --no-restore
     if ($LASTEXITCODE -ne 0) { throw '场景验证失败。' }
 }
 if ($Publish) {
@@ -23,7 +25,12 @@ if ($Publish) {
     $taskReleaseRoot = if ([System.IO.Path]::IsPathRooted($ReleaseRoot)) { $ReleaseRoot } else { Join-Path $taskRoot $ReleaseRoot }
     $taskOutput = Join-Path $taskReleaseRoot $taskPackageName
     if ($SelfContained) {
-        & $taskDotnet publish src/TraceTime.App -c Release -r win-x64 --self-contained true -o $taskOutput -p:PublishSingleFile=false -p:DebugType=None -p:DebugSymbols=false
+        if (!$Offline) {
+            # The app already declares win-x64. A global -r would change Core/Storage lock targets.
+            & $taskDotnet restore src/TraceTime.App -p:SelfContained=true @taskRestoreArgs
+            if ($LASTEXITCODE -ne 0) { throw '自包含发布依赖恢复失败。' }
+        }
+        & $taskDotnet publish src/TraceTime.App -c Release -r win-x64 --no-restore --self-contained true -o $taskOutput -p:PublishSingleFile=false -p:DebugType=None -p:DebugSymbols=false
     } else {
         & $taskDotnet publish src/TraceTime.App -c Release -r win-x64 --no-restore --self-contained false -o $taskOutput -p:DebugType=None -p:DebugSymbols=false
     }
@@ -49,6 +56,7 @@ if ($Publish) {
     Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\HISTORY-AND-QUICK-ACTIONS.md') -Destination $taskPackageDocs
     Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\BREAK-REMINDERS.md') -Destination $taskPackageDocs
     Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\PERFORMANCE.md') -Destination $taskPackageDocs
+    Copy-Item -LiteralPath (Join-Path $taskRoot 'docs\UPGRADING.md') -Destination $taskPackageDocs
     $taskPackageReleaseNotes = Join-Path $taskPackageDocs 'releases'
     New-Item -ItemType Directory -Path $taskPackageReleaseNotes -Force | Out-Null
     Get-ChildItem -LiteralPath (Join-Path $taskRoot 'docs\releases') -Filter '*.md' | ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $taskPackageReleaseNotes }

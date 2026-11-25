@@ -14,11 +14,20 @@ public static class ReportBuilder
 
     public static DayReport Build(DateOnly date, TimeZoneInfo zone, IEnumerable<UsageSegment> usage,
         IEnumerable<IdleInterval> idle, IEnumerable<GapInterval>? gaps = null)
+        => BuildCore(date, zone, usage, idle, gaps, includeTimeline: true);
+
+    // Summary consumers must not interpret the intentionally empty timeline as missing usage.
+    public static DayReport BuildSummary(DateOnly date, TimeZoneInfo zone, IEnumerable<UsageSegment> usage,
+        IEnumerable<IdleInterval> idle)
+        => BuildCore(date, zone, usage, idle, null, includeTimeline: false);
+
+    private static DayReport BuildCore(DateOnly date, TimeZoneInfo zone, IEnumerable<UsageSegment> usage,
+        IEnumerable<IdleInterval> idle, IEnumerable<GapInterval>? gaps, bool includeTimeline)
     {
         var (start, end) = Bounds(date, zone);
         var idleByScope = idle.GroupBy(x => x.ScopeId).ToDictionary(g => g.Key, g => Merge(g.Select(x => (x.Start, x.End))));
         var totals = new Dictionary<string, AppUsage>();
-        var timeline = new List<TimelineEntry>();
+        var timeline = includeTimeline ? new List<TimelineEntry>() : null;
         foreach (var segment in usage.OrderBy(x => x.Start))
         {
             var a = Max(segment.Start, start);
@@ -33,13 +42,13 @@ public static class ReportBuilder
                     var i = Max(a, span.Start);
                     var j = Min(b, span.End);
                     if (j <= i) continue;
-                    if (i > cursor) timeline.Add(new(cursor, i, segment.App.Key, segment.App.Name, "active"));
-                    timeline.Add(new(i, j, segment.App.Key, segment.App.Name, "idle"));
+                    if (i > cursor) timeline?.Add(new(cursor, i, segment.App.Key, segment.App.Name, "active"));
+                    timeline?.Add(new(i, j, segment.App.Key, segment.App.Name, "idle"));
                     inactive += j - i;
                     cursor = j;
                 }
             }
-            if (cursor < b) timeline.Add(new(cursor, b, segment.App.Key, segment.App.Name, "active"));
+            if (cursor < b) timeline?.Add(new(cursor, b, segment.App.Key, segment.App.Name, "active"));
             totals.TryGetValue(segment.App.Key, out var previous);
             totals[segment.App.Key] = new(segment.App, (previous?.Foreground ?? TimeSpan.Zero) + (b - a),
                 (previous?.WithoutIdle ?? TimeSpan.Zero) + (b - a - inactive));
@@ -47,9 +56,9 @@ public static class ReportBuilder
         foreach (var gap in gaps ?? [])
         {
             var a = Max(start, gap.Start); var b = Min(end, gap.End);
-            if (b > a) timeline.Add(new(a, b, "", gap.Reason, "gap"));
+            if (b > a) timeline?.Add(new(a, b, "", gap.Reason, "gap"));
         }
-        return new(date, totals.Values.OrderByDescending(x => x.Foreground).ToArray(), timeline.OrderBy(x => x.Start).ToArray());
+        return new(date, totals.Values.OrderByDescending(x => x.Foreground).ToArray(), timeline?.OrderBy(x => x.Start).ToArray() ?? []);
     }
 
     private static List<(DateTimeOffset Start, DateTimeOffset End)> Merge(IEnumerable<(DateTimeOffset Start, DateTimeOffset End)> spans)

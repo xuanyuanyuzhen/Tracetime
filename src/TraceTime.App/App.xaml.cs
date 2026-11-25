@@ -31,15 +31,33 @@ public partial class App : Application
             var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(Path.GetFullPath(dataDir).ToLowerInvariant())))[..20];
             _mutex = new Mutex(true,@"Local\TraceTime-"+hash,out var created);
             _activation = new EventWaitHandle(false,EventResetMode.AutoReset,@"Local\TraceTime-open-"+hash);
-            if(!created) { _activation.Set(); Shutdown(); return; }
+            var startup = StartupRegistration.ForLaunch(e.Args);
+            if(!created)
+            {
+                _activation.Set();
+                try
+                {
+                    if (!e.Args.Contains("--tray") && startup?.PointsElsewhere == true)
+                        MessageBox.Show("TraceTime 已在运行。升级时请先从托盘菜单退出运行中的版本，再重新打开本版本。\n新版成功启动后，会接续已开启的开机启动设置。", "TraceTime · 切换版本", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch { /* A registry read failure must not interfere with single-instance activation. */ }
+                Shutdown(); return;
+            }
             _db = new UsageDatabase(Path.Combine(dataDir,"usage.db"));
             if(demo) DemoData.Seed(_db);
             else _tracker = new TrackerController(_db,Dispatcher);
-            var window = new MainWindow(_db,_tracker,demo,deferOverview: !demo && e.Args.Contains("--tray"));
+            var window = new MainWindow(_db,_tracker,demo,deferOverview: !demo && e.Args.Contains("--tray"),startup: startup);
             MainWindow = window;
             _activationWait=ThreadPool.RegisterWaitForSingleObject(_activation,(_,_)=>Dispatcher.BeginInvoke(new Action(window.Reveal)),null,Timeout.Infinite,false);
             window.InstallTray();
             if(!e.Args.Contains("--tray") || demo) window.Show();
+            window.SynchronizeStartup();
+            if (demo && e.Args.Contains("--verify-startup") && Option("--data-dir") is not null)
+            {
+                try { window.VerifyStartupPreferences(dataDir); }
+                catch (Exception ex) { File.WriteAllText(Path.Combine(dataDir,"startup-result.txt"),"FAIL " + ex); Exiting=true; Shutdown(1); return; }
+                ExitApp(); return;
+            }
             if(demo && e.Args.Contains("--verify-appearance-load"))
             {
                 File.WriteAllText(Path.Combine(dataDir,"appearance-loaded.txt"),$"{ThemeManager.Current.Mode}|{ThemeManager.Current.Material}|{ThemeManager.Current.Accent}|dark={ThemeManager.IsDark}");

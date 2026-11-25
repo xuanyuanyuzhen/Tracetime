@@ -37,6 +37,9 @@ public partial class MainWindow
         Check(CanRefreshViews && !ReferenceEquals(prior,_report),"恢复窗口没有立即刷新报告");
         prior=_report;Hide();RefreshBackground();RefreshReport();
         Check(ReferenceEquals(prior,_report),"托盘隐藏仍读取概览");
+        var reminderReport=ReadLimitReport(SelectedDay);
+        Check(reminderReport.Date==SelectedDay && reminderReport.Timeline.Count==0 &&
+            reminderReport.Apps.SequenceEqual(_db.GetDay(SelectedDay,TimeZoneInfo.Local).Apps),"隐藏时提醒读路径未使用等价纯汇总");
         Show();RefreshReport();TimelineExpander.IsExpanded=false;
         var cold=new MainWindow(_db,null,true,deferOverview:true){ShowActivated=false};
         try
@@ -47,6 +50,6 @@ public partial class MainWindow
             Check(cold._report is not null && cold.AppList.Items.Count>0 && cold._dayActivity is null,"首次打开未加载排行或提前构造时间线");
         }
         finally{cold.DisposeTray();cold.Closing-=cold.WindowClosing;cold.Close();}
-        File.WriteAllText(Path.ChangeExtension(path,"performance.txt"),"PASS deferred tray report, first-open ranking, stable ranking preserves row containers/selection and updates bound duration, collapsed timeline allocation avoidance and release, complete expand/re-expand, hidden/minimized report suppression and immediate restore. Tracking/reminder timers remain separate from view visibility. Isolated demo only.");
+        File.WriteAllText(Path.ChangeExtension(path,"performance.txt"),"PASS deferred tray report, first-open ranking, stable ranking preserves row containers/selection and updates bound duration, collapsed timeline allocation avoidance and release, complete expand/re-expand, hidden/minimized report suppression and immediate restore, hidden reminder read uses equal application totals with empty timeline. Tracking/reminder timers remain separate from view visibility; demo checks the shared reminder read helper, not live popup delivery. Isolated demo only.");
     }
 }

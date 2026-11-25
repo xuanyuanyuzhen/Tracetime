@@ -1,4 +1,4 @@
-param([Parameter(Mandatory)][string]$Exe, [Parameter(Mandatory)][ValidatePattern('^[a-zA-Z0-9_-]+$')][string]$Label, [ValidateRange(10,90)][int]$SampleSeconds = 25)
+param([Parameter(Mandatory)][string]$Exe, [Parameter(Mandatory)][ValidatePattern('^[a-zA-Z0-9_-]+$')][string]$Label, [ValidateRange(10,90)][int]$SampleSeconds = 25, [ValidateRange(1,90)][int]$Days = 1, [switch]$WithRules)
 $ErrorActionPreference = 'Stop'
 $taskExe = (Resolve-Path -LiteralPath $Exe).Path
 $taskRepository = Split-Path $PSScriptRoot -Parent
@@ -9,6 +9,10 @@ using System;
 using System.Runtime.InteropServices;
 public static class TaskWindowState {
     [DllImport("user32.dll")] public static extern bool ShowWindowAsync(IntPtr h, int command);
+    [StructLayout(LayoutKind.Sequential)] public struct IoCounters {
+        public ulong ReadOperations, WriteOperations, OtherOperations, ReadBytes, WriteBytes, OtherBytes;
+    }
+    [DllImport("kernel32.dll", SetLastError=true)] public static extern bool GetProcessIoCounters(IntPtr h, out IoCounters counters);
 }
 '@
 }
@@ -19,7 +23,7 @@ if (!(Test-Path -LiteralPath $taskTests)) { throw 'Run scripts/build.ps1 -Test f
 $taskResults = @()
 foreach ($taskMode in @('tray','overview','minimized')) {
     $taskData = Join-Path $taskRoot ($taskMode + '-' + [guid]::NewGuid().ToString('N').Substring(0,8))
-    & $taskDotnet $taskTests '--seed-performance' $taskData | Out-Null
+    & $taskDotnet $taskTests '--seed-performance' $taskData $Days.ToString() $WithRules.IsPresent.ToString() | Out-Null
     if ($LASTEXITCODE -ne 0) { throw 'Synthetic seed failed.' }
     $taskArgs = @('--data-dir',('"' + $taskData + '"'),'--smoke-seconds',($SampleSeconds+18).ToString())
     if ($taskMode -eq 'tray') { $taskArgs += '--tray' }
@@ -34,6 +38,8 @@ foreach ($taskMode in @('tray','overview','minimized')) {
     Start-Sleep -Seconds 2
     $taskProcess.Refresh()
     $taskCpuStart = $taskProcess.TotalProcessorTime.TotalMilliseconds
+    $taskIoStart = [TaskWindowState+IoCounters]::new()
+    if (![TaskWindowState]::GetProcessIoCounters($taskProcess.Handle,[ref]$taskIoStart)) { throw 'Cannot read owned process I/O counters.' }
     $taskWatch = [System.Diagnostics.Stopwatch]::StartNew()
     $taskSamples = @()
     for ($taskIndex=0; $taskIndex -lt $SampleSeconds; $taskIndex++) {
@@ -44,11 +50,14 @@ foreach ($taskMode in @('tray','overview','minimized')) {
     }
     $taskElapsed = $taskWatch.Elapsed.TotalSeconds
     $taskCpuMs = $taskProcess.TotalProcessorTime.TotalMilliseconds - $taskCpuStart
+    $taskIoEnd = [TaskWindowState+IoCounters]::new()
+    if (![TaskWindowState]::GetProcessIoCounters($taskProcess.Handle,[ref]$taskIoEnd)) { throw 'Cannot read owned process I/O counters.' }
     $taskRow = [pscustomobject]@{
-        Label=$Label; Mode=$taskMode; Seconds=[math]::Round($taskElapsed,3); CpuMilliseconds=[math]::Round($taskCpuMs,3)
+        Label=$Label; Mode=$taskMode; Days=$Days; Rules=$(if($WithRules){40}else{0}); Seconds=[math]::Round($taskElapsed,3); CpuMilliseconds=[math]::Round($taskCpuMs,3)
         CpuWholeMachinePercent=[math]::Round($taskCpuMs/($taskElapsed*1000*[Environment]::ProcessorCount)*100,4)
         WorkingSetMeanMiB=[math]::Round(($taskSamples | Measure-Object WorkingSetMiB -Average).Average,2)
         PrivateMeanMiB=[math]::Round(($taskSamples | Measure-Object PrivateMiB -Average).Average,2)
+        LogicalReadBytes=$taskIoEnd.ReadBytes-$taskIoStart.ReadBytes; LogicalWriteBytes=$taskIoEnd.WriteBytes-$taskIoStart.WriteBytes
     }
     if (!$taskProcess.WaitForExit(20000)) { throw 'Owned benchmark did not exit on its smoke timer.' }
     if (!(Test-Path -LiteralPath (Join-Path $taskData 'smoke-result.txt'))) { throw 'Benchmark collection/exit check missing.' }

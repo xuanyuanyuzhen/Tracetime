@@ -78,3 +78,9 @@ if ((Get-Content -LiteralPath (Join-Path $taskBreakRestart 'break-loaded.txt') -
 Invoke-ReleaseCheck @('--demo', '--data-dir', $taskBreakRestart, '--verify-break-load')
 if ((Get-Content -LiteralPath (Join-Path $taskBreakRestart 'break-loaded.txt') -Raw).Trim() -ne 'True|45|Severe|2026-11-10|0') { throw '休息设置或新启动从零计时未恢复。' }
 'PASS break reminder defaults off; new process restores enabled/interval/intensity/today-ignore and starts a fresh session'
+
+$taskStartup = Join-Path $taskQa 'startup-preferences'
+Invoke-ReleaseCheck @('--demo', '--data-dir', $taskStartup, '--verify-startup')
+$taskStartupResult = Get-Content -LiteralPath (Join-Path $taskStartup 'startup-result.txt') -Raw
+if ($taskStartupResult -notmatch '^PASS') { throw $taskStartupResult }
+$taskStartupResult

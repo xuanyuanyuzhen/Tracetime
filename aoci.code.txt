@@ -1,0 +1,164 @@
+#AOCI-CODE-VOLUME: 1
+
+===E:/AI_Code/Tracetime/===
+.gitattributes[FV5T]: F:统一文本检出为LF以稳定AOCI原始字节基线 | R:code:.gitignore | A:- | S:该约定作用于全仓文本；二进制保持原样
+.gitignore[FS7T]: F:隔离构建缓存、个人记录、凭据和机器绑定的Agent配置 | R:code:AGENTS.md | A:- | S:AOCI正式认知资产须保持可入库；忽略数据库也不能代替发布包内容检查
+AGENTS.md[SG9S]: F:约束项目接手、计时隐私边界及AOCI认知建立和维护流程 | R:code:WORKLOG.md,code:PLAN.md | A:- | S:实际Guide和机器批次决定AOCI操作；语义必须由模型基于证据创作，空闲不得等同未工作，测试不得真实锁屏或更改时间
+DESIGN.md[SU7S]: F:归档当前WPF语义颜色、尺寸、组件和六页交互设计 | R:code:.impeccable/design.json,code:src/TraceTime.App/ThemeManager.cs,code:docs/overview-design.md | A:- | S:尺寸为DIP；色种不等于运行时画刷，当前主题以ThemeManager为准；历史验证不代表真实设备全覆盖
+Directory.Build.props[FV5T]: F:向各.NET项目提供可空检查、隐式引用、确定性构建和锁文件生成设置 | R:code:TraceTime.sln | A:Nullable,ImplicitUsings,LangVersion,Deterministic,RestorePackagesWithLockFile | S:生成锁文件不等于以locked-mode恢复依赖
+NuGet.Config[FV5T]: F:固定NuGet官方包源并将包缓存放入仓库内.packages | R:code:.gitignore,code:Directory.Build.props | A:packageSources,globalPackagesFolder | S:-
+PLAN.md[SG9M]: F:保存产品范围、双口径计时规则、版本演进与优化阶段验收约定 | R:code:PRODUCT.md,code:WORKLOG.md,code:docs/dev/PLAYBOOK-REVIEW.md,code:docs/dev/TIME-MODEL-ADR.md | A:- | S:顶部当前阶段优先，历史段落不覆盖新决定；首批切片不表示全部WS完成，UI替换、历史时区归属与双进程仍需对应决策
+PRODUCT.md[SG8S]: F:定义Windows本地时长产品定位、用户可控功能和已确认交互承诺 | R:code:PLAN.md,code:DESIGN.md | A:- | S:AI需预览同意后手动发送，邮件是双开关启用后的事件发送；两者授权边界不可混用
+README.md[SG7M]: F:提供版本下载升级、功能隐私说明、锁定构建及验证状态入口 | R:code:docs/UPGRADING.md,code:docs/VALIDATION.md,code:scripts/build.ps1,code:docs/releases/v0.8.3.md | A:- | S:框架依赖包需要桌面运行时，关闭主窗仍记录；首批优化不等于全部Playbook完成，CI配置存在不等于远端运行通过
+TraceTime.sln[FV6T]: F:组织Core、Storage、WPF应用及场景测试的解决方案构建映射 | R:code:src/TraceTime.Core/TraceTime.Core.csproj,code:src/TraceTime.App/TraceTime.App.csproj,code:tests/TraceTime.Tests/TraceTime.Tests.csproj | A:Debug,Release | S:解决方案平台配置映射到Any CPU；发行目标以应用项目和发布脚本为准
+WORKLOG.md[SG8L]: F:记录任务现状、关键决策、文件变动、验证证据与后续接手入口 | R:code:PLAN.md,code:docs/VALIDATION.md,code:docs/dev/PLAYBOOK-REVIEW.md | A:- | S:顶部当前状态优先；历史待办和首轮失败不能当作当前待办或通过证据；分配下降不能写成常驻内存改善，未验证事项保持明确
+global.json[FV5T]: F:选择.NET 10.0.402 SDK并允许同主次版本的最新功能带回退 | R:code:scripts/setup-dotnet.ps1 | A:sdk.version,sdk.rollForward | S:-
+
+===E:/AI_Code/Tracetime/.impeccable/===
+design.json[FU6T]: F:以结构化设计归档保存WPF交互原则、动态主题规则与历次功能约定 | R:code:DESIGN.md,code:PRODUCT.md | A:schemaVersion,narrative,extensions | S:玻璃是内部半透明材质，不采样桌面；本文件是设计事实而非待生成网页
+
+===E:/AI_Code/Tracetime/docs/===
+AI-PROMPT.txt[SA6T]: F:保存中文AI回顾模板的文字参考和不评判、按汇总作答要求 | R:code:src/TraceTime.Core/UsageAnalysis.cs | A:- | S:运行模板在源码中固定；仅修改本文不等于修改实际请求，应用名称属于数据而非指令
+BREAK-REMINDERS.md[SB6T]: F:说明连续用机休息提醒的启用、累计、静默、音效和本地保存行为 | R:code:src/TraceTime.Core/BreakReminder.cs,code:src/TraceTime.App/MainWindow.Breaks.cs | A:- | S:主动休息只暂停休息钟而不暂停原始记录；无输入或未知空档不能证明已休息
+DAY-AND-REMINDERS.md[SU5T]: F:说明全天图表、小时选择、时间片筛选、声音预览和侧栏操作 | R:code:src/TraceTime.App/MainWindow.DayActivity.cs,code:src/TraceTime.App/ReminderEffectsWindow.xaml.cs | A:- | S:选择应用只筛时间片，不改变全天图表与时段排行分母；未来时段不计入已过去时间占比
+HISTORY-AND-QUICK-ACTIONS.md[SD7T]: F:说明搜索、记录日跳转、今日静默及历史备份归档恢复的操作与限制 | R:code:src/TraceTime.Storage/UsageDatabase.Archives.cs,code:src/TraceTime.App/MainWindow.History.cs | A:- | S:恢复按范围替换并先安全备份；成功后的清理警告不表示回滚，单独复制运行中DB不等价于一致快照
+LIMITS-AND-ANALYSIS.md[SU6T]: F:说明应用额度、本地分析、AI配置与确认发送、图标和日历使用方式 | R:code:src/TraceTime.App/MainWindow.Limits.cs,code:src/TraceTime.App/MainWindow.Analysis.cs | A:- | S:临时额度始终消耗目标应用前台停留；资源栏仅采样本进程，AI只发送确认的汇总
+PERFORMANCE.md[SP7S]: F:记录提醒纯汇总与历史轻量化的测量方法、对照数据和收益边界 | R:code:scripts/measure-resources.ps1,code:tests/TraceTime.Tests/PerformanceTests.cs | A:- | S:90天合成读路径分配下降不等于进程占用下降；10秒对照未呈一致CPU或驻留改善，不证明长期无泄漏
+REMINDERS-AND-ROADMAP.md[SB6T]: F:说明再进入提醒、提前临时使用、SMTP行为及待评估的轻量化和移动端方向 | R:code:src/TraceTime.Core/UsageLimits.cs,code:src/TraceTime.App/ReminderEmailService.cs | A:- | S:邮件仅支持STARTTLS且失败不自动重试；手机端仅为可行性讨论，不能标成已实现
+UPGRADING.md[SV7T]: F:区分旧版手动修复与0.8.2自动接续启动项的升级步骤 | R:code:src/TraceTime.App/Windows/StartupPreferences.cs,code:src/TraceTime.App/Windows/StartupRegistration.cs | A:- | S:需先退出旧托盘实例；未开启及Windows禁用状态保持不动，数据目录不随EXE迁移
+VALIDATION.md[SQ8S]: F:归档版本元数据、时间边界、纯汇总及历次隔离发布验证证据和限制 | R:code:WORKLOG.md,code:scripts/verify-release.ps1,code:tests/TraceTime.Tests/Program.cs | A:- | S:118场景和本地包通过不证明远端CI或真实电源网络行为；保留首轮失败与复验区别，自包含构建不等于重跑该包全套WPF验证
+design-v0.1.md[SU3M]: F:保存0.1版WPF浅色双页界面的视觉和交互历史快照 | R:code:DESIGN.md | A:- | S:历史快照不能覆盖当前主题与导航约定
+overview-design.md[SU6T]: F:记录概览到额度、休息、分析及历史管理的用户流程和设计方向 | R:code:DESIGN.md,code:PRODUCT.md | A:- | S:保留原生WPF语义和完整时间片；演示截图只代表视口与对应验证范围
+
+===E:/AI_Code/Tracetime/docs/dev/===
+AOCI.md[SQ6T]: F:记录AOCI本机接入、完整索引与增量覆盖证据及日常维护入口 | R:code:AGENTS.md,code:WORKLOG.md | A:- | S:文本覆盖不含二进制截图；机器配置不跨机提交，源码索引不连接用户库；路径存在不等于关系语义正确，索引检查不替代产品测试
+PLAYBOOK-REVIEW.md[SG7T]: F:核实外部Playbook假设并按WS记录首批发布完成矩阵与后续决策 | R:code:PLAN.md,code:docs/PERFORMANCE.md,code:docs/dev/TIME-MODEL-ADR.md | A:- | S:历史只读和索引未建不代表当前；首批完成不等于WS全验收，纯汇总仍查询区间，历史时区与完整UI和双进程仍待决策
+TIME-MODEL-ADR.md[SB8T]: F:记录UTC锚点与单调计时、时区分日及回拨异常的现状和未决语义 | R:code:src/TraceTime.Core/TrackingEngine.cs,code:src/TraceTime.Core/ReportBuilder.cs,code:tests/TraceTime.Tests/TimeBoundaryTests.cs | A:- | S:大幅回拨的新旧Scope可在墙钟上重叠，累计总量与规整时间轴可不同；测试仅刻画现状，不能直接去重或声称历史归属已解决
+
+===E:/AI_Code/Tracetime/docs/releases/===
+v0.7.0.md[SV3T]: F:归档首次公开Release的下载依赖、0.5至0.7功能、升级和验证范围 | R:code:docs/HISTORY-AND-QUICK-ACTIONS.md | A:- | S:版本历史说明，不代表当前版本
+v0.7.1.md[SV3T]: F:记录饼图、秒级提示和自身资源显示的本地版本变更 | R:code:docs/releases/v0.8.0.md | A:- | S:未单独发布，改进合入0.8.0
+v0.8.0.md[SV3T]: F:记录休息提醒首发及合入0.7.1的公开版本说明 | R:code:docs/BREAK-REMINDERS.md | A:- | S:连续用机进度不跨进程保存
+v0.8.1.md[SV3T]: F:记录延迟加载、隐藏停止刷新和包体瘦身的发布说明 | R:code:docs/PERFORMANCE.md | A:- | S:短测数据不是固定资源占用承诺
+v0.8.2.md[SV5T]: F:记录已启用启动项在升级后自动接续的修复与升级方式 | R:code:docs/UPGRADING.md,code:docs/releases/v0.8.3.md | A:- | S:未单独公开，改进合入0.8.3；不自动开启原先关闭的启动项
+v0.8.3.md[SV5T]: F:说明提醒汇总与启动项接续的版本范围、升级方式和验证边界 | R:code:docs/PERFORMANCE.md,code:docs/VALIDATION.md,code:docs/UPGRADING.md | A:- | S:首批发布不表示完整Playbook完成；分配减少不表示常驻改善，墙钟回拨重叠仍未修复
+
+===E:/AI_Code/Tracetime/scripts/===
+build.ps1[OV8T]: F:执行锁定恢复、Release构建、场景验证与Windows包和校验和生成 | R:code:TraceTime.sln,code:src/TraceTime.App/TraceTime.App.csproj,code:scripts/verify-release.ps1 | A:Test,Publish,SelfContained,Offline,UpdateLockFile,ReleaseRoot | S:默认locked-mode，UpdateLockFile显式重算且不能与Offline组合；run和publish禁隐式恢复，自包含沿用App声明RID避免污染Core锁目标；清旧runtimes先验证边界和SQLite库
+measure-resources.ps1[TP6T]: F:用可选90天及额度规则的合成数据测量托盘概览和最小化进程资源 | R:code:tests/TraceTime.Tests/PerformanceTests.cs,code:docs/PERFORMANCE.md | A:Exe,Label,SampleSeconds,Days,WithRules | S:只控制自建实例并等待自退；默认一天无规则；CPU按全机归一化，I/O为逻辑字节，短测不证明长期收益
+setup-dotnet.ps1[OV5T]: F:下载微软安装脚本并按SDK配置安装仓库内工具链 | R:code:global.json,code:scripts/build.ps1 | A:- | S:NoPath安装，不修改系统PATH
+verify-release.ps1[TQ8T]: F:启动正式包的隔离流程、截图、配置重启和启动偏好回归 | R:code:src/TraceTime.App/App.xaml.cs,code:scripts/build.ps1 | A:AppearanceOnly,ReleaseRoot | S:清除开发运行时环境以验证系统运行时；独立数据目录和模拟服务不能证明真实网络、声卡或重启行为
+
+===E:/AI_Code/Tracetime/src/TraceTime.App/===
+AiConfigWindow.xaml[FU5T]: F:声明AI服务地址、密钥、模型选择和保存反馈的配置弹窗 | R:code:src/TraceTime.App/AiConfigWindow.xaml.cs | A:AiConfigWindow | S:获取模型列表是显式网络操作；保存配置不发送使用记录
+AiConfigWindow.xaml.cs[AA7S]: F:协调AI服务配置、凭据复用、可取消模型获取和本地保存 | R:code:src/TraceTime.App/AiSettings.cs,code:src/TraceTime.Core/AiProviderOptions.cs | A:AiConfigWindow,FetchModelsAsync,Saved | S:切换服务不复用旧密钥；模型请求禁重定向且20秒取消，关闭清空密码框
+AiSettings.cs[PS8T]: F:持久化AI配置并提供Windows当前用户DPAPI凭据加解密 | R:code:src/TraceTime.App/AiConfigWindow.xaml.cs,code:src/TraceTime.App/EmailSettings.cs | A:AiSettings.Load,AiSettings.Save,AiSettings.Key,UserSecret.Protect,UserSecret.Unprotect | S:配置用临时文件替换，密钥存密文；DPAPI原生缓冲释放前清零，密文不能当成跨用户可移植凭据
+AnalysisChart.cs[AU5T]: F:绘制每日前台与扣空闲双柱趋势和秒级悬停详情 | R:code:src/TraceTime.App/HoverChart.cs,code:src/TraceTime.Core/UsageAnalysis.cs | A:Analysis | S:宽细柱同时展示两种口径，纵轴以最大前台时长缩放
+AnalysisPieChart.cs[AU6T]: F:绘制应用份额饼图、图例及双口径精确提示 | R:code:src/TraceTime.App/HoverChart.cs,code:src/TraceTime.Core/UsageDistribution.cs | A:SetData | S:分母为所选日期全部应用的当前口径；颜色按稳定键排序，其余项独立灰色
+App.xaml[EG7T]: F:声明WPF显式退出生命周期并装载共享控件资源 | R:code:src/TraceTime.App/App.xaml.cs,code:src/TraceTime.App/Themes/Controls.xaml | A:TraceTime.App.App | S:关闭最后一个窗口不等于退出应用
+App.xaml.cs[EG9S]: F:组装数据存储、采集器、主窗和托盘，管理单实例及隔离验证入口 | R:code:src/TraceTime.App/Windows/TrackerController.cs,code:src/TraceTime.App/MainWindow.xaml.cs,code:src/TraceTime.Storage/UsageDatabase.cs,code:src/TraceTime.App/Windows/StartupRegistration.cs | A:OnStartup,ExitApp,OnExit | S:单实例按规范化数据目录哈希隔离；默认数据在LocalAppData，演示另用临时目录；取得实例并装好托盘后才接续已启用启动项；历史维护忙时拒绝退出
+AppIconCache.cs[IP7S]: F:异步提取本地应用图标并共享内存磁盘缓存及可绑定视觉对象 | R:code:src/TraceTime.Core/Models.cs,code:src/TraceTime.App/MainWindow.xaml.cs | A:Get,WhenReadyAsync,CacheFile,AppVisual,AppIconView | S:拒绝UNC和非本地路径；容量256，缓存30天后尝试刷新；失败保留旧图或首字且不得中断计时
+AppearanceSettings.cs[PC6T]: F:规范化并原子替换外观主题、材质和强调色配置 | R:code:src/TraceTime.App/ThemeManager.cs | A:Normalize,Load,Save,ValidAccent | S:缺失或损坏回退system/glass；纯配置逻辑被场景测试直接编译，不依赖Windows
+DemoData.cs[TQ6T]: F:为演示窗口生成应用时段、空闲、暂停和边界数据 | R:code:src/TraceTime.App/App.xaml.cs,code:src/TraceTime.Storage/UsageDatabase.cs | A:Seed | S:会先删除演示日期范围，只允许在隔离演示数据库运行
+EmailConfigWindow.xaml[FU5T]: F:声明SMTP账号、收件人、启用状态和凭据提示界面 | R:code:src/TraceTime.App/EmailConfigWindow.xaml.cs | A:EmailConfigWindow | S:全局保存后还需应用额度开关；明确不支持465隐式TLS
+EmailConfigWindow.xaml.cs[AN7T]: F:校验邮件配置、处理旧凭据复用并调用保存委托 | R:code:src/TraceTime.App/EmailSettings.cs,code:src/TraceTime.Core/EmailReminders.cs | A:EmailConfigWindow | S:仅账号匹配才复用旧密码；启用时校验连接参数及非空密码，不进行网络试连；保存或取消清空密码输入
+EmailSettings.cs[PS7T]: F:保存SMTP配置与用户绑定密文并判断是否可沿用凭据 | R:code:src/TraceTime.App/AiSettings.cs,code:src/TraceTime.Core/EmailReminders.cs | A:Load,Save,Password,WithPassword,SameAccount,Connection | S:账号匹配包含主机、端口、登录名和发件人，收件人变化不清除凭据
+HoverChart.cs[CU7S]: F:为自绘图表提供几何命中、键盘导航、复用提示和精确时长扇区工具 | R:code:src/TraceTime.App/AnalysisChart.cs,code:src/TraceTime.App/TimelineView.cs | A:RenderChart,AddHoverRegion,ResetHover,ChartDetails.Duration,ChartDetails.Sector | S:重绘更新静止指针下的提示；滚动、失焦或隐藏关闭提示，卸载时另解绑窗口与滚动事件
+LimitReminderWindow.cs[AU7T]: F:构造额度与休息共用的置顶提醒弹窗并处理确认和延后动作 | R:code:src/TraceTime.App/MainWindow.Limits.cs,code:src/TraceTime.App/MainWindow.Breaks.cs | A:Accept,Acknowledge,DismissSilently,RequestForeground | S:正式提醒未经成功处理不允许关闭；中度不主动激活，严重请求前台失败改闪烁；预览按钮不改变规则
+MainWindow.AiVerification.cs[TA6T]: F:用模拟HTTP验证分析界面成功、错误脱敏、取消及同意重置 | R:code:src/TraceTime.App/MainWindow.Analysis.cs | A:VerifyAiUiAsync | S:仅演示模式且不联网；模拟超时不代表真实服务可用
+MainWindow.Analysis.cs[AA8S]: F:组织本地多日分析、应用份额及AI汇总预览确认发送和导出 | R:code:src/TraceTime.Core/UsageAnalysis.cs,code:src/TraceTime.Core/AiAnalysisClient.cs,code:src/TraceTime.App/AiConfigWindow.xaml.cs | A:InitializeAnalysis,RefreshAnalysis,PrepareAiPreview,SendPreparedAnalysisAsync | S:日期、匿名或配置变动使预览与同意失效并取消旧请求；发送固定预览体、禁重定向且90秒超时；结束清除授权，AI结果不自动改额度
+MainWindow.Appearance.cs[AU7S]: F:管理六页切换、主题颜色选择、系统主题响应和外观验证 | R:code:src/TraceTime.App/AppearanceSettings.cs,code:src/TraceTime.App/ThemeManager.cs | A:SetPage,ChangeAppearance,VerifyAppearanceFlow | S:先保存再应用防止失败假象；系统主题事件不重写偏好；动画尊重系统设置且演示禁用
+MainWindow.BreakVerification.cs[TB7S]: F:验证休息提醒状态、弹窗互斥、独立音效及异步播放取消 | R:code:src/TraceTime.App/MainWindow.Breaks.cs,code:src/TraceTime.App/ReminderAudio.cs | A:VerifyBreakAudioCancellationAsync,VerifyBreakViews | S:合成时钟和音频替身覆盖状态，不实际锁屏、休眠、抢焦点或播放设备声音
+MainWindow.Breaks.cs[AB8S]: F:将连续用机休息钟接入设置、静默、提醒弹窗与独立声音预览 | R:code:src/TraceTime.Core/BreakReminder.cs,code:src/TraceTime.App/LimitReminderWindow.cs,code:src/TraceTime.App/ReminderAudio.cs | A:TickBreakReminder,CheckBreakReminder,PresentBreakAlert,BreakLoadedState | S:主动休息不暂停原始记录；与额度弹窗互斥且声音相隔至少6秒；会话不可用隐藏并停止声音，轻度提醒展示后推迟下一间隔
+MainWindow.ChartResourceVerification.cs[TU6S]: F:验证图表几何提示、饼图分组、键盘操作和资源采样生命周期 | R:code:src/TraceTime.App/HoverChart.cs,code:src/TraceTime.App/MainWindow.Resources.cs | A:VerifyChartResourceViews | S:演示夹具覆盖静止指针重绘和隐藏恢复；资源读数不等于性能基准
+MainWindow.DayActivity.cs[AU7T]: F:把全天与小时活动汇总接入图表、时段排行和日期选择 | R:code:src/TraceTime.Core/DayActivity.cs,code:src/TraceTime.App/TimelineView.cs | A:RenderActivity,SelectedActivity,OpenDayDistribution | S:日期变化重置小时选择；演示可注入观察截止时刻，未来不算未记录；应用选择不改变时段总量
+MainWindow.DaySoundVerification.cs[TU6T]: F:验证全天图表、小时空档与声音配置和异步输出路由 | R:code:src/TraceTime.App/MainWindow.DayActivity.cs,code:src/TraceTime.App/ReminderAudio.cs | A:VerifyDaySoundViews,VerifyAudioPipelineAsync | S:截图前断言完整视口；音频使用替身，预览不能改规则或今日状态
+MainWindow.FeatureVerification.cs[TU7S]: F:验证额度编辑弹窗、本地分析、凭据保护与AI授权及空状态 | R:code:src/TraceTime.App/MainWindow.Limits.cs,code:src/TraceTime.App/MainWindow.Analysis.cs | A:VerifyFeatureViews | S:仅隔离演示使用合成凭据；严重弹窗不实测抢焦点，AI无真实请求
+MainWindow.History.cs[AD9S]: F:编排历史快照、按月归档移除、预检确认恢复和界面缓存失效 | R:code:src/TraceTime.Storage/UsageDatabase.Archives.cs,code:src/TraceTime.App/Windows/TrackerController.cs,code:src/TraceTime.App/MainWindow.Analysis.cs | A:HistoryBusy,BackupHistory,ArchiveHistoryMonth,RestoreHistory,RefreshAfterHistoryChange | S:备份时可继续采集，删除和恢复进入维护边界；删归档月前重验哈希并持有只读租约；恢复先安全备份、按UTC范围替换且今日静默；已恢复后的刷新或清理警告不是回滚
+MainWindow.HistoryVerification.cs[TD6T]: F:验证搜索与日期跳转、静默、临时偏好和历史管理恢复预览 | R:code:src/TraceTime.App/MainWindow.History.cs,code:src/TraceTime.App/MainWindow.QuickActions.cs | A:VerifyHistoryQuickViews | S:隔离归档恢复验证安全备份和静默，搜索不改变总计或底层规则
+MainWindow.LimitOptions.cs[AB8T]: F:协调再进入检测、临时前台额度、SMTP设置及邮件入队和手动重试 | R:code:src/TraceTime.Core/EmailReminders.cs,code:src/TraceTime.App/ReminderEmailService.cs,code:src/TraceTime.Core/LimitDispatch.cs | A:ObserveLimitVisit,StartTemporaryUse,QueueDueEmails,DrainEmailQueueAsync | S:临时使用总按目标前台停留消耗；本应用不造成新访问；邮件要求全局及规则开关，演示或不可用会话不投递
+MainWindow.LimitOptionsVerification.cs[TN7T]: F:验证临时额度、SMTP凭据边界及邮件队列状态和取消重试 | R:code:src/TraceTime.App/MainWindow.LimitOptions.cs,code:src/TraceTime.App/ReminderEmailService.cs | A:VerifyLimitOptionsViews,VerifyEmailPipelineAsync | S:注入模拟发信器，不连接SMTP；发送中止结果不确定按失败保存，不能当成未发送自动重试
+MainWindow.Limits.cs[AB8M]: F:管理额度编辑进度并用纯汇总选择后台提醒和持久化确认临时使用 | R:code:src/TraceTime.Core/UsageLimits.cs,code:src/TraceTime.Core/LimitDispatch.cs,code:src/TraceTime.Storage/UsageDatabase.cs | A:RefreshRecordedApps,RenderLimitProgress,ReadLimitReport,CheckLimits,PresentLimitAlert | S:最多100规则；后台Flush成功后读取最新汇总，不受主窗隐藏限制；呈现前保存Pending与访问状态，弹窗操作核对日期修订；暂停维护预览休息互斥
+MainWindow.Navigation.cs[AU6T]: F:应用侧栏与图表偏好并把嵌套列表滚轮交给概览整页 | R:code:src/TraceTime.App/ViewPreferences.cs,code:src/TraceTime.App/MainWindow.DayActivity.cs | A:ApplyViewPreferences,SaveViewPreferences,OverviewMouseWheel | S:显式拖动滚动条不被接管；保存失败恢复旧偏好显示，折叠导航保留可访问名称
+MainWindow.NavigationVerification.cs[TU5T]: F:验证45行排行整页滚动、六页图标导航及侧栏图表偏好 | R:code:src/TraceTime.App/MainWindow.Navigation.cs | A:VerifyNavigationViews | S:仅演示数据；系统滚轮行数为零时不要求位移
+MainWindow.PerformanceVerification.cs[TP7T]: F:验证延迟报告、控件复用、隐藏视图抑制及提醒纯汇总接入 | R:code:src/TraceTime.App/MainWindow.xaml.cs,code:src/TraceTime.App/MainWindow.Limits.cs | A:VerifyPerformanceViews | S:仅隔离演示，隐藏提醒断言共享读取入口而非真实弹窗投递；行为验证不能替代资源基准，恢复窗口须立即刷新
+MainWindow.PolishVerification.cs[TU6T]: F:验证图标缓存回退容量、旧AI配置迁移与模型选择和日历更新 | R:code:src/TraceTime.App/AppIconCache.cs,code:src/TraceTime.App/AiConfigWindow.xaml.cs | A:PreparePolishCaptureAsync,VerifyRecordedCalendar | S:合成模型接口不联网；真实图标只读取本进程可执行资源
+MainWindow.QuickActions.cs[AU7T]: F:提供应用搜索、相邻记录日跳转与当天全局提醒静默 | R:code:src/TraceTime.Core/ApplicationQuery.cs,code:src/TraceTime.Storage/UsageDatabase.Calendar.cs | A:SearchApps,UpdateRecordedDayButtons,ToggleQuietToday,RenderQuietState | S:静默覆盖隐藏规则、邮件和休息但不改独立规则或计时；开启时取消未发送及进行中的邮件
+MainWindow.Reminders.cs[AU6T]: F:协调额度提醒效果预览、声音播放及预览生命周期 | R:code:src/TraceTime.App/ReminderEffectsWindow.xaml.cs,code:src/TraceTime.App/ReminderAudio.cs | A:OpenReminderEffects,PreviewReminderAsync,CloseReminderPreview | S:实际提醒待处理时阻止预览；退出预览停止声音，演示不走真实额度音效
+MainWindow.Resources.cs[AP6T]: F:在侧栏显示当前进程CPU和工作集并管理采样计时器 | R:code:src/TraceTime.App/ProcessResourceSampler.cs | A:InitializeResourceMonitor,UpdateResourceMonitoring,DisposeResourceMonitor | S:仅窗口可见且非最小化时每2秒采样，恢复重建CPU基线；不写入使用记录
+MainWindow.Startup.cs[AC7T]: F:加载开机启动选择并呈现迁移结果与失败反馈 | R:code:src/TraceTime.App/Windows/StartupPreferences.cs,code:src/TraceTime.App/MainWindow.xaml.cs | A:LoadStartupPreference,SynchronizeStartup | S:读注册表失败仅禁用启动项选项；演示和不合格启动无适配器，不妨碍计时偏好保存
+MainWindow.StartupVerification.cs[TC7T]: F:在发布包内用内存启动存储验证设置勾选、迁移和读写失败路径 | R:code:src/TraceTime.App/MainWindow.Startup.cs,code:src/TraceTime.App/Windows/StartupPreferences.cs | A:VerifyStartupPreferences | S:仅演示入口；模拟注册表并恢复计时设置，不更改真实Run或StartupApproved
+MainWindow.xaml[FU8M]: F:声明六页WPF主窗、双口径排行、活动图表、提醒分析和数据管理入口 | R:code:src/TraceTime.App/MainWindow.xaml.cs,code:src/TraceTime.App/Themes/Controls.xaml | A:TraceTime.App.MainWindow | S:排行随整页滚动，时间片保留全部且用回收虚拟列表；AI发送初始禁用须预览同意；休息默认关闭，归档移除另行确认；侧栏版本文本须与项目Version同步
+MainWindow.xaml.cs[AG9L]: F:组装主窗模块、报告刷新、排行时间线、托盘生命周期与隔离截图验证 | R:code:src/TraceTime.App/Windows/TrackerController.cs,code:src/TraceTime.Storage/UsageDatabase.cs,code:src/TraceTime.App/MainWindow.Limits.cs,code:src/TraceTime.App/MainWindow.Breaks.cs | A:MainWindow,Reveal,InstallTray,DisposeTray,Capture,FormatTime | S:关闭隐藏至托盘；隐藏或最小化不刷新报告但仍判断提醒；托盘可延迟加载，收起时间线释放派生引用；稳定排行复用控件，搜索不改分母；截图仅允许隔离演示
+ProcessResourceSampler.cs[IP6T]: F:用进程句柄与单调时钟计算本进程CPU百分比和工作集 | R:code:src/TraceTime.App/MainWindow.Resources.cs | A:Sample,CalculateCpuPercent,Reset,Dispose | S:CPU按全部逻辑处理器容量归一化；首样或无效差值为空，不调用WMI或枚举进程
+RecordedCalendar.cs[AU6T]: F:为日期选择器标记有记录日期并缓存当前可见日历范围 | R:code:src/TraceTime.Storage/UsageDatabase.Calendar.cs,code:src/TraceTime.App/Themes/Controls.xaml | A:HasRecordProperty,RefreshOpen | S:缓存绑定HistoryRevision；无记录日期仍可选，查询失败清标记而不禁用日期
+ReminderAudio.cs[IH8T]: F:管理三档提醒声音、哈希命名自定义WAV与可取消异步音频输出 | R:code:src/TraceTime.Core/ReminderSound.cs,code:src/TraceTime.App/ReminderEffectsWindow.xaml.cs | A:IReminderAudioOutput,ReminderAudioService.Save,PlayAsync,Stop,FileNameFor,FileFor | S:自定义名严格为64位十六进制加.wav且限大小；代次号阻止Stop后的异步播放；先保存设置再清未引用音频，系统音不使用应用音量
+ReminderEffectsWindow.xaml[FU5T]: F:声明三档提醒效果、WAV导入、音量试听和保存取消界面 | R:code:src/TraceTime.App/ReminderEffectsWindow.xaml.cs | A:ReminderEffectsWindow | S:显示实际支持的PCM规格和系统音量限制，预览独立于规则状态
+ReminderEffectsWindow.xaml.cs[AU6T]: F:编辑独立声音草稿并验证导入、试听、效果预览和保存 | R:code:src/TraceTime.App/ReminderAudio.cs,code:src/TraceTime.Core/ReminderSound.cs | A:Import,Save,Preview,Listen | S:导入保留内存草稿至保存；取消不持久化，关闭或换档停止音效与预览
+ReminderEmailService.cs[AN8T]: F:串行消费持久邮件通知队列并处理配置变化、取消及发送结果 | R:code:src/TraceTime.Core/EmailReminders.cs,code:src/TraceTime.Storage/UsageDatabase.Email.cs,code:src/TraceTime.App/EmailSettings.cs | A:DrainAsync,Update,CancelRule,CancelActive,CanContinue,CurrentDay | S:数据库访问归UI线程，SMTP异步；每次发送重验日期、规则修订和队列，22秒取消；不保存服务商原始错误，失败或结果未知只能手动重试
+TemporaryUseWindow.cs[AU6T]: F:选择临时使用分钟数并通过委托启动和保存常用值 | R:code:src/TraceTime.App/MainWindow.LimitOptions.cs | A:TemporaryUseWindow | S:限制1至120分钟；先启动临时额度再保存偏好，消耗按前台停留含空闲且跨日结束
+ThemeManager.cs[CU7S]: F:生成动态主题画刷、材质尺寸、高对比替代与系统标题栏颜色 | R:code:src/TraceTime.App/AppearanceSettings.cs,code:src/TraceTime.App/Themes/Controls.xaml | A:Apply,Get,SystemIsDark,ApplyTitleBar,Contrast | S:玻璃仅WPF内部渐变不采桌面；自定义色调整到可读对比度，画刷冻结复用，高对比模式覆盖语义资源
+TimelineView.cs[AU7S]: F:绘制全天分时柱、状态轴和占比环图并支持小时选择和精确提示 | R:code:src/TraceTime.Core/DayActivity.cs,code:src/TraceTime.App/HoverChart.cs | A:Activity,Mode,SelectedHour,SelectedAppKey,HourSelected | S:环图分母仅已过去时长；应用选择只淡化轴段不改汇总；小时数量来自时区日边界，不硬编码24
+TraceTime.App.csproj[FV7T]: F:配置.NET 10 Windows桌面入口、版本和Core/Storage依赖 | R:code:src/TraceTime.Core/TraceTime.Core.csproj,code:src/TraceTime.Storage/TraceTime.Storage.csproj,code:scripts/build.ps1 | A:TargetFramework,Version,RuntimeIdentifiers | S:同时使用WPF与WinForms托盘，发行运行时仅win-x64；包名读取Version，侧栏版本文本独立维护
+ViewPreferences.cs[PC5T]: F:规范化并保存侧栏、全天图表及常用临时分钟偏好 | R:code:src/TraceTime.App/MainWindow.Navigation.cs | A:Normalize,Load,Save | S:旧配置缺分钟时默认10；损坏回退，使用临时文件替换
+app.manifest[FV5T]: F:声明普通用户权限运行及Windows兼容性身份 | R:code:src/TraceTime.App/TraceTime.App.csproj | A:requestedExecutionLevel,supportedOS | S:asInvoker且uiAccess=false，不要求管理员权限
+packages.lock.json[FV6T]: F:锁定桌面应用的项目依赖、SQLite托管依赖与win-x64原生包解析结果 | R:code:src/TraceTime.App/TraceTime.App.csproj,code:src/TraceTime.Storage/packages.lock.json | A:dependencies | S:保留Windows框架与RID两组解析；锁文件存在不等于构建使用locked-mode
+
+===E:/AI_Code/Tracetime/src/TraceTime.App/Themes/===
+Controls.xaml[FU7T]: F:提供共享按钮、表单、滚动条、日历与数据行模板及主题绑定 | R:code:src/TraceTime.App/ThemeManager.cs,code:src/TraceTime.App/RecordedCalendar.cs | A:PrimaryButton,NavButton,Choice,DataRow,KeyboardFocusVisual,ThemedCalendar | S:按钮焦点提示通过键盘FocusVisualStyle；保留PART模板契约，记录标记不能禁止空日期选择
+
+===E:/AI_Code/Tracetime/src/TraceTime.App/Windows/===
+ForegroundReader.cs[IB9T]: F:采集UTC与单调时间、最后输入间隔及前台应用身份 | R:code:src/TraceTime.Core/Models.cs,code:src/TraceTime.App/Windows/TrackerController.cs | A:Read,ReadApp | S:不读取窗口标题或键盘内容；UWP宿主追踪可见子进程，无法识别返回Unknown不继承前项；身份优先路径后备进程名；复用缓冲限同一Dispatcher
+StartupPreferences.cs[DC8T]: F:以注入存储和版本检查实现启动项识别、升级接续及保存回滚 | R:code:src/TraceTime.App/Windows/StartupRegistration.cs,code:tests/TraceTime.Tests/StartupTests.cs | A:IsNormalLaunch,IsEnabled,PointsElsewhere,Synchronize,Save,TryGetExecutable | S:只认带引号TraceTime.exe加--tray的历史命令；无启动项不创建，更新版本或身份未知不覆盖；保存计时偏好失败精确回滚原命令并检测竞争
+StartupRegistration.cs[IC8T]: F:为合格发布启动构造Windows Run存储与可执行版本适配器 | R:code:src/TraceTime.App/Windows/StartupPreferences.cs,code:src/TraceTime.App/App.xaml.cs | A:ForLaunch,RegistryStartupStore.Read,RegistryStartupStore.Replace | S:须有包标记且仅空参数或--tray；只写HKCU的TraceTime值，保留StartupApproved；写前比较原值，版本检查要求产品及原始文件身份匹配
+TrackerController.cs[AB9S]: F:把Windows前台会话电源事件和定时采样接入计时引擎与存储 | R:code:src/TraceTime.App/Windows/ForegroundReader.cs,code:src/TraceTime.Core/TrackingEngine.cs,code:src/TraceTime.Storage/UsageDatabase.cs | A:Flush,TogglePause,BeginMaintenance,EndMaintenance,UpdateSettings,DeleteRange | S:前台事件加1秒兜底，每5个Tick尝试持久化；维护/休眠/锁屏/暂停按优先级切断区间并记已知空档；空闲仍属用机；阈值改变先成功保存再重置边界，失败可重试
+
+===E:/AI_Code/Tracetime/src/TraceTime.Core/===
+AiAnalysisClient.cs[IA8T]: F:验证分析端点、构造Chat Completions请求并有界解析文本结果 | R:code:src/TraceTime.Core/UsageAnalysis.cs,code:src/TraceTime.App/MainWindow.Analysis.cs | A:ValidateEndpoint,RequestBody,SendAsync | S:仅回环允许HTTP，禁URL凭据查询片段；响应限256KiB且不转抄错误体；取消与禁止重定向由调用者配置，汇总置于user消息
+AiProviderOptions.cs[IA7T]: F:规范化AI接口地址、判断凭据服务范围并获取可选模型 | R:code:src/TraceTime.Core/AiAnalysisClient.cs,code:src/TraceTime.App/AiConfigWindow.xaml.cs | A:ResolveEndpoint,ModelsEndpoint,SameService,FetchModelsAsync | S:仅标准chat/completions路径推导models；同服务比较scheme/host/port；模型列表限512KiB和500项，失败不暴露原响应
+ApplicationQuery.cs[KU4T]: F:提供应用名称的去空白忽略大小写子串匹配 | R:code:src/TraceTime.App/MainWindow.QuickActions.cs | A:Matches | S:-
+BreakReminder.cs[DB8T]: F:定义休息设置及可注入单调时间的连续用机状态机 | R:code:src/TraceTime.App/MainWindow.Breaks.cs,code:tests/TraceTime.Tests/BreakReminderTests.cs | A:BreakReminderSettings,BreakReminderClock.Configure,Observe,IsDue,BeginRest,Resume | S:无输入不是休息；Using超过15秒未知断档不累计亦不证明休息，已知Away或主动休息满5分钟归零；暂停保留已用量，重启进度不持久化
+DayActivity.cs[KB8T]: F:将每日时间线规整为不重叠全天覆盖并构造小时切片及应用总量 | R:code:src/TraceTime.Core/ReportBuilder.cs,code:src/TraceTime.App/TimelineView.cs | A:DayActivity,ActivitySlice,ActivityHour,Slice | S:前台证据优先于重叠中断；保留不同来源的相邻片段；截止后的时间是future，其前无证据为unrecorded；按时区边界生成23/25小时日
+EmailReminders.cs[IN8T]: F:定义邮件连接校验、确定性通知身份和STARTTLS异步投递适配 | R:code:src/TraceTime.Core/UsageLimits.cs,code:src/TraceTime.App/ReminderEmailService.cs | A:EmailConnection,EmailNotice,EmailNoticePolicy.Due,IReminderEmailSender,SmtpReminderEmailSender | S:每日与临时到期按应用/日期/修订/种类/token散列去重；只发日期名称额度汇总，禁465且无明文回退；发送20秒超时不保证未送达
+LimitDispatch.cs[DB8T]: F:按提醒强度和访问状态从应用额度中选择一个待呈现项 | R:code:src/TraceTime.Core/UsageLimits.cs,code:src/TraceTime.App/MainWindow.Limits.cs | A:NextForVisit,Next,DueLimit | S:运行路径NextForVisit仅当前前台应用或已有Pending可进入；Next是兼容无访问选择，不能替代再进入语义
+Models.cs[DB9T]: F:定义采样、前台区间、空闲、中断、持久化批次及双口径报告契约 | R:code:src/TraceTime.Core/TrackingEngine.cs,code:src/TraceTime.Core/ReportBuilder.cs,code:src/TraceTime.Storage/UsageDatabase.cs | A:AppIdentity,TrackingSample,UsageSegment,ChangeBatch,ITrackingSink,DayReport | S:空闲通过ScopeId关联，不能扣到其他边界；前台包含空闲，未知和系统有固定身份；记录不承载窗口标题、网址、键盘或截图
+ReminderSound.cs[KH7T]: F:规范化提醒音效配置并验证、生成及缩放PCM WAV数据 | R:code:src/TraceTime.App/ReminderAudio.cs | A:SoundChoice,ReminderSounds,ReminderWave.Validate,SetVolume,Chime | S:限2MiB/10秒、8或16位、单/双声道和8至96kHz；拒绝重复格式/数据块，音量克隆原数据；默认中重档静音
+ReportBuilder.cs[KB9T]: F:共享按时区裁切前台和空闲交集的聚合并生成完整日报或纯应用汇总 | R:code:src/TraceTime.Core/Models.cs,code:src/TraceTime.Core/DayActivity.cs,code:src/TraceTime.Storage/UsageDatabase.cs | A:Bounds,Build,BuildSummary,Max,Min | S:空闲先按Scope合并防重复扣除；BuildSummary保留完整应用身份排序与双口径，但时间线刻意为空不可交给时间轴；日界转UTC并跳过无效分钟，不补未知空档，不同前台源重叠由DayActivity规整
+TraceTime.Core.csproj[FV6T]: F:构建不依赖Windows桌面的.NET 10核心规则程序集 | R:code:src/TraceTime.Core/TrackingEngine.cs,code:tests/TraceTime.Tests/TraceTime.Tests.csproj | A:TargetFramework | S:核心计时和状态场景可脱离WPF验证
+TrackingEngine.cs[DB9T]: F:以单线程状态机累计前台区间并按阈值回扣空闲，批量提交可重试增量 | R:code:src/TraceTime.Core/Models.cs,code:src/TraceTime.Core/ReportBuilder.cs,code:src/TraceTime.App/Windows/TrackerController.cs | A:Observe,Stop,ChangeThreshold,Flush,IsIdle,LastObservedUtc | S:UTC锚点加单调差值计时；倒退、超过15秒或UTC偏差超过2秒重建Scope且不补空档；启动忽略此前无输入，阈值改变切边界；两次采样间已结束的超阈值空闲也回扣；sink失败保留脏批次
+UsageAnalysis.cs[KA8T]: F:聚合多日报告、生成本地摘要与隐私受限AI载荷和固定回顾提示词 | R:code:src/TraceTime.Core/Models.cs,code:src/TraceTime.Core/AiAnalysisClient.cs | A:Apps,RecordedDays,Summary,Payload,DefaultPrompt | S:载荷无路径、键或原始片段；最多20应用可匿名且其余汇总；日均仅分母为记录日；提示词不将空闲等同生产力，应用名作为数据
+UsageDistribution.cs[KA6T]: F:按选定口径生成有限数量的应用份额并保留双口径总量 | R:code:src/TraceTime.App/AnalysisPieChart.cs,code:src/TraceTime.Core/Models.cs | A:UsageShare,Build | S:最多6项，超过6时前5加其余；滤零按当前口径，同量按稳定键排序
+UsageLimits.cs[DB9T]: F:定义额度规则、按日修订状态、临时前台额度及再进入提醒策略 | R:code:src/TraceTime.Core/LimitDispatch.cs,code:src/TraceTime.Storage/UsageDatabase.Limits.cs | A:UsageLimit,LimitDayState,LimitPolicy,LimitVisits | S:日状态绑定应用日期修订；临时额度始终消耗前台且可覆盖今日忽略；已确认后是否再提醒由新访问与RepeatOnEntry决定；本应用置前不构成新访问，Pending保持待确认
+packages.lock.json[FV4T]: F:记录核心.NET 10项目无外部包依赖的锁定结果 | R:code:src/TraceTime.Core/TraceTime.Core.csproj | A:dependencies | S:-
+
+===E:/AI_Code/Tracetime/src/TraceTime.Storage/===
+AssemblyInfo.cs[FQ4T]: F:向场景测试程序集开放存储内部验证入口 | R:code:tests/TraceTime.Tests/TraceTime.Tests.csproj | A:InternalsVisibleTo | S:-
+TraceTime.Storage.csproj[FV7T]: F:配置.NET 10存储程序集及核心和SQLite依赖 | R:code:src/TraceTime.Core/TraceTime.Core.csproj,code:src/TraceTime.Storage/packages.lock.json | A:TargetFramework,PackageReference | S:SQLite直接依赖10.0.13；具体传递版本由锁文件记录
+UsageDatabase.Archives.cs[PD9S]: F:创建一致历史归档、验证单文件快照并安全替换恢复范围 | R:code:src/TraceTime.Storage/UsageDatabase.cs,code:src/TraceTime.App/MainWindow.History.cs | A:HistoryCounts,CreateHistoryArchive,InspectHistoryArchive,RestoreHistoryArchive | S:读事务固定WAL快照，只复制历史不复制凭据规则；预检拒触发器视图虚拟表和外部日志；恢复须暂停采集、复制暂存并校验预览哈希，先备份再事务替换UTC范围且换记录ID；提交后清理失败仅警告
+UsageDatabase.Calendar.cs[PD7T]: F:按时区查询相邻记录日和可见日期范围并提供历史版本失效标记 | R:code:src/TraceTime.Core/ReportBuilder.cs,code:src/TraceTime.App/RecordedCalendar.cs | A:HistoryRevision,InvalidateHistory,FindRecordedDay,RecordedDates | S:只认正时长usage，午夜终点减1tick避免多标一天；HistoryRevision是当前连接实例内计数
+UsageDatabase.Email.cs[PN8T]: F:持久化邮件通知、唯一入队、状态转换及启动恢复和过期清理 | R:code:src/TraceTime.Core/EmailReminders.cs,code:src/TraceTime.App/ReminderEmailService.cs | A:QueueEmail,ReadEmails,SetEmailStatus,RecoverEmailAttempts,RetryFailedEmails,PruneEmails | S:确定性ID加INSERT OR IGNORE防重复；遗留sending视为结果未知失败，不自动重发；跨日取消队列并保留最多近7天记录
+UsageDatabase.Limits.cs[PD8S]: F:迁移并持久化额度规则、每日提醒状态与静默选择，读取多日分析 | R:code:src/TraceTime.Core/UsageLimits.cs,code:src/TraceTime.Storage/UsageDatabase.Email.cs,code:src/TraceTime.Core/UsageAnalysis.cs | A:SaveLimit,LoadLimitDay,SaveLimitDay,SetReminderQuiet,RecordedApps,Analyze | S:只允许正时长记录中的应用建规则；修改递增修订并取消旧邮件，迁移默认开启再进入而关闭邮件；日状态按修订重置，保留35天，分析限定1至31日
+UsageDatabase.cs[PD9S]: F:实现SQLite增量存储、完整日报和纯汇总读取、范围删除与CSV导出 | R:code:src/TraceTime.Core/Models.cs,code:src/TraceTime.Core/ReportBuilder.cs,code:src/TraceTime.Storage/UsageDatabase.Limits.cs,code:src/TraceTime.Storage/UsageDatabase.Archives.cs | A:Save,GetDay,GetDaySummary,DeleteRange,ExportCsv,SaveSettings | S:UTC ticks与WAL/FULL，禁池且调用方串行使用；同ID检查点仅更新终点；纯汇总无缓存且不读gaps，时间线为空；删除保留跨界余段Scope并清日状态，CSV防公式注入且无路径
+packages.lock.json[FV6T]: F:固定存储程序集的SQLite托管及原生依赖解析结果 | R:code:src/TraceTime.Storage/TraceTime.Storage.csproj | A:dependencies | S:直接包为Microsoft.Data.Sqlite 10.0.13，SQLitePCLRaw为2.1.13；锁文件不自动启用locked-mode
+
+===E:/AI_Code/Tracetime/tests/TraceTime.Tests/===
+BreakReminderTests.cs[TB7T]: F:以合成单调时间验证休息钟累计、重置、稍后和配置恢复 | R:code:src/TraceTime.Core/BreakReminder.cs | A:All | S:Away、暂停和未知断档分别验证；不触发真实锁屏休眠，键鼠空闲不构成休息证据
+ChartResourceTests.cs[TP6T]: F:验证应用份额双口径守恒、排序及本进程资源采样边界 | R:code:src/TraceTime.Core/UsageDistribution.cs,code:src/TraceTime.App/ProcessResourceSampler.cs | A:All | S:首帧和重置后CPU必须为空；CPU按逻辑处理器容量归一化，场景断言不等于性能基准
+DaySoundTests.cs[TU7T]: F:验证全天覆盖、分时统计、DST日长及WAV和导航偏好边界 | R:code:src/TraceTime.Core/DayActivity.cs,code:src/TraceTime.Core/ReminderSound.cs,code:src/TraceTime.App/ViewPreferences.cs | A:All | S:区分未来与未记录，保留相邻原始片段；WAV只在内存验证而不播放，配置使用临时目录
+FeatureTests.cs[TB8S]: F:验证额度与迁移持久化、跨日分析和AI请求隐私及失败处理 | R:code:src/TraceTime.Core/UsageLimits.cs,code:src/TraceTime.Storage/UsageDatabase.Limits.cs,code:src/TraceTime.Core/AiAnalysisClient.cs | A:All | S:数据库为独立临时夹具，HTTP用注入替身；无真实请求，兼容调度Next的通过不能代替再进入调度验证
+HistoryTests.cs[TD8S]: F:验证历史归档一致性、恢复安全与失败回滚及日期导航和静默 | R:code:src/TraceTime.Storage/UsageDatabase.Archives.cs,code:src/TraceTime.Storage/UsageDatabase.Calendar.cs,code:src/TraceTime.Storage/UsageDatabase.Limits.cs | A:All | S:全部操作使用独立夹具；提交后清理失败必须保留成功及诊断，安全备份失败不得开始恢复；覆盖预览哈希变化、事务中止和重复恢复不增量
+PerformanceTests.cs[TP7T]: F:验证全天汇总分配边界并生成多日合成数据和提醒读路径性能对照 | R:code:src/TraceTime.Core/DayActivity.cs,code:scripts/measure-resources.ps1,code:tests/TraceTime.Tests/SummaryTests.cs | A:All,Seed,MeasureSummary | S:Seed只创建新目录，默认一天无规则；90天对照交替预热并测线程分配，不代表常驻内存或物理I/O
+PolishTests.cs[TU6T]: F:验证记录日标记边界与AI地址规范化和模型列表解析 | R:code:src/TraceTime.Storage/UsageDatabase.Calendar.cs,code:src/TraceTime.Core/AiProviderOptions.cs | A:All | S:午夜终点不多标日期，空闲仍是记录；模型请求仅模拟HTTP，不发送使用记录或真实凭据
+Program.cs[TQ8S]: F:运行控制台确定性场景并提供计时夹具和性能播种测量入口 | R:code:src/TraceTime.Core/TrackingEngine.cs,code:src/TraceTime.Storage/UsageDatabase.cs,code:tests/TraceTime.Tests/PerformanceTests.cs | A:--seed-performance,--measure-summary,Fixture,MemorySink,FailingSink | S:模拟UTC单调时间和临时SQLite，不改系统时钟；逐场景捕获失败并返回非零，性能命令直接返回而不执行完整场景
+ReminderTests.cs[TB8S]: F:验证再进入去重、临时前台额度、邮件状态及旧库迁移 | R:code:src/TraceTime.Core/UsageLimits.cs,code:src/TraceTime.Core/LimitDispatch.cs,code:src/TraceTime.Core/EmailReminders.cs,code:src/TraceTime.Storage/UsageDatabase.Email.cs | A:All | S:临时额度含空闲且仅随目标前台增长；模拟发送中断必须落failed并等待手动重试；只验证SMTP配置和队列，不实际发送邮件
+StartupTests.cs[TC8S]: F:验证升级启动项接续、版本保护、显式保存回滚与并发冲突 | R:code:src/TraceTime.App/Windows/StartupPreferences.cs | A:All | S:内存存储与注入版本信息替代注册表和EXE检查；不修改真实启动项，未启用或未知身份不得自动接管，显式保存允许选择旧版本
+TraceTime.Tests.csproj[FQ7T]: F:构建.NET 10控制台场景并链接可脱离WPF验证的应用逻辑 | R:code:src/TraceTime.Core/TraceTime.Core.csproj,code:src/TraceTime.Storage/TraceTime.Storage.csproj,code:tests/TraceTime.Tests/Program.cs | A:TargetFramework,OutputType,Compile | S:直接链接外观、视图、资源采样和启动偏好源码，不引用桌面项目；测试由可执行入口运行
+packages.lock.json[FV5T]: F:锁定场景测试通过Storage引入的SQLite依赖图及项目引用 | R:code:tests/TraceTime.Tests/TraceTime.Tests.csproj,code:src/TraceTime.Storage/packages.lock.json | A:dependencies | S:SQLite为传递依赖，锁文件本身不保证restore使用locked-mode
+SummaryTests.cs[TB8T]: F:验证纯汇总的双口径身份排序、数据更新可见性及提醒等价和分配下降 | R:code:src/TraceTime.Core/ReportBuilder.cs,code:src/TraceTime.Storage/UsageDatabase.cs,code:src/TraceTime.Core/LimitDispatch.cs | A:All,Same | S:独立数据库覆盖仅空闲更新、删除、归档恢复与重启；比较完整报告逐tick及应用顺序，纯汇总时间线必须为空；分配断言不证明进程驻留减少
+TimeBoundaryTests.cs[TB8S]: F:用固定时区与模拟样本验证DST回拨休眠和分日双口径守恒 | R:code:src/TraceTime.Core/TrackingEngine.cs,code:src/TraceTime.Core/ReportBuilder.cs,code:docs/dev/TIME-MODEL-ADR.md | A:All,Eastern | S:不改变系统时钟时区或电源；固定2026测试DST规则和随机种子；回拨Scope重叠断言刻画现状，不表示已解决墙钟重叠语义
+
+===E:/AI_Code/Tracetime/.github/===
+dependabot.yml[FV5T]: F:声明NuGet和GitHub Actions的每周依赖更新检查 | R:code:.github/workflows/ci.yml | A:updates | S:每类最多五个开放PR；本地配置存在不代表远端已经启用或运行
+
+===E:/AI_Code/Tracetime/.github/workflows/===
+ci.yml[OV8T]: F:在Windows执行锁定构建、场景测试和便携包上传并提供手动WPF验证 | R:code:scripts/build.ps1,code:scripts/verify-release.ps1,code:global.json | A:push,pull_request,workflow_dispatch | S:权限只读且动作固定提交；WPF仅手动选择，包上传不创建Release；缓存目录须与NuGet保持一致

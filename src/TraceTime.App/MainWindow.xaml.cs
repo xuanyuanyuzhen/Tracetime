@@ -26,6 +26,7 @@ public partial class MainWindow : Window
     private readonly UsageDatabase _db;
     private readonly TrackerController? _tracker;
     private readonly bool _demo;
+    private readonly StartupPreferences? _startup;
     private readonly DispatcherTimer _refreshTimer;
     private readonly AppIconCache _icons;
     private readonly RecordedCalendar _recordedCalendar;
@@ -40,9 +41,9 @@ public partial class MainWindow : Window
     private DateOnly SelectedDay => DateOnly.FromDateTime(DayPicker.SelectedDate ?? DateTime.Today);
     private bool WithoutIdle => ActiveMetric.IsChecked == true;
 
-    internal MainWindow(UsageDatabase db, TrackerController? tracker, bool demo, bool deferOverview = false)
+    internal MainWindow(UsageDatabase db, TrackerController? tracker, bool demo, bool deferOverview = false, StartupPreferences? startup = null)
     {
-        _db = db; _tracker = tracker; _demo = demo;
+        _db = db; _tracker = tracker; _demo = demo; _startup = startup;
         _reminderAudio=new ReminderAudioService(Path.GetDirectoryName(db.FilePath)!);
         _icons = new AppIconCache(Path.GetDirectoryName(db.FilePath)!,Dispatcher);
         _appearancePath = Path.Combine(Path.GetDirectoryName(db.FilePath)!, "appearance.json");
@@ -65,7 +66,7 @@ public partial class MainWindow : Window
         RangeStart.DisplayDateEnd = RangeEnd.DisplayDateEnd = DateTime.Today;
         StoragePath.Text = db.FilePath;
         IdleInput.Text = db.LoadSettings().IdleMinutes.ToString(CultureInfo.InvariantCulture);
-        try { StartupCheck.IsChecked = StartupRegistration.IsEnabled(); } catch { StartupCheck.IsChecked = false; }
+        LoadStartupPreference();
         if (_demo) { Title = "TraceTime · 演示数据"; PauseButton.IsEnabled = false; StartupCheck.IsEnabled = false; }
         if (_tracker is not null) _tracker.Changed += UpdateStatus;
         _refreshTimer = new DispatcherTimer(TimeSpan.FromSeconds(5), DispatcherPriority.Background, (_, _) => RefreshBackground(), Dispatcher);
@@ -223,6 +224,7 @@ public partial class MainWindow : Window
     private void ShowSettings(object sender, RoutedEventArgs e)
     {
         SetPage("settings");
+        LoadStartupPreference();
         IdleInput.Text = _db.LoadSettings().IdleMinutes.ToString(CultureInfo.InvariantCulture);
         RangeStart.SelectedDate = RangeEnd.SelectedDate = SelectedDay.ToDateTime(TimeOnly.MinValue);
         RefreshHistoryStorage();
@@ -231,20 +233,15 @@ public partial class MainWindow : Window
     private void SavePreferences(object sender, RoutedEventArgs e)
     {
         if (!int.TryParse(IdleInput.Text, out var minutes) || minutes is < 1 or > 60) { SettingsFeedback.Text = "请输入 1–60 之间的整数分钟数。"; return; }
-        var oldStartup = false; var startupChanged = false;
         try
         {
-            if (!_demo)
-            {
-                oldStartup = StartupRegistration.IsEnabled();
-                if (oldStartup != (StartupCheck.IsChecked == true)) { StartupRegistration.SetEnabled(StartupCheck.IsChecked == true); startupChanged = true; }
-            }
-            if (_tracker is not null) _tracker.UpdateSettings(new(minutes)); else _db.SaveSettings(new(minutes));
+            void SaveTracking() { if (_tracker is not null) _tracker.UpdateSettings(new(minutes)); else _db.SaveSettings(new(minutes)); }
+            if (_startup is not null && StartupCheck.IsEnabled) _startup.Save(StartupCheck.IsChecked == true, SaveTracking);
+            else SaveTracking();
             SettingsFeedback.Text = "已保存。新的空闲阈值用于此后的记录。";
         }
         catch (Exception ex)
         {
-            if (startupChanged) { try { StartupRegistration.SetEnabled(oldStartup); } catch { } }
             SettingsFeedback.Text = "保存失败：" + ex.Message;
         }
     }

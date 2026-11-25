@@ -2,7 +2,8 @@ using TraceTime.Core;
 using TraceTime.Storage;
 using TraceTime.App;
 
-if(args.Length==2 && args[0]=="--seed-performance") { PerformanceTests.Seed(args[1]); return 0; }
+if(args.Length is >=2 and <=4 && args[0]=="--seed-performance") { PerformanceTests.Seed(args[1],args.Length>=3?int.Parse(args[2]):1,args.Length==4 && bool.Parse(args[3])); return 0; }
+if(args.Length==2 && args[0]=="--measure-summary") { PerformanceTests.MeasureSummary(args[1]); return 0; }
 
 var tests = new (string Name, Action Test)[]
 {
@@ -100,7 +101,7 @@ var tests = new (string Name, Action Test)[]
         var zone=TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"); var (a,b)=ReportBuilder.Bounds(new(2026,3,8),zone); Near((b-a).TotalHours,23);
     })
 };
-tests = tests.Concat(FeatureTests.All).Concat(PolishTests.All).Concat(DaySoundTests.All).Concat(ReminderTests.All).Concat(HistoryTests.All).Concat(ChartResourceTests.All).Concat(BreakReminderTests.All).Concat(PerformanceTests.All).ToArray();
+tests = tests.Concat(FeatureTests.All).Concat(PolishTests.All).Concat(DaySoundTests.All).Concat(ReminderTests.All).Concat(HistoryTests.All).Concat(ChartResourceTests.All).Concat(BreakReminderTests.All).Concat(PerformanceTests.All).Concat(StartupTests.All).Concat(TimeBoundaryTests.All).Concat(SummaryTests.All).ToArray();
 var failures=0;
 foreach(var (name,test) in tests) { try { test(); Console.WriteLine($"PASS {name}"); } catch(Exception e) { failures++; Console.Error.WriteLine($"FAIL {name}: {e}"); } }
 Console.WriteLine($"{tests.Length-failures}/{tests.Length} passed");

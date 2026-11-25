@@ -50,10 +50,12 @@ TraceTime 常驻系统托盘，自动记录当前前台应用。你可以回看�
 
 ### 下载与运行
 
-**0.8.1** 提供 Windows x64 ZIP 包，在0.8.0的休息提醒、图表和资源占用显示基础上进一步降低常驻开销与下载体积。已验证平台为 Windows 11 x64，见[发布说明](docs/releases/v0.8.1.md)。
+**0.8.3** 提供 Windows x64 ZIP 包，包含升级后的开机启动接续、后台提醒汇总优化和时间边界回归。已验证平台为 Windows 11 x64，见[发布说明](docs/releases/v0.8.3.md)。
+
+本版交付首批优化；完整UI重构、应用别名、安装器、自动快照及双进程仍属于后续计划。0.8.2未单独公开，其启动项修复已包含在本版。
 
 1. 安装 [Microsoft .NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)，在 **.NET Desktop Runtime** 下选择 **Windows x64**。运行应用无需安装 SDK。
-2. 打开 [最新 Release](https://github.com/xuanyuanyuzhen/Tracetime/releases/latest)，在 **Assets** 下载 `TraceTime-0.8.1-win-x64.zip`。GitHub 自动生成的 `Source code` 是源码包。
+2. 打开 [最新 Release](https://github.com/xuanyuanyuzhen/Tracetime/releases/latest)，在 **Assets** 下载 `TraceTime-0.8.3-win-x64.zip`。GitHub 自动生成的 `Source code` 是源码包。
 3. 将 ZIP 完整解压到固定文件夹，运行其中的 `TraceTime.exe`。请保留全部文件，不要只复制 EXE。
 4. 正常启动后即开始记录。在「每日概览」查看使用情况，在「设置与数据」调整空闲阈值、导出或备份历史。
 
@@ -62,11 +64,11 @@ TraceTime 常驻系统托盘，自动记录当前前台应用。你可以回看�
 <details>
 <summary>校验下载文件</summary>
 
-Release 同时提供 `TraceTime-0.8.1-win-x64.zip.sha256`。在下载目录运行：
+Release 同时提供 `TraceTime-0.8.3-win-x64.zip.sha256`。在下载目录运行：
 
 ```powershell
-Get-FileHash .\TraceTime-0.8.1-win-x64.zip -Algorithm SHA256
-Get-Content .\TraceTime-0.8.1-win-x64.zip.sha256
+Get-FileHash .\TraceTime-0.8.3-win-x64.zip -Algorithm SHA256
+Get-Content .\TraceTime-0.8.3-win-x64.zip.sha256
 ```
 
 两处 SHA-256 应一致，字母大小写不影响比较。
@@ -77,7 +79,7 @@ Get-Content .\TraceTime-0.8.1-win-x64.zip.sha256
 
 升级前先备份数据：旧版支持历史备份时，可通过「设置与数据 → 历史备份与归档」操作；更早版本请先退出，再复制整个 `%LOCALAPPDATA%\TraceTime` 目录。随后从旧版托盘菜单选择「退出」（如仍在运行），解压并启动新版本。程序文件与用户数据分开保存，同一 Windows 用户启动新版时会继续使用原有数据目录。
 
-如果启用了开机启动并更换了程序位置，请在新版设置中重新勾选并保存启动选项。当前没有安装器、自动更新或代码签名。版本变化见 [0.8.1 发布说明](docs/releases/v0.8.1.md)。
+**0.8.1及更早版本**更换程序位置后，需要在新版「设置与数据」重新勾选开机启动并点击「保存偏好」，否则仍可能启动旧路径。**0.8.2起**会在新版成功启动后接续已开启的启动项，原来关闭的保持关闭；切换前仍需从旧版托盘退出。详细步骤及固定目录升级方法见[升级与开机启动](docs/UPGRADING.md)。当前没有安装器、自动更新或代码签名。
 
 ## 界面预览
 
@@ -177,7 +179,7 @@ cd Tracetime
 # 可选：下载项目声明的 SDK 到 .tools，不修改系统 PATH
 .\scripts\setup-dotnet.ps1
 
-# 恢复依赖、Release 构建并运行确定性场景验证
+# 按锁文件恢复依赖、Release 构建并运行确定性场景验证
 .\scripts\build.ps1 -Test
 
 # 生成发布目录、ZIP 和 SHA-256（需要桌面运行时）
@@ -187,9 +189,11 @@ cd Tracetime
 .\scripts\verify-release.ps1
 ```
 
-当前源码产物位于 `artifacts\release\TraceTime-0.8.1-win-x64`。依赖已恢复时可使用 `-Offline`；需要自行生成包含运行时的包时可使用 `-SelfContained`（需要下载对应运行时依赖，当前 Release 附件为框架依赖包）。0.8.1按win-x64解析原生依赖，避免混入其他平台的SQLite库。
+当前源码产物位于 `artifacts\release\TraceTime-0.8.3-win-x64`，ZIP和SHA-256校验文件直接放在`artifacts\release`同级。依赖已恢复时可使用 `-Offline`；需要自行生成包含运行时的包时可使用 `-SelfContained`（需要下载对应运行时依赖，当前 Release 附件为框架依赖包）。0.8.1起按win-x64解析原生依赖，避免混入其他平台的SQLite库。
 
 若默认发布目录中的程序正在运行，可给构建和验证脚本都传入 `-ReleaseRoot artifacts\release\fresh`，在独立目录生成并验证包，避免覆盖运行中的文件。
+
+默认恢复使用`--locked-mode`，依赖声明与锁文件不一致时直接失败。只有有意更新依赖时才运行`./scripts/build.ps1 -UpdateLockFile -Test`并审查四份锁文件；`-Offline`仅复用已恢复资产，不能替代锁定恢复检查。Windows CI配置会构建、运行场景并上传框架依赖ZIP；手动触发可选择隔离WPF验证。工作流和Dependabot已加入源码，远端执行状态需在推送后核实。
 
 ### 项目结构
 
@@ -209,7 +213,7 @@ WORKLOG.md             # 当前进度、验证结果与接手入口
 
 ### 验证状态
 
-当前源码累计 **98 项场景**通过；0.8.1正式包验证了托盘延迟加载、最小化停止界面刷新、恢复窗口、排行行复用及时间线完整恢复，并保留计时、提醒与双口径回归。具体证据见[验证记录](docs/VALIDATION.md)，短时资源对照见[性能说明](docs/PERFORMANCE.md)。AI与邮件使用模拟服务验证。
+当前源码累计 **118 项场景**通过，新增固定时区/模拟时钟边界、汇总等价、空闲回扣、删除恢复与提醒选择回归。后台额度检查只读取应用汇总，省去时间线构建；两种时长保持不变。大幅墙钟回拨后的时间轴重叠仍是已记录限制。具体证据见[验证记录](docs/VALIDATION.md)，分配和短时资源对照见[性能说明](docs/PERFORMANCE.md)。AI与邮件使用模拟服务验证。
 
 实际锁屏 / 休眠、多显示器、长期资源占用、真实 AI / SMTP 服务和大型历史归档仍需进一步实测。项目目前提供 Windows 桌面端；手机端与多设备同步尚未实现。
 
@@ -217,6 +221,9 @@ WORKLOG.md             # 当前进度、验证结果与接手入口
 
 | 文档 | 内容 |
 | --- | --- |
+| [0.8.3 发布说明](docs/releases/v0.8.3.md) | 提醒汇总读取、时间边界回归、升级与验证范围 |
+| [升级与开机启动](docs/UPGRADING.md) | 旧版手动修复、0.8.2接续已有选择与固定目录升级 |
+| [0.8.2 本地修复说明](docs/releases/v0.8.2.md) | 升级后启动路径接续、版本保护与失败恢复 |
 | [0.8.1 发布说明](docs/releases/v0.8.1.md) | 视图按需计算、分配减少、Windows x64包精简 |
 | [0.8.0 发布说明](docs/releases/v0.8.0.md) | 新休息提醒、合并0.7.1改进与升级须知 |
 | [轻量化与资源测量](docs/PERFORMANCE.md) | 优化措施、对照数据、复测方法与适用边界 |

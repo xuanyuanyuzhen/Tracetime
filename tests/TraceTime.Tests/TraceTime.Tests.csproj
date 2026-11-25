@@ -4,4 +4,5 @@
   <ItemGroup><Compile Include="..\..\src\TraceTime.App\AppearanceSettings.cs" Link="AppearanceSettings.cs"/></ItemGroup>
   <ItemGroup><Compile Include="..\..\src\TraceTime.App\ViewPreferences.cs" Link="ViewPreferences.cs"/></ItemGroup>
   <ItemGroup><Compile Include="..\..\src\TraceTime.App\ProcessResourceSampler.cs" Link="ProcessResourceSampler.cs"/></ItemGroup>
+  <ItemGroup><Compile Include="..\..\src\TraceTime.App\Windows\StartupPreferences.cs" Link="StartupPreferences.cs"/></ItemGroup>
 </Project>

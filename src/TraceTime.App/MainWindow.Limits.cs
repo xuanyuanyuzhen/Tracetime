@@ -111,6 +111,8 @@ public partial class MainWindow
     private static string LevelName(ReminderLevel level) => level switch { ReminderLevel.Light => "轻度", ReminderLevel.Medium => "中度", _ => "严重" };
     private static string MetricName(UsageMetric metric) => metric == UsageMetric.Foreground ? "前台停留" : "扣除空闲后";
 
+    private DayReport ReadLimitReport(DateOnly day) => _db.GetDaySummary(day, TimeZoneInfo.Local);
+
     private void CheckLimits()
     {
         if (_demo || _tracker is null || !_ready || _checkingLimits || _historyBusy) return;
@@ -127,7 +129,7 @@ public partial class MainWindow
             if (!_limits.Any(x => x.Enabled)) return;
             if (_prunedDay != today) { _db.PruneLimitDays(today); _prunedDay = today; }
             _tracker.Flush(); if (_tracker.Error is not null) return;
-            var report = _db.GetDay(today, TimeZoneInfo.Local);
+            var report = ReadLimitReport(today);
             QueueDueEmails(report);
             _ = DrainEmailQueueAsync(today);
             var next = LimitDispatch.NextForVisit(_limits,report,rule=>_db.LoadLimitDay(rule,today),_limitVisits,_tracker.CanPresentReminder);

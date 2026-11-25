@@ -1,0 +1,1033 @@
+{
+  "version": 1,
+  "created_at": "2026-11-25T12:31:07Z",
+  "updated_at": "2026-11-25T15:54:20Z",
+  "files": {
+    ".gitattributes": {
+      "role": "index",
+      "sha256": "21fa16a2122e2b0360b47502c577428b645437e08e9e87ffba661f84853cb476",
+      "size": 291,
+      "normalized_sha256": "21fa16a2122e2b0360b47502c577428b645437e08e9e87ffba661f84853cb476"
+    },
+    ".github/dependabot.yml": {
+      "role": "index",
+      "sha256": "165ed2f1493147d59316b94736963f8710bb37de7743dd6bf089df46554ac961",
+      "size": 259,
+      "normalized_sha256": "165ed2f1493147d59316b94736963f8710bb37de7743dd6bf089df46554ac961"
+    },
+    ".github/workflows/ci.yml": {
+      "role": "index",
+      "sha256": "40cdada5d9bf58404af90434abd172e9418c8689377a731550961d58ae3ae24b",
+      "size": 2222,
+      "normalized_sha256": "40cdada5d9bf58404af90434abd172e9418c8689377a731550961d58ae3ae24b"
+    },
+    ".gitignore": {
+      "role": "index",
+      "sha256": "5efe74e9776b155515a167317a663f02e6ca01098eb339eb0a14a6f433d91727",
+      "size": 455,
+      "normalized_sha256": "5efe74e9776b155515a167317a663f02e6ca01098eb339eb0a14a6f433d91727"
+    },
+    ".impeccable/design.json": {
+      "role": "index",
+      "sha256": "5618311214e6340a079cecef78ca8c3b927d0858bf950015055a43e636ca2aef",
+      "size": 7416,
+      "normalized_sha256": "845c4acb97d0284629c6f643b4cda6fae161ff4d35aa43db343c72bdc2c04df1"
+    },
+    "AGENTS.md": {
+      "role": "index",
+      "sha256": "02d30cae6b07740809e260f1c3cb496069c15ab2cef8b03098b8c8f81648e679",
+      "size": 13898,
+      "normalized_sha256": "02d30cae6b07740809e260f1c3cb496069c15ab2cef8b03098b8c8f81648e679"
+    },
+    "DESIGN.md": {
+      "role": "index",
+      "sha256": "83c47752a0fc504d2ea3c7127703f1e1a25eb2571b90806ba0bdae7005473195",
+      "size": 26322,
+      "normalized_sha256": "f42d44b7e3b2d1e2ea443e877f185d54b32f221ebb240d97d3af6be148bf718a"
+    },
+    "Directory.Build.props": {
+      "role": "index",
+      "sha256": "7edc56670b9e382244d5226de52a829dcbf6f6ab055f59932b69d1b8b7d6190f",
+      "size": 280,
+      "normalized_sha256": "7edc56670b9e382244d5226de52a829dcbf6f6ab055f59932b69d1b8b7d6190f"
+    },
+    "NuGet.Config": {
+      "role": "index",
+      "sha256": "0f76441f96a472f4f46f20b072e9172f2ef74ae377542ca8fd52a261cf3ae6cb",
+      "size": 255,
+      "normalized_sha256": "0f76441f96a472f4f46f20b072e9172f2ef74ae377542ca8fd52a261cf3ae6cb"
+    },
+    "PLAN.md": {
+      "role": "index",
+      "sha256": "b446d74ca5242b6d40626d5de84e2b93b09b6d861ed68dddc4ccc48d85e28870",
+      "size": 20673,
+      "normalized_sha256": "b446d74ca5242b6d40626d5de84e2b93b09b6d861ed68dddc4ccc48d85e28870"
+    },
+    "PRODUCT.md": {
+      "role": "index",
+      "sha256": "ad2d791bc4e0de4037b2420afdaf09b56e09d3f460fb3cc1a4237f00506aa93c",
+      "size": 19147,
+      "normalized_sha256": "d2910a8db4eff575fa7c2b74a12a7d44bbe4bdc5faa6469a9eb8136e355447a3"
+    },
+    "README.md": {
+      "role": "index",
+      "sha256": "6c7485efbb0643147b99219efaaa2e73df25dbb217a82e99d1d632754497a459",
+      "size": 16399,
+      "normalized_sha256": "f734e5bc119fa7265364d82471b5b4aba282b85bfabfb5240d256f60142011fb"
+    },
+    "TraceTime.sln": {
+      "role": "index",
+      "sha256": "2b58559135bafdd6930e2159312aa26c00246f2de06bda04097a6be2a211157f",
+      "size": 5810,
+      "normalized_sha256": "c6e4e568feb02464a59521c61424565a05c90963e6092ae2eb3a2919487fdeeb"
+    },
+    "WORKLOG.md": {
+      "role": "index",
+      "sha256": "99501e793c294c2ab59dd6ff1080a14eb2999324ddb0943912f600064f8d3407",
+      "size": 104981,
+      "normalized_sha256": "4a3f99b9a0647d1c3254d250d7699d6e24883f91af14fbc4318635fc6981443e"
+    },
+    "aoci.code.txt": {
+      "role": "index",
+      "sha256": "0374105cfc6cbc297502d545f5843cb1476db50169f7958afcea0e3e173d6621",
+      "size": 48173,
+      "normalized_sha256": "0374105cfc6cbc297502d545f5843cb1476db50169f7958afcea0e3e173d6621"
+    },
+    "aoci.meta.txt": {
+      "role": "index",
+      "sha256": "fbc304fa05182547e96f1f8404c7c30ad6c366bba9589523f1019c2c1da0427c",
+      "size": 1989,
+      "normalized_sha256": "fbc304fa05182547e96f1f8404c7c30ad6c366bba9589523f1019c2c1da0427c"
+    },
+    "aoci.txt": {
+      "role": "index",
+      "sha256": "fc99881b2e59bb4106df468757d59991db1f1b891f14e0c418bfdeae239908de",
+      "size": 298,
+      "normalized_sha256": "fc99881b2e59bb4106df468757d59991db1f1b891f14e0c418bfdeae239908de"
+    },
+    "docs/AI-PROMPT.txt": {
+      "role": "index",
+      "sha256": "75296a11769968a8a6a491ff8e892ab7a49f4c6323fc47074d39fa5cc6adb1f3",
+      "size": 1041,
+      "normalized_sha256": "025865120aa1559cfb38c127dc861a1e5bfa53a903b284e4f27fb12db1538859"
+    },
+    "docs/BREAK-REMINDERS.md": {
+      "role": "index",
+      "sha256": "1c59b96df2c7bc32d9183e6a7cc80f5529a6db08595c2f0f1763485180a42df5",
+      "size": 3548,
+      "normalized_sha256": "1c59b96df2c7bc32d9183e6a7cc80f5529a6db08595c2f0f1763485180a42df5"
+    },
+    "docs/DAY-AND-REMINDERS.md": {
+      "role": "index",
+      "sha256": "4792015f8bd79dba5fd1d98cdbb88957505e4ad0b87c640ccdd0240e23be605c",
+      "size": 4918,
+      "normalized_sha256": "4792015f8bd79dba5fd1d98cdbb88957505e4ad0b87c640ccdd0240e23be605c"
+    },
+    "docs/HISTORY-AND-QUICK-ACTIONS.md": {
+      "role": "index",
+      "sha256": "39b0f0e29dd6800193b5043f8b3df61a5207beca8d1fa606ed0635e1ec719957",
+      "size": 5071,
+      "normalized_sha256": "39b0f0e29dd6800193b5043f8b3df61a5207beca8d1fa606ed0635e1ec719957"
+    },
+    "docs/LIMITS-AND-ANALYSIS.md": {
+      "role": "index",
+      "sha256": "22c5d782ad1ada603731ea3463c100f8311fb3d4f4c50e3f96d3c7dec1418a24",
+      "size": 7541,
+      "normalized_sha256": "df3f8c0d1a3fc548444aa305b7a9c66ad60636481b5d55b14be36059beae7315"
+    },
+    "docs/PERFORMANCE.md": {
+      "role": "index",
+      "sha256": "9be5c957b912ac68bf51ba9e8801c75d4ca8b73deccac8896075085ee80638b1",
+      "size": 9783,
+      "normalized_sha256": "9be5c957b912ac68bf51ba9e8801c75d4ca8b73deccac8896075085ee80638b1"
+    },
+    "docs/REMINDERS-AND-ROADMAP.md": {
+      "role": "index",
+      "sha256": "79090e275a4cb9d47e8205417d43387730fd720950336a1387ed54c008964648",
+      "size": 7013,
+      "normalized_sha256": "79090e275a4cb9d47e8205417d43387730fd720950336a1387ed54c008964648"
+    },
+    "docs/UPGRADING.md": {
+      "role": "index",
+      "sha256": "0666c31f891ba168c53916d49d2e94ef552a421f30ffd658f8f578c3ca8b35bd",
+      "size": 2822,
+      "normalized_sha256": "0666c31f891ba168c53916d49d2e94ef552a421f30ffd658f8f578c3ca8b35bd"
+    },
+    "docs/VALIDATION.md": {
+      "role": "index",
+      "sha256": "4508a64fbec22a5dcce9602a61d396b56d331a4f50ceadf5c4839141b28073d1",
+      "size": 29756,
+      "normalized_sha256": "4508a64fbec22a5dcce9602a61d396b56d331a4f50ceadf5c4839141b28073d1"
+    },
+    "docs/design-v0.1.md": {
+      "role": "index",
+      "sha256": "2394c9eba4b50f6e1976064628a8f5cc124a88cd28987f40e4df415e145e2946",
+      "size": 11731,
+      "normalized_sha256": "2394c9eba4b50f6e1976064628a8f5cc124a88cd28987f40e4df415e145e2946"
+    },
+    "docs/dev/AOCI.md": {
+      "role": "index",
+      "sha256": "40eb95cc42e3a65c3c10f283d624b68edd8d9f331112642792d2a9e503f69f23",
+      "size": 6088,
+      "normalized_sha256": "40eb95cc42e3a65c3c10f283d624b68edd8d9f331112642792d2a9e503f69f23"
+    },
+    "docs/dev/PLAYBOOK-REVIEW.md": {
+      "role": "index",
+      "sha256": "0a72cb1b447ad5d7280420b7857b624f31a23963b2ec86336084be50a6c3c26e",
+      "size": 14136,
+      "normalized_sha256": "0a72cb1b447ad5d7280420b7857b624f31a23963b2ec86336084be50a6c3c26e"
+    },
+    "docs/dev/TIME-MODEL-ADR.md": {
+      "role": "index",
+      "sha256": "973313ec34d8bf15e96852a0af5261e4e12d12d01d804aa94fd0ef11c8dc2732",
+      "size": 2544,
+      "normalized_sha256": "973313ec34d8bf15e96852a0af5261e4e12d12d01d804aa94fd0ef11c8dc2732"
+    },
+    "docs/overview-design.md": {
+      "role": "index",
+      "sha256": "5710ae7d3d1b8fbc0bbab34553550f593aab0964f9c100d1719716fec1cd2fd6",
+      "size": 15090,
+      "normalized_sha256": "1ca17f25cb9de194a68dae4a84214e51e5acc7f00aaef77482a45fbe72138f7d"
+    },
+    "docs/releases/v0.7.0.md": {
+      "role": "index",
+      "sha256": "f7830897aa1e588c6b834fb113abf8ac1c30fdc341de41f68215910ac4daca66",
+      "size": 3523,
+      "normalized_sha256": "f7830897aa1e588c6b834fb113abf8ac1c30fdc341de41f68215910ac4daca66"
+    },
+    "docs/releases/v0.7.1.md": {
+      "role": "index",
+      "sha256": "e3bf160c8a21880bf1be4aa9ccfe2be9bf545c4ba93b9bf14e761e890a5a4779",
+      "size": 1773,
+      "normalized_sha256": "e3bf160c8a21880bf1be4aa9ccfe2be9bf545c4ba93b9bf14e761e890a5a4779"
+    },
+    "docs/releases/v0.8.0.md": {
+      "role": "index",
+      "sha256": "e0c266a7ab432f83709e71a4d1aa53ccf86332dc2b9e854f199f2edc9e13bfa0",
+      "size": 2105,
+      "normalized_sha256": "e0c266a7ab432f83709e71a4d1aa53ccf86332dc2b9e854f199f2edc9e13bfa0"
+    },
+    "docs/releases/v0.8.1.md": {
+      "role": "index",
+      "sha256": "57cc5a3b0a7de75706b34b8336cbdf50868eb49869555f5d257f6e45d279edc6",
+      "size": 1745,
+      "normalized_sha256": "57cc5a3b0a7de75706b34b8336cbdf50868eb49869555f5d257f6e45d279edc6"
+    },
+    "docs/releases/v0.8.2.md": {
+      "role": "index",
+      "sha256": "757d0d87aef5e4bc14450ea4933b22bc292b79efea4c976a06c938d156f6cb98",
+      "size": 1117,
+      "normalized_sha256": "757d0d87aef5e4bc14450ea4933b22bc292b79efea4c976a06c938d156f6cb98"
+    },
+    "docs/releases/v0.8.3.md": {
+      "role": "index",
+      "sha256": "7055ed2b416b85fbdff770b03ec650cad8b42b238189b312a1d21d5901250b4d",
+      "size": 1745,
+      "normalized_sha256": "7055ed2b416b85fbdff770b03ec650cad8b42b238189b312a1d21d5901250b4d"
+    },
+    "docs/screenshots/ai-config-dark.png": {
+      "role": "index",
+      "sha256": "429bb9c47c2300a402b76b79d817bb62e57c383bc49871613152d558fa15bc7c",
+      "size": 125271
+    },
+    "docs/screenshots/analysis-dark.png": {
+      "role": "index",
+      "sha256": "68c757f5eedcc67923ca979df9b501e14a4ad99609179e21630393595e55872b",
+      "size": 166681
+    },
+    "docs/screenshots/analysis-icons.png": {
+      "role": "index",
+      "sha256": "a7d8ca9d6ef4b0b8f56e6c4d670345e7c48132c2610866dedf4fa0860d452d32",
+      "size": 181277
+    },
+    "docs/screenshots/analysis-pie-compact-dark.png": {
+      "role": "index",
+      "sha256": "61a8a3c5f19533412dbe01761f19a1c912ff446591a359d7fada6012f2e3a7db",
+      "size": 93908
+    },
+    "docs/screenshots/analysis-pie.png": {
+      "role": "index",
+      "sha256": "aaa17717be30f8b2255688fd71ef98ec54954e3b82621444198eb3ee6dc5c7dc",
+      "size": 124525
+    },
+    "docs/screenshots/appearance-dark.png": {
+      "role": "index",
+      "sha256": "9590aad6696671e0084863c7320972df3fe4c22c8fd2ce0fd058332e80f200c0",
+      "size": 161386
+    },
+    "docs/screenshots/break-reminder.png": {
+      "role": "index",
+      "sha256": "e1892786276073cf4401c992b920c41c512217d4c6e3bbe9d5c8a0d27baa60ef",
+      "size": 42606
+    },
+    "docs/screenshots/break-settings.png": {
+      "role": "index",
+      "sha256": "2b0abcef445ea97483b421d4aebbccb90625aec0edb78f2bfb252ea7bfddc3de",
+      "size": 115984
+    },
+    "docs/screenshots/day-bars.png": {
+      "role": "index",
+      "sha256": "325ecceee6227f794ade2b4dee6f53df7a6cce1c7403696cf34c41899d0aba1a",
+      "size": 151414
+    },
+    "docs/screenshots/day-ring.png": {
+      "role": "index",
+      "sha256": "23c8d2917f8f449ff692ecf8d5c6f60005b9b96a9198b68c56126949abd08c27",
+      "size": 145662
+    },
+    "docs/screenshots/day-timeline.png": {
+      "role": "index",
+      "sha256": "46037fd254e5a85eefc92a912f48a27b2c5f594ca6d43c7384ab5dacef50fd01",
+      "size": 142314
+    },
+    "docs/screenshots/email-settings.png": {
+      "role": "index",
+      "sha256": "d97606003098534b8c767bbcbd3669ed1aeeeee3d6e1c3f42619ed199f14a8b5",
+      "size": 101220
+    },
+    "docs/screenshots/history-compact-dark.png": {
+      "role": "index",
+      "sha256": "5752f85690387020aa5eca5e2e4e1cf9aab04530eeb0fccc79e83ec01fa13f08",
+      "size": 145956
+    },
+    "docs/screenshots/history-settings.png": {
+      "role": "index",
+      "sha256": "5fd7a3115d1eaf8e168159c133fd905d175597e824dea1f4d3282bbec53b53cf",
+      "size": 163392
+    },
+    "docs/screenshots/limit-options.png": {
+      "role": "index",
+      "sha256": "bfd6c5ff04265ba3d97cc80fecee2dc85e234b493d30926ec69d923f0499795a",
+      "size": 154714
+    },
+    "docs/screenshots/limits-light.png": {
+      "role": "index",
+      "sha256": "22d593793b196cea5e85002bad11670ba198fa737a15006fc8a7e78d5d1d4714",
+      "size": 167916
+    },
+    "docs/screenshots/overview-dark.png": {
+      "role": "index",
+      "sha256": "8dbfd61fb3943e220293d821bc2d109d6f9439d8020d990c2fe2dc572cd5cad0",
+      "size": 171433
+    },
+    "docs/screenshots/overview-light.png": {
+      "role": "index",
+      "sha256": "f8694842f3f87268c1cb226b0945c2bcab6c91a7b6617a16d0945b083ef31402",
+      "size": 155791
+    },
+    "docs/screenshots/quiet-rules.png": {
+      "role": "index",
+      "sha256": "155446d029298fc37da9da22d6ced3aa4d0b89186a7d6e359e4181bc18b23b1a",
+      "size": 170341
+    },
+    "docs/screenshots/recorded-calendar.png": {
+      "role": "index",
+      "sha256": "313cd9c70d61aa9d53db588c49b328dcbd48eb2db3c34015a65b4fff17f0f015",
+      "size": 14390
+    },
+    "docs/screenshots/reminder-severe.png": {
+      "role": "index",
+      "sha256": "99f07cbf96a8cbf51dfa6754c2c1f3db583d4c06dd5ddda83732104e5166ff2f",
+      "size": 52442
+    },
+    "docs/screenshots/search-overview.png": {
+      "role": "index",
+      "sha256": "8361e946cc3ade093fe22eb976b81997a08dff33f6dd5c8386eb091cf8820b84",
+      "size": 148218
+    },
+    "docs/screenshots/sidebar-dark.png": {
+      "role": "index",
+      "sha256": "f33c7e7ee6889decc66fdddf6b3acfbb602ee1ef38938eb9d3484534e44153cc",
+      "size": 94643
+    },
+    "docs/screenshots/sound-settings.png": {
+      "role": "index",
+      "sha256": "03d33ccf8c85783abc0c02b601dc236a3a1a78a7d4a88e0d9a46a92f33f9ffb6",
+      "size": 117477
+    },
+    "docs/screenshots/temporary-preference.png": {
+      "role": "index",
+      "sha256": "0676e569c06789185014bfdf225edcd4b63743623a6cadbf5d07e3aa4e74c599",
+      "size": 62648
+    },
+    "docs/screenshots/temporary-use.png": {
+      "role": "index",
+      "sha256": "70f6a395602aa8d193b07d5b3834eff841a3dc7553869a86a4035f39e95ad551",
+      "size": 59366
+    },
+    "global.json": {
+      "role": "index",
+      "sha256": "d6f64e309beac9c78636c88f796a19ea0d8e0fd23c560e332c8b57cf10e7b0f3",
+      "size": 71,
+      "normalized_sha256": "d6f64e309beac9c78636c88f796a19ea0d8e0fd23c560e332c8b57cf10e7b0f3"
+    },
+    "scripts/build.ps1": {
+      "role": "index",
+      "sha256": "d4215e02280561168c81d411a4c8b38f39db1a4e62011e6998be1dd87f5bbf6e",
+      "size": 5463,
+      "normalized_sha256": "d4215e02280561168c81d411a4c8b38f39db1a4e62011e6998be1dd87f5bbf6e"
+    },
+    "scripts/measure-resources.ps1": {
+      "role": "index",
+      "sha256": "411279d5b6bffb1b3cb2ce0cab5d139e682de4cb500a4c9d325120f42c168be8",
+      "size": 4533,
+      "normalized_sha256": "411279d5b6bffb1b3cb2ce0cab5d139e682de4cb500a4c9d325120f42c168be8"
+    },
+    "scripts/setup-dotnet.ps1": {
+      "role": "index",
+      "sha256": "8729af95d4145c7759fed641c44114d223c11d2c42ad69fe26f1cfe571bb4b50",
+      "size": 666,
+      "normalized_sha256": "8729af95d4145c7759fed641c44114d223c11d2c42ad69fe26f1cfe571bb4b50"
+    },
+    "scripts/verify-release.ps1": {
+      "role": "index",
+      "sha256": "c03ff3459f0cb8726e1268bdf22f2722f410b8f8bd4c0fe349b64aa3133ba9e4",
+      "size": 7181,
+      "normalized_sha256": "c03ff3459f0cb8726e1268bdf22f2722f410b8f8bd4c0fe349b64aa3133ba9e4"
+    },
+    "src/TraceTime.App/AiConfigWindow.xaml": {
+      "role": "index",
+      "sha256": "fee017395a181d516d063e2142e219eb56cd133f14395b3a7163ac7e61c380db",
+      "size": 5029,
+      "normalized_sha256": "fee017395a181d516d063e2142e219eb56cd133f14395b3a7163ac7e61c380db"
+    },
+    "src/TraceTime.App/AiConfigWindow.xaml.cs": {
+      "role": "index",
+      "sha256": "96c29362ba36cdc7642d7cc8406ed0944be22320ae53b45c77a41927bd51adb5",
+      "size": 8133,
+      "normalized_sha256": "96c29362ba36cdc7642d7cc8406ed0944be22320ae53b45c77a41927bd51adb5"
+    },
+    "src/TraceTime.App/AiSettings.cs": {
+      "role": "index",
+      "sha256": "c022758ce7c12c810859b6ce7136bd8b2029a2912884027ec12c925fe0bddcf1",
+      "size": 3172,
+      "normalized_sha256": "c022758ce7c12c810859b6ce7136bd8b2029a2912884027ec12c925fe0bddcf1"
+    },
+    "src/TraceTime.App/AnalysisChart.cs": {
+      "role": "index",
+      "sha256": "736307691f33dc2f0929ac3c0a4624da37a364210a6312921beac3b35b80bd05",
+      "size": 2431,
+      "normalized_sha256": "736307691f33dc2f0929ac3c0a4624da37a364210a6312921beac3b35b80bd05"
+    },
+    "src/TraceTime.App/AnalysisPieChart.cs": {
+      "role": "index",
+      "sha256": "2f39de76c1f15a5d076100fa1f35bb0e0cc5608d5e832864d2fe0e8b992f3a3a",
+      "size": 3576,
+      "normalized_sha256": "2f39de76c1f15a5d076100fa1f35bb0e0cc5608d5e832864d2fe0e8b992f3a3a"
+    },
+    "src/TraceTime.App/App.xaml": {
+      "role": "index",
+      "sha256": "10c684dacfeffa1a962d0a0a8da2efadeb032b5feda10d5403b7c5a78d60179a",
+      "size": 433,
+      "normalized_sha256": "154db9d63964447f5f6eb769956b6023feeef06ecb45b490f09bc35ca330304e"
+    },
+    "src/TraceTime.App/App.xaml.cs": {
+      "role": "index",
+      "sha256": "78adc295bc03c3fcadc2846389419431a74a241a02b2edbbe2a871e1d772510f",
+      "size": 10836,
+      "normalized_sha256": "78adc295bc03c3fcadc2846389419431a74a241a02b2edbbe2a871e1d772510f"
+    },
+    "src/TraceTime.App/AppIconCache.cs": {
+      "role": "index",
+      "sha256": "61b0806e887b0571cd6ce1b10a004fd42b4350ec138afd9ed9a98352b3999da8",
+      "size": 6153,
+      "normalized_sha256": "61b0806e887b0571cd6ce1b10a004fd42b4350ec138afd9ed9a98352b3999da8"
+    },
+    "src/TraceTime.App/AppearanceSettings.cs": {
+      "role": "index",
+      "sha256": "04796e0d9e404b2d4d940a31a6076b7914f60d44cec8c6346f35f8f5fac44a54",
+      "size": 1525,
+      "normalized_sha256": "04796e0d9e404b2d4d940a31a6076b7914f60d44cec8c6346f35f8f5fac44a54"
+    },
+    "src/TraceTime.App/DemoData.cs": {
+      "role": "index",
+      "sha256": "cea84f7ffc002f644d01608403aee3517e3c173ead1b4347c39637d3ec5e2231",
+      "size": 1931,
+      "normalized_sha256": "cea84f7ffc002f644d01608403aee3517e3c173ead1b4347c39637d3ec5e2231"
+    },
+    "src/TraceTime.App/EmailConfigWindow.xaml": {
+      "role": "index",
+      "sha256": "9f6b02626cc7027671772d6c6e3ddb5e62dc1403b64a781329cc529f40fa8194",
+      "size": 3752,
+      "normalized_sha256": "9f6b02626cc7027671772d6c6e3ddb5e62dc1403b64a781329cc529f40fa8194"
+    },
+    "src/TraceTime.App/EmailConfigWindow.xaml.cs": {
+      "role": "index",
+      "sha256": "e529192cb84edf3fed049e93a2b7a7c4ae124bede87087a2d093e0456928bd16",
+      "size": 2206,
+      "normalized_sha256": "e529192cb84edf3fed049e93a2b7a7c4ae124bede87087a2d093e0456928bd16"
+    },
+    "src/TraceTime.App/EmailSettings.cs": {
+      "role": "index",
+      "sha256": "0433b5069bda67f6c9dae61552040693d635efe1c2d3faca648dcbd84a33c2af",
+      "size": 1789,
+      "normalized_sha256": "0433b5069bda67f6c9dae61552040693d635efe1c2d3faca648dcbd84a33c2af"
+    },
+    "src/TraceTime.App/HoverChart.cs": {
+      "role": "index",
+      "sha256": "50d2ef90f645b2e8bdaeba7c2fafdfcc832f547a077917e952f820d30021759a",
+      "size": 6854,
+      "normalized_sha256": "50d2ef90f645b2e8bdaeba7c2fafdfcc832f547a077917e952f820d30021759a"
+    },
+    "src/TraceTime.App/LimitReminderWindow.cs": {
+      "role": "index",
+      "sha256": "c3bef079187c0a26c76684e9fbcab0339aa4bccf5e2877ac0f03501f3ea9d4e1",
+      "size": 5816,
+      "normalized_sha256": "c3bef079187c0a26c76684e9fbcab0339aa4bccf5e2877ac0f03501f3ea9d4e1"
+    },
+    "src/TraceTime.App/MainWindow.AiVerification.cs": {
+      "role": "index",
+      "sha256": "4c5e6a019ab1f11e54a65e0e35a3f42a3dfec827a521f8fbd5e5fbbfb63ea177",
+      "size": 2793,
+      "normalized_sha256": "467443ead97b8ba965a4e6ac583aa54ae69f55675ec068c9ecc581c6885672c3"
+    },
+    "src/TraceTime.App/MainWindow.Analysis.cs": {
+      "role": "index",
+      "sha256": "140bb2b67441d7896a0d5fba45c0549dd3bcfeabd590068035d5d7c8fdc7a9a7",
+      "size": 11136,
+      "normalized_sha256": "a5b1c5cc34e7e29f9348510fc836291e66c8b3732812f7a334e371dbd847cc84"
+    },
+    "src/TraceTime.App/MainWindow.Appearance.cs": {
+      "role": "index",
+      "sha256": "b905473a09b24fe24a687a8ac962f93698dc61dc01285e59ae7d6a7e749224ee",
+      "size": 9803,
+      "normalized_sha256": "b905473a09b24fe24a687a8ac962f93698dc61dc01285e59ae7d6a7e749224ee"
+    },
+    "src/TraceTime.App/MainWindow.BreakVerification.cs": {
+      "role": "index",
+      "sha256": "4604f028d9e9946ffc634c41266e5e57c0af69e99b91d7d018bb3735a13f9457",
+      "size": 11410,
+      "normalized_sha256": "4604f028d9e9946ffc634c41266e5e57c0af69e99b91d7d018bb3735a13f9457"
+    },
+    "src/TraceTime.App/MainWindow.Breaks.cs": {
+      "role": "index",
+      "sha256": "b0da8bcb91eda9f8878b3f1a3368549207e55c72112c5ff8cf49dc9ee271b8c0",
+      "size": 12364,
+      "normalized_sha256": "b0da8bcb91eda9f8878b3f1a3368549207e55c72112c5ff8cf49dc9ee271b8c0"
+    },
+    "src/TraceTime.App/MainWindow.ChartResourceVerification.cs": {
+      "role": "index",
+      "sha256": "c5fc261ca5a4a97510a477a7ddaa68de1fbdfbe9d08952d042a08e0cc0e595ab",
+      "size": 10814,
+      "normalized_sha256": "c5fc261ca5a4a97510a477a7ddaa68de1fbdfbe9d08952d042a08e0cc0e595ab"
+    },
+    "src/TraceTime.App/MainWindow.DayActivity.cs": {
+      "role": "index",
+      "sha256": "aad12436af5429b2cd94debe98fe6c19d7078e633e1c6cf815447bed7011cd3e",
+      "size": 3396,
+      "normalized_sha256": "aad12436af5429b2cd94debe98fe6c19d7078e633e1c6cf815447bed7011cd3e"
+    },
+    "src/TraceTime.App/MainWindow.DaySoundVerification.cs": {
+      "role": "index",
+      "sha256": "3238184d91c75672df7ddac061c7e306fb9b46c960d1a603730dce082c79b69d",
+      "size": 7663,
+      "normalized_sha256": "3238184d91c75672df7ddac061c7e306fb9b46c960d1a603730dce082c79b69d"
+    },
+    "src/TraceTime.App/MainWindow.FeatureVerification.cs": {
+      "role": "index",
+      "sha256": "acfaaaca03bfd17ea20270f803dfc373dada6ff6b0c343295bcd27ebd539c0ab",
+      "size": 10728,
+      "normalized_sha256": "987c030520c560a772680ef17a20fd554aa3e17235475adb6ff26a293ef5d006"
+    },
+    "src/TraceTime.App/MainWindow.History.cs": {
+      "role": "index",
+      "sha256": "f35d709b6b5d34981c2d6bf95f2ff8874fe878f32de86ff4029508f2ed0bd872",
+      "size": 8711,
+      "normalized_sha256": "f35d709b6b5d34981c2d6bf95f2ff8874fe878f32de86ff4029508f2ed0bd872"
+    },
+    "src/TraceTime.App/MainWindow.HistoryVerification.cs": {
+      "role": "index",
+      "sha256": "7d0975d20432cac854443e0579facca6f5dba43e61e350c9aed540c129fbf39a",
+      "size": 5884,
+      "normalized_sha256": "7d0975d20432cac854443e0579facca6f5dba43e61e350c9aed540c129fbf39a"
+    },
+    "src/TraceTime.App/MainWindow.LimitOptions.cs": {
+      "role": "index",
+      "sha256": "d414dcc66799c470d92df104d9a875c813d6a250e9eabd68ee3733b2abf21ff3",
+      "size": 6230,
+      "normalized_sha256": "d414dcc66799c470d92df104d9a875c813d6a250e9eabd68ee3733b2abf21ff3"
+    },
+    "src/TraceTime.App/MainWindow.LimitOptionsVerification.cs": {
+      "role": "index",
+      "sha256": "95407ea342a090966b2bbee9d3ad0fe1d55de55b1b6270b5a61391cf57c2abd7",
+      "size": 8764,
+      "normalized_sha256": "95407ea342a090966b2bbee9d3ad0fe1d55de55b1b6270b5a61391cf57c2abd7"
+    },
+    "src/TraceTime.App/MainWindow.Limits.cs": {
+      "role": "index",
+      "sha256": "36e786f11debd8652b204490ef87c4925674be14a42204d4bf015bfc3cefda87",
+      "size": 14665,
+      "normalized_sha256": "36e786f11debd8652b204490ef87c4925674be14a42204d4bf015bfc3cefda87"
+    },
+    "src/TraceTime.App/MainWindow.Navigation.cs": {
+      "role": "index",
+      "sha256": "65983ff7aaeeed742c4b0a14bd6d788ae9059169f3d7908bd7de2039ca3d6f99",
+      "size": 4292,
+      "normalized_sha256": "65983ff7aaeeed742c4b0a14bd6d788ae9059169f3d7908bd7de2039ca3d6f99"
+    },
+    "src/TraceTime.App/MainWindow.NavigationVerification.cs": {
+      "role": "index",
+      "sha256": "5c09aaa07700a3655ed618e8a217e73d6ed344447a8673c8cb933aa3c11ce408",
+      "size": 4471,
+      "normalized_sha256": "5c09aaa07700a3655ed618e8a217e73d6ed344447a8673c8cb933aa3c11ce408"
+    },
+    "src/TraceTime.App/MainWindow.PerformanceVerification.cs": {
+      "role": "index",
+      "sha256": "b9a53dec1bd4108cf007348e5144f67473b51a436fcb8a4ec97dcfd4167a1666",
+      "size": 4408,
+      "normalized_sha256": "b9a53dec1bd4108cf007348e5144f67473b51a436fcb8a4ec97dcfd4167a1666"
+    },
+    "src/TraceTime.App/MainWindow.PolishVerification.cs": {
+      "role": "index",
+      "sha256": "5684ee8cf603dfeedd1998c0d2390600c95c278833d6d3a4da45188dd2fccdd4",
+      "size": 7807,
+      "normalized_sha256": "5684ee8cf603dfeedd1998c0d2390600c95c278833d6d3a4da45188dd2fccdd4"
+    },
+    "src/TraceTime.App/MainWindow.QuickActions.cs": {
+      "role": "index",
+      "sha256": "7adb9166012502ef9e8903ec627a01c703096b3144fe4e5d47588c0721654f49",
+      "size": 3749,
+      "normalized_sha256": "7adb9166012502ef9e8903ec627a01c703096b3144fe4e5d47588c0721654f49"
+    },
+    "src/TraceTime.App/MainWindow.Reminders.cs": {
+      "role": "index",
+      "sha256": "844c0b676fa700d0c690ecdec54b7e2ac1b5e4f56d2800184259b74d2b896b9a",
+      "size": 2813,
+      "normalized_sha256": "844c0b676fa700d0c690ecdec54b7e2ac1b5e4f56d2800184259b74d2b896b9a"
+    },
+    "src/TraceTime.App/MainWindow.Resources.cs": {
+      "role": "index",
+      "sha256": "0af68ed5b2813c3686c7ed5621b69bdbe44c12d64977edf62228e4ced1fc749d",
+      "size": 3854,
+      "normalized_sha256": "0af68ed5b2813c3686c7ed5621b69bdbe44c12d64977edf62228e4ced1fc749d"
+    },
+    "src/TraceTime.App/MainWindow.Startup.cs": {
+      "role": "index",
+      "sha256": "ad797d10fd298037565255eeafa4640ac7bfcc3e45e3943fb2a4a435dae22661",
+      "size": 1765,
+      "normalized_sha256": "ad797d10fd298037565255eeafa4640ac7bfcc3e45e3943fb2a4a435dae22661"
+    },
+    "src/TraceTime.App/MainWindow.StartupVerification.cs": {
+      "role": "index",
+      "sha256": "b71400fc58dece38620ce6b1718659451f7ad8c05f81dffeff2591413f62d5d1",
+      "size": 3351,
+      "normalized_sha256": "b71400fc58dece38620ce6b1718659451f7ad8c05f81dffeff2591413f62d5d1"
+    },
+    "src/TraceTime.App/MainWindow.xaml": {
+      "role": "index",
+      "sha256": "b1c40cc323779668490ab0ffa918b81dc7c852006d36d45f83c2628d73e74bc9",
+      "size": 53963,
+      "normalized_sha256": "fec60ee0b1e4a7ae67c093d913c61e9939feed88bcaceae137326c6d4591b209"
+    },
+    "src/TraceTime.App/MainWindow.xaml.cs": {
+      "role": "index",
+      "sha256": "22391303f0710c94bb2c93e41f12064d0bf2af854233ea025405a8432d1a61ab",
+      "size": 32339,
+      "normalized_sha256": "22391303f0710c94bb2c93e41f12064d0bf2af854233ea025405a8432d1a61ab"
+    },
+    "src/TraceTime.App/ProcessResourceSampler.cs": {
+      "role": "index",
+      "sha256": "be03a92000d95b711469c7478484d963096c53664bf356237e300047329f7df7",
+      "size": 1384,
+      "normalized_sha256": "be03a92000d95b711469c7478484d963096c53664bf356237e300047329f7df7"
+    },
+    "src/TraceTime.App/RecordedCalendar.cs": {
+      "role": "index",
+      "sha256": "22b708edcbcfc85497ab6dab0d6c86cfe7abb0ae5b93b7525386c79c07b11dc9",
+      "size": 3668,
+      "normalized_sha256": "22b708edcbcfc85497ab6dab0d6c86cfe7abb0ae5b93b7525386c79c07b11dc9"
+    },
+    "src/TraceTime.App/ReminderAudio.cs": {
+      "role": "index",
+      "sha256": "42c3ad2f7f7f69e7fdb5c9c6146dbef0b083575f02e3a62ab5f7a55ffff2d4e3",
+      "size": 4268,
+      "normalized_sha256": "42c3ad2f7f7f69e7fdb5c9c6146dbef0b083575f02e3a62ab5f7a55ffff2d4e3"
+    },
+    "src/TraceTime.App/ReminderEffectsWindow.xaml": {
+      "role": "index",
+      "sha256": "08bd583a277a96008ebacd9e4935dc7bbfe4cbf3476d63c8daa2614131322ef2",
+      "size": 4044,
+      "normalized_sha256": "08bd583a277a96008ebacd9e4935dc7bbfe4cbf3476d63c8daa2614131322ef2"
+    },
+    "src/TraceTime.App/ReminderEffectsWindow.xaml.cs": {
+      "role": "index",
+      "sha256": "c4d197a13a55341c7aeb48fc5db793d5e2d469b0362f279a08920662097eb7f7",
+      "size": 5914,
+      "normalized_sha256": "c4d197a13a55341c7aeb48fc5db793d5e2d469b0362f279a08920662097eb7f7"
+    },
+    "src/TraceTime.App/ReminderEmailService.cs": {
+      "role": "index",
+      "sha256": "d73ad6e8cc3311adeb92019dc09257aa58fff43550afa780c206ee5f834fe263",
+      "size": 3854,
+      "normalized_sha256": "d73ad6e8cc3311adeb92019dc09257aa58fff43550afa780c206ee5f834fe263"
+    },
+    "src/TraceTime.App/TemporaryUseWindow.cs": {
+      "role": "index",
+      "sha256": "aafdd695f0677b532d7299425323587de52fe6c45db28eeeb94735a1b006434f",
+      "size": 3894,
+      "normalized_sha256": "aafdd695f0677b532d7299425323587de52fe6c45db28eeeb94735a1b006434f"
+    },
+    "src/TraceTime.App/ThemeManager.cs": {
+      "role": "index",
+      "sha256": "6d23bc78048e6006294aa84d2bb20d727e6bb30a9c457620a215b6a529387819",
+      "size": 6818,
+      "normalized_sha256": "6d23bc78048e6006294aa84d2bb20d727e6bb30a9c457620a215b6a529387819"
+    },
+    "src/TraceTime.App/Themes/Controls.xaml": {
+      "role": "index",
+      "sha256": "dda3c1320efe1c4f38950e288f28410345540868fb1b53dea1db075c83b8e468",
+      "size": 23089,
+      "normalized_sha256": "4dd051f11839dd6a1d07bc027741642a800d7724beacb5afbba275b993dec07d"
+    },
+    "src/TraceTime.App/TimelineView.cs": {
+      "role": "index",
+      "sha256": "9eede69eb500a9eaa51c7a2d77f8a0dd37a0320809e2a793b84ce4c492f4eae0",
+      "size": 9343,
+      "normalized_sha256": "99f98d268083fa016cac2f38e082ce919c408ebac3b138c8e0525f38f778ea71"
+    },
+    "src/TraceTime.App/TraceTime.App.csproj": {
+      "role": "index",
+      "sha256": "e1fdf4d65b30826755ceb177b2364fe30d7d1a9c69408d7ce7b6a4426fdc3cbc",
+      "size": 633,
+      "normalized_sha256": "9dfbb0ce35456694aaed8a151d7b722010dfd56a96714a03513f13b1110a46de"
+    },
+    "src/TraceTime.App/ViewPreferences.cs": {
+      "role": "index",
+      "sha256": "e21f0378ac0d16c54927e84a357c1828dfbe3b303ad25e47477ce0cdc46b89be",
+      "size": 1101,
+      "normalized_sha256": "e21f0378ac0d16c54927e84a357c1828dfbe3b303ad25e47477ce0cdc46b89be"
+    },
+    "src/TraceTime.App/Windows/ForegroundReader.cs": {
+      "role": "index",
+      "sha256": "c28b24f63d6651a27c8533ce07cf8c1247e310e6cad38ed2f16ecc5dbd840f9d",
+      "size": 4881,
+      "normalized_sha256": "c28b24f63d6651a27c8533ce07cf8c1247e310e6cad38ed2f16ecc5dbd840f9d"
+    },
+    "src/TraceTime.App/Windows/StartupPreferences.cs": {
+      "role": "index",
+      "sha256": "7324ff5710cfb9069fd7fd4b8674748c45e6abf4ebe21a52605d3bf82520ee45",
+      "size": 4275,
+      "normalized_sha256": "7324ff5710cfb9069fd7fd4b8674748c45e6abf4ebe21a52605d3bf82520ee45"
+    },
+    "src/TraceTime.App/Windows/StartupRegistration.cs": {
+      "role": "index",
+      "sha256": "333f74a03f6f0a219501a2c8f1956fc58540f9e18f4f84931cbc2a87529b7d19",
+      "size": 2217,
+      "normalized_sha256": "333f74a03f6f0a219501a2c8f1956fc58540f9e18f4f84931cbc2a87529b7d19"
+    },
+    "src/TraceTime.App/Windows/TrackerController.cs": {
+      "role": "index",
+      "sha256": "f0b36d0ce8769518cd7e2421de7860a76809c0b13955db81c322ba1389fd0ea0",
+      "size": 6969,
+      "normalized_sha256": "f0b36d0ce8769518cd7e2421de7860a76809c0b13955db81c322ba1389fd0ea0"
+    },
+    "src/TraceTime.App/app.manifest": {
+      "role": "index",
+      "sha256": "f5755ede368869d44f2782866fcad1f8d3de3f043c2bb2e7bb38d179209acb9e",
+      "size": 544,
+      "normalized_sha256": "f5755ede368869d44f2782866fcad1f8d3de3f043c2bb2e7bb38d179209acb9e"
+    },
+    "src/TraceTime.App/packages.lock.json": {
+      "role": "index",
+      "sha256": "67aade02226a7355fdda89587dd60f7430bd167ca3e3b20a9e525b6ae2404979",
+      "size": 2457,
+      "normalized_sha256": "b907299601226ebe387f8d2e911ace5e009aeaccd397c4169d3d850512632727"
+    },
+    "src/TraceTime.Core/AiAnalysisClient.cs": {
+      "role": "index",
+      "sha256": "13a1d920f87263ba4ec9c02ffe0d9fbba9ae400e979cdc37af33b10b3d75bed2",
+      "size": 3976,
+      "normalized_sha256": "13a1d920f87263ba4ec9c02ffe0d9fbba9ae400e979cdc37af33b10b3d75bed2"
+    },
+    "src/TraceTime.Core/AiProviderOptions.cs": {
+      "role": "index",
+      "sha256": "8a07632bd1cfc088e98dc3f8adedda7926a8a7abe5bf6fda6d418fba3906fef7",
+      "size": 3157,
+      "normalized_sha256": "8a07632bd1cfc088e98dc3f8adedda7926a8a7abe5bf6fda6d418fba3906fef7"
+    },
+    "src/TraceTime.Core/ApplicationQuery.cs": {
+      "role": "index",
+      "sha256": "7b15297cd0df99214457ad83207663261416c1bccd88b2f706a4265e39ab78b9",
+      "size": 239,
+      "normalized_sha256": "7b15297cd0df99214457ad83207663261416c1bccd88b2f706a4265e39ab78b9"
+    },
+    "src/TraceTime.Core/BreakReminder.cs": {
+      "role": "index",
+      "sha256": "76470a247c9772cb332da022ce070373487fc95f50500a9dbb2d601296f51620",
+      "size": 3854,
+      "normalized_sha256": "76470a247c9772cb332da022ce070373487fc95f50500a9dbb2d601296f51620"
+    },
+    "src/TraceTime.Core/DayActivity.cs": {
+      "role": "index",
+      "sha256": "0fbdff6d6bc965b6f99b729e8fa0468785ab3dc5e6843e4b6d13a91edbc85a8e",
+      "size": 4705,
+      "normalized_sha256": "0fbdff6d6bc965b6f99b729e8fa0468785ab3dc5e6843e4b6d13a91edbc85a8e"
+    },
+    "src/TraceTime.Core/EmailReminders.cs": {
+      "role": "index",
+      "sha256": "eef9a498109bd7f0fb32fe4a0d595aee48c5b54210e2e3eb074ea124f213fa80",
+      "size": 4415,
+      "normalized_sha256": "eef9a498109bd7f0fb32fe4a0d595aee48c5b54210e2e3eb074ea124f213fa80"
+    },
+    "src/TraceTime.Core/LimitDispatch.cs": {
+      "role": "index",
+      "sha256": "c67c33e6c25d6ed40f565d6ba2f7615d02aa57ccbae2f32f124f276afbfa4db6",
+      "size": 1661,
+      "normalized_sha256": "c67c33e6c25d6ed40f565d6ba2f7615d02aa57ccbae2f32f124f276afbfa4db6"
+    },
+    "src/TraceTime.Core/Models.cs": {
+      "role": "index",
+      "sha256": "2713c4be3fd3723ee1c9393ce23de11fdde9a92e4f87c52248b7a389ae24f89a",
+      "size": 1497,
+      "normalized_sha256": "2713c4be3fd3723ee1c9393ce23de11fdde9a92e4f87c52248b7a389ae24f89a"
+    },
+    "src/TraceTime.Core/ReminderSound.cs": {
+      "role": "index",
+      "sha256": "c695c7c763b5de58deab31ecc11a8a2999e82348a7a25d79dba3c89a78fbf47a",
+      "size": 5502,
+      "normalized_sha256": "c695c7c763b5de58deab31ecc11a8a2999e82348a7a25d79dba3c89a78fbf47a"
+    },
+    "src/TraceTime.Core/ReportBuilder.cs": {
+      "role": "index",
+      "sha256": "c76c930a284bb1973436de05f6ed678b59a8fd2823b6150589f1c289e17ee07c",
+      "size": 3945,
+      "normalized_sha256": "c76c930a284bb1973436de05f6ed678b59a8fd2823b6150589f1c289e17ee07c"
+    },
+    "src/TraceTime.Core/TraceTime.Core.csproj": {
+      "role": "index",
+      "sha256": "91275edd3790c4f0cb484653195ccd8ad6af2f1a0a69b84fdb26b88c0b52407f",
+      "size": 117,
+      "normalized_sha256": "91275edd3790c4f0cb484653195ccd8ad6af2f1a0a69b84fdb26b88c0b52407f"
+    },
+    "src/TraceTime.Core/TrackingEngine.cs": {
+      "role": "index",
+      "sha256": "5d0c22af12345f3d61fcd8b7bb2f06476346c7ff1e1cddccedfb868aea8898ae",
+      "size": 3800,
+      "normalized_sha256": "5d0c22af12345f3d61fcd8b7bb2f06476346c7ff1e1cddccedfb868aea8898ae"
+    },
+    "src/TraceTime.Core/UsageAnalysis.cs": {
+      "role": "index",
+      "sha256": "fed0a8d1cc0a680fea0a972263ffa70bd8a3a1e3435857adac83d8d82c34424c",
+      "size": 4731,
+      "normalized_sha256": "fed0a8d1cc0a680fea0a972263ffa70bd8a3a1e3435857adac83d8d82c34424c"
+    },
+    "src/TraceTime.Core/UsageDistribution.cs": {
+      "role": "index",
+      "sha256": "3e5fba965fc64ae85f738137efb289e2b943167f6a354fb3aa8d9fa956940528",
+      "size": 1194,
+      "normalized_sha256": "3e5fba965fc64ae85f738137efb289e2b943167f6a354fb3aa8d9fa956940528"
+    },
+    "src/TraceTime.Core/UsageLimits.cs": {
+      "role": "index",
+      "sha256": "25831abab5929ffe7da052aeae5de271c2e093e3893b6b0677f8e2305924a307",
+      "size": 4949,
+      "normalized_sha256": "25831abab5929ffe7da052aeae5de271c2e093e3893b6b0677f8e2305924a307"
+    },
+    "src/TraceTime.Core/packages.lock.json": {
+      "role": "index",
+      "sha256": "a4364d81a6de2707d66fbced18fbbc926c882ab96e1d1aebbb17e871285b9d75",
+      "size": 66,
+      "normalized_sha256": "a29c6aa8cfb81874ff8bb78dc369d7416f28c9b8cc47e99592bfc019b20c41eb"
+    },
+    "src/TraceTime.Storage/AssemblyInfo.cs": {
+      "role": "index",
+      "sha256": "11d208092214d2fe8e1359d48b9a17856bc731667e78308a8cc41ae904ea28a8",
+      "size": 90,
+      "normalized_sha256": "11d208092214d2fe8e1359d48b9a17856bc731667e78308a8cc41ae904ea28a8"
+    },
+    "src/TraceTime.Storage/TraceTime.Storage.csproj": {
+      "role": "index",
+      "sha256": "1b6958b4ed8d021728377c664cfac444ba7bac8a68e51cbdd69b82324570ad97",
+      "size": 285,
+      "normalized_sha256": "1b6958b4ed8d021728377c664cfac444ba7bac8a68e51cbdd69b82324570ad97"
+    },
+    "src/TraceTime.Storage/UsageDatabase.Archives.cs": {
+      "role": "index",
+      "sha256": "4332828e7ac7aff6d45e2266d040bb1913d01a9c771f558acd499d9c29e1ff83",
+      "size": 13035,
+      "normalized_sha256": "4332828e7ac7aff6d45e2266d040bb1913d01a9c771f558acd499d9c29e1ff83"
+    },
+    "src/TraceTime.Storage/UsageDatabase.Calendar.cs": {
+      "role": "index",
+      "sha256": "5aafa0636c2de2eeaa1dff1e2cccd51ab9fcba477b6f7e4e8507a276bb9d8dc9",
+      "size": 2003,
+      "normalized_sha256": "5aafa0636c2de2eeaa1dff1e2cccd51ab9fcba477b6f7e4e8507a276bb9d8dc9"
+    },
+    "src/TraceTime.Storage/UsageDatabase.Email.cs": {
+      "role": "index",
+      "sha256": "4137f8aaf32dad4a3ad8b2816e627afaeedc9d5e48d4afea338cac16ea56aac3",
+      "size": 3298,
+      "normalized_sha256": "4137f8aaf32dad4a3ad8b2816e627afaeedc9d5e48d4afea338cac16ea56aac3"
+    },
+    "src/TraceTime.Storage/UsageDatabase.Limits.cs": {
+      "role": "index",
+      "sha256": "f92a952f6b27559c1efc6f933ad02459b3352395ec56bec759bfed1209298dee",
+      "size": 7305,
+      "normalized_sha256": "f92a952f6b27559c1efc6f933ad02459b3352395ec56bec759bfed1209298dee"
+    },
+    "src/TraceTime.Storage/UsageDatabase.cs": {
+      "role": "index",
+      "sha256": "15b7592c87e109183be27a91a8b0ff4375e289f67933fa9dc738c55c4d4ba37f",
+      "size": 10179,
+      "normalized_sha256": "15b7592c87e109183be27a91a8b0ff4375e289f67933fa9dc738c55c4d4ba37f"
+    },
+    "src/TraceTime.Storage/packages.lock.json": {
+      "role": "index",
+      "sha256": "2fb12ba1eeab64a10bfca27e9f21b4ec7721f67093336e8685e8c37eb421e617",
+      "size": 2011,
+      "normalized_sha256": "c736b786a1044c9d4143ffb88a3f35ea5a5ee6b0d2dedc0b77ac00415e43f4eb"
+    },
+    "tests/TraceTime.Tests/BreakReminderTests.cs": {
+      "role": "index",
+      "sha256": "221a5826b4ba34a3d2969935fc57c2c43ff2c333895696d38b97133eb3b5c0ea",
+      "size": 4940,
+      "normalized_sha256": "221a5826b4ba34a3d2969935fc57c2c43ff2c333895696d38b97133eb3b5c0ea"
+    },
+    "tests/TraceTime.Tests/ChartResourceTests.cs": {
+      "role": "index",
+      "sha256": "3b564ad2cd2d7216b8952f723069196e9212ff9ab0b033413a3d7fbae5288783",
+      "size": 3329,
+      "normalized_sha256": "3b564ad2cd2d7216b8952f723069196e9212ff9ab0b033413a3d7fbae5288783"
+    },
+    "tests/TraceTime.Tests/DaySoundTests.cs": {
+      "role": "index",
+      "sha256": "c46c37ff3838ddcab28af4b3707cc897df46458de0558ffb7f605231c091f962",
+      "size": 7616,
+      "normalized_sha256": "c46c37ff3838ddcab28af4b3707cc897df46458de0558ffb7f605231c091f962"
+    },
+    "tests/TraceTime.Tests/FeatureTests.cs": {
+      "role": "index",
+      "sha256": "860adfcd106e7bf86f9c9b4d49169b056fd4bbac74fbdcdb5b9b0a0a35916bb0",
+      "size": 10361,
+      "normalized_sha256": "860adfcd106e7bf86f9c9b4d49169b056fd4bbac74fbdcdb5b9b0a0a35916bb0"
+    },
+    "tests/TraceTime.Tests/HistoryTests.cs": {
+      "role": "index",
+      "sha256": "14089c2f15dabf4d2b56e46f9bf829f4e6a359f602ebeece6a19212b10abc389",
+      "size": 12125,
+      "normalized_sha256": "14089c2f15dabf4d2b56e46f9bf829f4e6a359f602ebeece6a19212b10abc389"
+    },
+    "tests/TraceTime.Tests/PerformanceTests.cs": {
+      "role": "index",
+      "sha256": "0e58d030c96bb2e196dabcd23b7947cff981292fc3f162888c912262a6cbe078",
+      "size": 5284,
+      "normalized_sha256": "0e58d030c96bb2e196dabcd23b7947cff981292fc3f162888c912262a6cbe078"
+    },
+    "tests/TraceTime.Tests/PolishTests.cs": {
+      "role": "index",
+      "sha256": "e194cc8f7c7182c99e5f3d7c36391ee07fde599307902bfed9a522877b619eb2",
+      "size": 5263,
+      "normalized_sha256": "e194cc8f7c7182c99e5f3d7c36391ee07fde599307902bfed9a522877b619eb2"
+    },
+    "tests/TraceTime.Tests/Program.cs": {
+      "role": "index",
+      "sha256": "a67328faacc81d9ae13e69ba1877fce20c340475ba42bdbbfa6f3e97e425d098",
+      "size": 9663,
+      "normalized_sha256": "a67328faacc81d9ae13e69ba1877fce20c340475ba42bdbbfa6f3e97e425d098"
+    },
+    "tests/TraceTime.Tests/ReminderTests.cs": {
+      "role": "index",
+      "sha256": "7df4e7bcc9f35588971aafb3e91bc558746d1edcfc536cf77e52f64a83ab59c3",
+      "size": 10613,
+      "normalized_sha256": "7df4e7bcc9f35588971aafb3e91bc558746d1edcfc536cf77e52f64a83ab59c3"
+    },
+    "tests/TraceTime.Tests/StartupTests.cs": {
+      "role": "index",
+      "sha256": "67b04c14d050995c16f56d8a2e60d4927d708f2bb89e8323738565620f65e212",
+      "size": 7346,
+      "normalized_sha256": "67b04c14d050995c16f56d8a2e60d4927d708f2bb89e8323738565620f65e212"
+    },
+    "tests/TraceTime.Tests/SummaryTests.cs": {
+      "role": "index",
+      "sha256": "4c30c9e1e6c857dba1f02b431aa93b240edd29f753459f36f66960afbf9bff51",
+      "size": 6031,
+      "normalized_sha256": "4c30c9e1e6c857dba1f02b431aa93b240edd29f753459f36f66960afbf9bff51"
+    },
+    "tests/TraceTime.Tests/TimeBoundaryTests.cs": {
+      "role": "index",
+      "sha256": "2485c21ae984ea058026a3811efb3cd301f5fafa0b3c0f6518a2bf3fa0cce4c9",
+      "size": 6702,
+      "normalized_sha256": "2485c21ae984ea058026a3811efb3cd301f5fafa0b3c0f6518a2bf3fa0cce4c9"
+    },
+    "tests/TraceTime.Tests/TraceTime.Tests.csproj": {
+      "role": "index",
+      "sha256": "ff40726f727e0f38548573a2b8018644c04b00760f8143d2cf09e29219a2d9f2",
+      "size": 827,
+      "normalized_sha256": "ff40726f727e0f38548573a2b8018644c04b00760f8143d2cf09e29219a2d9f2"
+    },
+    "tests/TraceTime.Tests/packages.lock.json": {
+      "role": "index",
+      "sha256": "e65e1b51d713bdfed661c27a6c45037a243bfb6d2f336112c0f9a072648bc7a8",
+      "size": 2176,
+      "normalized_sha256": "9ef380919bdc566f598bcebadb9b7207bf9656bb1ec2d02687bc2308c45973b9"
+    }
+  },
+  "managed_scope": {
+    "version": "managed-scope-baseline/v1",
+    "policy_identity": "5e1ade5d9e1fe70387d5f1547e4e83425a32b71cc2eadfb7366bf879f291743c",
+    "observe_change_policy": "review_required",
+    "budget_policy_identity": "15e9b37a6c57e9bf03c9df3d0d049eb5b9a7f5540f9d34960408114e2538a32d",
+    "budget_policy": {
+      "version": "cognition-budget-policy/v1",
+      "mode": "enforce",
+      "whole_index": {
+        "target_tokens": 200000,
+        "warning_tokens": 300000,
+        "max_tokens": 400000
+      },
+      "r": [
+        {
+          "min_c": 1,
+          "max_c": 4,
+          "target_tokens": 25,
+          "max_tokens": 50
+        },
+        {
+          "min_c": 5,
+          "max_c": 7,
+          "target_tokens": 45,
+          "max_tokens": 90
+        },
+        {
+          "min_c": 8,
+          "max_c": 8,
+          "target_tokens": 70,
+          "max_tokens": 140
+        },
+        {
+          "min_c": 9,
+          "max_c": 9,
+          "target_tokens": 90,
+          "max_tokens": 180
+        }
+      ],
+      "s": [
+        {
+          "min_c": 1,
+          "max_c": 4,
+          "target_tokens": 20,
+          "max_tokens": 40
+        },
+        {
+          "min_c": 5,
+          "max_c": 7,
+          "target_tokens": 40,
+          "max_tokens": 80
+        },
+        {
+          "min_c": 8,
+          "max_c": 8,
+          "target_tokens": 70,
+          "max_tokens": 140
+        },
+        {
+          "min_c": 9,
+          "max_c": 9,
+          "target_tokens": 100,
+          "max_tokens": 200
+        }
+      ]
+    },
+    "apply_authorization_mode": "auto"
+  }
+}
